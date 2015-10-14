@@ -73,7 +73,8 @@ $dirbasename = basename( $dir );
 // registering mecanism to append to the internal autoloader. Simply use
 // $wgAutoLoadClasses as below:
 $wgAutoloadClasses['HuijiFunctions'] = $dir . '/HuijiFunctions.php';
-$wgAutoloadClasses['ExampleHooks'] = $dir . '/Example.hooks.php';
+$wgAutoloadClasses['HuijiPrefix'] = $dir . '/HuijiPrefix.php';
+$wgAutoloadClasses['HuijiMiddlewareHook'] = $dir . '/HuijiMiddleware.hooks.php';
 $wgAutoloadClasses['SpecialHelloWorld'] = $dir . '/specials/SpecialHelloWorld.php';
 $wgAutoloadClasses['ApiQueryExample'] = $dir . '/api/ApiQueryExample.php';
 
