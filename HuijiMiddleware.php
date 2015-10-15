@@ -86,12 +86,12 @@ $wgAPIListModules['HuijiMiddleware'] = 'ApiQueryExample';
 
 // Register hooks
 // See also http://www.mediawiki.org/wiki/Manual:Hooks
-$wgHooks['BeforePageDisplay'][] = 'ExampleHooks::onBeforePageDisplay';
-$wgHooks['ResourceLoaderGetConfigVars'][] = 'ExampleHooks::onResourceLoaderGetConfigVars';
-$wgHooks['ParserFirstCallInit'][] = 'ExampleHooks::onParserFirstCallInit';
-$wgHooks['MagicWordwgVariableIDs'][] = 'ExampleHooks::onRegisterMagicWords';
-$wgHooks['ParserGetVariableValueSwitch'][] = 'ExampleHooks::onParserGetVariableValueSwitch';
-$wgHooks['LoadExtensionSchemaUpdates'][] = 'ExampleHooks::onLoadExtensionSchemaUpdates';
+#$wgHooks['BeforePageDisplay'][] = 'ExampleHooks::onBeforePageDisplay';
+#$wgHooks['ResourceLoaderGetConfigVars'][] = 'ExampleHooks::onResourceLoaderGetConfigVars';
+#$wgHooks['ParserFirstCallInit'][] = 'ExampleHooks::onParserFirstCallInit';
+#$wgHooks['MagicWordwgVariableIDs'][] = 'ExampleHooks::onRegisterMagicWords';
+#$wgHooks['ParserGetVariableValueSwitch'][] = 'ExampleHooks::onParserGetVariableValueSwitch';
+#$wgHooks['LoadExtensionSchemaUpdates'][] = 'ExampleHooks::onLoadExtensionSchemaUpdates';
 
 // Register special pages
 // See also http://www.mediawiki.org/wiki/Manual:Special_pages

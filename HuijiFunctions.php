@@ -1,4 +1,4 @@
-<?
+<?php
 Class HuijiFunctions {
 	/**
 	 * The following four functions are borrowed
@@ -364,3 +364,4 @@ Class HuijiFunctions {
 		return $users;
 	}	
 }
+?>
