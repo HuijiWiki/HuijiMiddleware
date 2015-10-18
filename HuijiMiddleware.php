@@ -95,7 +95,7 @@ $wgAPIListModules['HuijiMiddleware'] = 'ApiQueryExample';
 
 // Register special pages
 // See also http://www.mediawiki.org/wiki/Manual:Special_pages
-$wgSpecialPages['HelloWorld'] = 'SpecialHelloWorld';
+$wgSpecialPages['InvitationCode'] = 'SpecialInvitationCode';
 
 // Register modules
 // See also http://www.mediawiki.org/wiki/Manual:$wgResourceModules
