@@ -47,17 +47,18 @@ class SpecialInvitationCode extends SpecialPage {
 			$out->blockedPage( false );
 			return false;
 		}
-		if ( $request->wasPosted() ) {
-			// generate invitation code on the fly.
-			$num = $request->getVal( 'num' );
-			Invitation::generateInvCode($num);
-			$codeArr = Invitation::getInv($num);
-			$out->addHtml(var_dump($codeArr));
-		}
+
 		// Parses message from .i18n.php as wikitext and adds it to the
 		// page output.
-		$codeArr = Invitation::getInv(1);
-		$out->addHtml(var_dump($codeArr));
+		$num = $request->getVal( 'num' );
+		if ($num == ''){
+			$num = 1;
+		}
+		Invitation::generateInvCode($num);
+		$codeArr = Invitation::getInv($num);
+		$out->addHtml(var_dump($codeArr));			
+		
+
 		// $out->addWikiMsg( 'huijimiddleware-helloworld-intro' );
 	}
 
