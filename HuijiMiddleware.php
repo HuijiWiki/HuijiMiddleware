@@ -51,7 +51,7 @@ $wgExtensionCredits['other'][] = array(
 		'Sun Lixin',
 	),
 
-	'version'  => '0.1.0',
+	'version'  => '0.1.1',
 
 	// The extension homepage. www.mediawiki.org will be happy to host
 	// your extension homepage.
@@ -75,7 +75,7 @@ $dirbasename = basename( $dir );
 $wgAutoloadClasses['HuijiFunctions'] = $dir . '/HuijiFunctions.php';
 $wgAutoloadClasses['HuijiPrefix'] = $dir . '/HuijiPrefix.php';
 $wgAutoloadClasses['HuijiMiddlewareHook'] = $dir . '/HuijiMiddleware.hooks.php';
-$wgAutoloadClasses['SpecialInvitionCode'] = $dir . '/specials/SpecialInvitationCode.php';
+$wgAutoloadClasses['SpecialInvitationCode'] = $dir . '/specials/SpecialInvitationCode.php';
 $wgAutoloadClasses['ApiQueryExample'] = $dir . '/api/ApiQueryExample.php';
 
 $wgMessagesDirs['HuijiMiddleware'] = __DIR__ . '/i18n';
