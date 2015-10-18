@@ -55,7 +55,7 @@ class SpecialInvitationCode extends SpecialPage {
 			$num = 1;
 		}
 		Invitation::generateInvCode($num);
-		$code = Invitation::getInv($num);
+		$code = Invitation::getInvList($num);
 		$out->addHtml($code);			
 		
 
