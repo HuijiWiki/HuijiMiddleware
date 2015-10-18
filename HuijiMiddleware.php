@@ -75,7 +75,7 @@ $dirbasename = basename( $dir );
 $wgAutoloadClasses['HuijiFunctions'] = $dir . '/HuijiFunctions.php';
 $wgAutoloadClasses['HuijiPrefix'] = $dir . '/HuijiPrefix.php';
 $wgAutoloadClasses['HuijiMiddlewareHook'] = $dir . '/HuijiMiddleware.hooks.php';
-$wgAutoloadClasses['SpecialHelloWorld'] = $dir . '/specials/SpecialHelloWorld.php';
+$wgAutoloadClasses['SpecialInvitionCode'] = $dir . '/specials/SpecialInvitationCode.php';
 $wgAutoloadClasses['ApiQueryExample'] = $dir . '/api/ApiQueryExample.php';
 
 $wgMessagesDirs['HuijiMiddleware'] = __DIR__ . '/i18n';
@@ -83,6 +83,10 @@ $wgExtensionMessagesFiles['HuijiMiddlewareAlias'] = $dir . '/HuijiMiddleware.i18
 $wgExtensionMessagesFiles['HuijiMiddlewareMagic'] = $dir . '/HuijiMiddleware.i18n.magic.php';
 
 $wgAPIListModules['HuijiMiddleware'] = 'ApiQueryExample';
+
+global $wgAvailableRights, $wgGroupPermissions;
+$wgAvailableRights[] = 'getinvitationcode';
+$wgGroupPermissions['staff']['getinvitationcode'] = true;
 
 // Register hooks
 // See also http://www.mediawiki.org/wiki/Manual:Hooks
