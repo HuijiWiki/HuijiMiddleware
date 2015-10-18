@@ -55,8 +55,8 @@ class SpecialInvitationCode extends SpecialPage {
 			$num = 1;
 		}
 		Invitation::generateInvCode($num);
-		$codeArr = InvitationDB::getInv($num);
-		$out->addHtml('<pre>'.var_dump($codeArr).'</pre>');			
+		$code = Invitation::getInv($num);
+		$out->addHtml($code);			
 		
 
 		// $out->addWikiMsg( 'huijimiddleware-helloworld-intro' );
