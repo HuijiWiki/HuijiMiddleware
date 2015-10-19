@@ -10,10 +10,10 @@ $specialPageAliases = array();
 
 /** English (English) */
 $specialPageAliases['en'] = array(
-	'InvitationCode' => array( 'InvitationCode' ),
+	'invitationcode' => array( 'InvitationCode' ),
 );
 
 /** chinese */
 $specialPageAliases['zh-hans'] = array(
-	'InvitationCode' => array( '邀请码' ),
+	'invitationcode' => array( '邀请码' ),
 );
