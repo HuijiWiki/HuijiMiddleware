@@ -8,6 +8,7 @@
     "example-welcome-color-label": "Today's color:",
     "example-welcome-color-value": "$1",
     "huijimiddleware-invitationcode": "邀请码",
+    "invitationcode":"邀请码",
     "example-helloworld-intro": "This is the HelloWorld special page, as provided by the Example extension.",
     "apihelp-query+example-description": "Get information about foo.",
     "apihelp-query+example-param-key": "Reduce the result to only one of the foo properties.",
