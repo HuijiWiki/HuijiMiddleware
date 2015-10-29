@@ -17,3 +17,7 @@ $specialPageAliases['en'] = array(
 $specialPageAliases['zh-hans'] = array(
 	'invitationcode' => array( '邀请码' ),
 );
+/** chinese */
+$specialPageAliases['zh-cn'] = array(
+	'invitationcode' => array( '邀请码' ),
+);
