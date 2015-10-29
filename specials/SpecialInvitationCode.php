@@ -64,6 +64,6 @@ class SpecialInvitationCode extends SpecialPage {
 	}
 
 	protected function getGroupName() {
-		return 'other';
+		return 'developer';
 	}
 }
