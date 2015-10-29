@@ -16,7 +16,8 @@ class SpecialInvitationCode extends SpecialPage {
 		// We do this by calling the parent class (the SpecialPage class)
 		// constructor method with the name as first and only parameter.
 		require_once ('/var/www/html/Invitation.php');
-		parent::__construct( 'InvitationCode' );
+		// add restriction
+		parent::__construct( 'InvitationCode', 'getinvitationcode' );
 	}
 
 	/**
