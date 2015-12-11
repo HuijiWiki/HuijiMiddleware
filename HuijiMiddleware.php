@@ -99,7 +99,7 @@ $wgGroupPermissions['staff']['getinvitationcode'] = true;
 
 // Register special pages
 // See also http://www.mediawiki.org/wiki/Manual:Special_pages
-$wgSpecialPages['InvitationCode'] = 'SpecialInvitationCode';
+$wgSpecialPages['invitationcode'] = 'SpecialInvitationCode';
 
 // Register modules
 // See also http://www.mediawiki.org/wiki/Manual:$wgResourceModules
