@@ -74,7 +74,7 @@ $dirbasename = basename( $dir );
 // $wgAutoLoadClasses as below:
 $wgAutoloadClasses['HuijiFunctions'] = $dir . '/HuijiFunctions.php';
 $wgAutoloadClasses['HuijiPrefix'] = $dir . '/HuijiPrefix.php';
-$wgAutoloadClasses['HuijiMiddlewareHook'] = $dir . '/HuijiMiddleware.hooks.php';
+$wgAutoloadClasses['HuijiHooks'] = $dir . '/HuijiMiddleware.hooks.php';
 $wgAutoloadClasses['SpecialInvitationCode'] = $dir . '/specials/SpecialInvitationCode.php';
 $wgAutoloadClasses['ApiQueryExample'] = $dir . '/api/ApiQueryExample.php';
 
@@ -100,6 +100,9 @@ $wgGroupPermissions['staff']['getinvitationcode'] = true;
 // Register special pages
 // See also http://www.mediawiki.org/wiki/Manual:Special_pages
 $wgSpecialPages['InvitationCode'] = 'SpecialInvitationCode';
+
+// Hooks
+$wgHooks['SpecialSearchResultsPrepend'][] = 'HuijiHooks::onSpecialSearchResultsPrepend';
 
 // Register modules
 // See also http://www.mediawiki.org/wiki/Manual:$wgResourceModules
