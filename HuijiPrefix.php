@@ -44,7 +44,8 @@ class HuijiPrefix{
 		return "<a href=\"".self::prefixToUrl($prefix)."\">".self::prefixToSiteName($prefix)."</a>";
 	}
 	public static function prefixToUrl( $prefix ){
-		return 'http://'.$prefix.'.huiji.wiki/';
+		global $wgHuijiSuffix;
+		return 'http://'.$prefix.$wgHuijiSuffix.'/';
 	}
 	public static function getRandomPrefix(){
 		
