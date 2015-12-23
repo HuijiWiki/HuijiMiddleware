@@ -16,5 +16,17 @@ class HuijiHooks {
 		$output->addHtml('<p class="global-search-notice">'.$globalSearchNotice.'</p>');
 		return true;
 	}
+	
+	public static function onOpenSearchUrls( &$urls ) {
+		global $wgHuijiPrefix;
+		if ($wgHuijiPrefix = 'www' || $wgHuijiPrefix = 'zs.test'){
+			$urls[] = array(
+				'type' => 'text/html',
+				'method' => 'get',
+				'template' => SpecialPage::getTitleFor('GlobalSearch')->getCanonicalURL( 'key={searchTerms}' )
+			);
+		}
+		
+	}
 
 }
