@@ -20,11 +20,11 @@ class HuijiHooks {
 	public static function onOpenSearchUrls( &$urls ) {
 		global $wgHuijiPrefix;
 		if ($wgHuijiPrefix = 'www' || $wgHuijiPrefix = 'zs.test'){
-			$urls[] = array(
+			$urls = array(array(
 				'type' => 'text/html',
 				'method' => 'get',
 				'template' => SpecialPage::getTitleFor('GlobalSearch')->getCanonicalURL( 'key={searchTerms}' )
-			);
+			));
 		}
 		
 	}
