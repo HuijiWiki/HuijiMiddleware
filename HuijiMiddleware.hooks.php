@@ -16,5 +16,10 @@ class HuijiHooks {
 		$output->addHtml('<p class="global-search-notice">'.$globalSearchNotice.'</p>');
 		return true;
 	}
+	public static function onGetDoubleUnderscoreIDs( &$doubleUnderscoreIDs ) {
+        $doubleUnderscoreIDs[] = 'norec';
+        $doubleUnderscoreIDs[] = 'rec';
+        return true;
+    }
 
 }

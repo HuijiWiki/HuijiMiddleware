@@ -77,6 +77,9 @@ $wgAutoloadClasses['HuijiPrefix'] = $dir . '/HuijiPrefix.php';
 $wgAutoloadClasses['HuijiHooks'] = $dir . '/HuijiMiddleware.hooks.php';
 $wgAutoloadClasses['SpecialInvitationCode'] = $dir . '/specials/SpecialInvitationCode.php';
 $wgAutoloadClasses['ApiQueryExample'] = $dir . '/api/ApiQueryExample.php';
+if (!class_exists("PageProps")){
+	$wgAutoloadClasses['PageProps'] = $dir . '/PageProps.php';
+}
 
 $wgMessagesDirs['HuijiMiddleware'] = __DIR__ . '/i18n';
 $wgExtensionMessagesFiles['HuijiMiddlewareAlias'] = $dir . '/HuijiMiddleware.i18n.alias.php';
@@ -103,6 +106,7 @@ $wgSpecialPages['InvitationCode'] = 'SpecialInvitationCode';
 
 // Hooks
 $wgHooks['SpecialSearchResultsPrepend'][] = 'HuijiHooks::onSpecialSearchResultsPrepend';
+$wgHooks['GetDoubleUnderscoreIDs'][] = 'HuijiHooks::onGetDoubleUnderscoreIDs';
 
 // Register modules
 // See also http://www.mediawiki.org/wiki/Manual:$wgResourceModules
@@ -166,3 +170,4 @@ $wgExampleWelcomeColorDays = array(
 
 // Value of {{MYWORD}} constant
 $wgExampleMyWord = 'Awesome';
+
