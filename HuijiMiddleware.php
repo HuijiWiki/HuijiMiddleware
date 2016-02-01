@@ -102,12 +102,16 @@ $wgGroupPermissions['staff']['getinvitationcode'] = true;
 
 // Register special pages
 // See also http://www.mediawiki.org/wiki/Manual:Special_pages
-$wgSpecialPages['InvitationCode'] = 'SpecialInvitationCode';
+$wgSpecialPages['invitationcode'] = 'SpecialInvitationCode';
 
 // Hooks
 $wgHooks['SpecialSearchResultsPrepend'][] = 'HuijiHooks::onSpecialSearchResultsPrepend';
+<<<<<<< HEAD
 $wgHooks['GetDoubleUnderscoreIDs'][] = 'HuijiHooks::onGetDoubleUnderscoreIDs';
 
+=======
+$wgHooks['OpenSearchUrls'][] = 'HuijiHooks::onOpenSearchUrls';
+>>>>>>> 66c1d673ca5acada25b4350fe07eb1d6f2e9e870
 // Register modules
 // See also http://www.mediawiki.org/wiki/Manual:$wgResourceModules
 // ResourceLoader modules are the de facto standard way to easily
