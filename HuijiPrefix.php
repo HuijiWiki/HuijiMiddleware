@@ -86,4 +86,21 @@ class HuijiPrefix{
 			return '';
 		}
 	}
+	static function getHiddenPrefixes(){
+		$dbr = wfGetDB( DB_SLAVE );
+		$res = $dbr->select(
+			'domain',
+			array( 'domain_prefix' ),
+			$showHidden?array():array( 'domain_status' => 1 ),
+			__METHOD__
+		);
+		if( $res !== false ){
+			foreach ($res as $value) {
+				$result[] = $value->domain_prefix;
+			}
+			return $result;
+		}else{
+			return '';
+		}
+	}
 }
