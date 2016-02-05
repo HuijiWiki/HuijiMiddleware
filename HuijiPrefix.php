@@ -91,7 +91,7 @@ class HuijiPrefix{
 		$res = $dbr->select(
 			'domain',
 			array( 'domain_prefix' ),
-			$showHidden?array():array( 'domain_status' => 1 ),
+			array( 'domain_status' => 1 ),
 			__METHOD__
 		);
 		if( $res !== false ){
