@@ -66,12 +66,15 @@ class HuijiPrefix{
 			return '';
 		}
 	}
-	static function getAllPrefix(){
+	static function getAllprefix($showHidden = false){
+		self::getAllPrefixes($showHidden);
+	}
+	static function getAllPrefixes($showHidden){
 		$dbr = wfGetDB( DB_SLAVE );
 		$res = $dbr->select(
 			'domain',
 			array( 'domain_prefix' ),
-			array( 'domain_status' => 0, ),
+			$showHidden?array():array( 'domain_status' => 0 ),
 			__METHOD__
 		);
 		if( $res !== false ){
