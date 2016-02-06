@@ -67,7 +67,7 @@ class HuijiPrefix{
 		}
 	}
 	static function getAllprefix($showHidden = false){
-		self::getAllPrefixes($showHidden);
+		return self::getAllPrefixes($showHidden);
 	}
 	static function getAllPrefixes($showHidden = false){
 		$dbr = wfGetDB( DB_SLAVE );
