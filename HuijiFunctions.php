@@ -92,7 +92,7 @@ Class HuijiFunctions {
 		if( $isURL && !$image && strlen( $linkText ) > 30 ) {
 			$start = substr( $linkText, 0, ( 30 / 2 ) - 3 );
 			$end = substr( $linkText, strlen( $linkText ) - ( 30 / 2 ) + 3, ( 30 / 2 ) - 3 );
-			$linkText = trim( $start ) . wfMsg( 'ellipsis' ) . trim( $end );
+			$linkText = trim( $start ) . wfMessage( 'ellipsis' )->plain() . trim( $end );
 		}
 		return $tagOpen . $linkText . $tagClose;
 	}
