@@ -77,6 +77,9 @@ $wgAutoloadClasses['HuijiPrefix'] = $dir . '/HuijiPrefix.php';
 $wgAutoloadClasses['HuijiHooks'] = $dir . '/HuijiMiddleware.hooks.php';
 $wgAutoloadClasses['SpecialInvitationCode'] = $dir . '/specials/SpecialInvitationCode.php';
 $wgAutoloadClasses['ApiQueryExample'] = $dir . '/api/ApiQueryExample.php';
+$wgAutoloadClasses['WikiSite'] = $dir . '/WikiSiteClass.php';
+$wgAutoloadClasses['Site'] = $dir . '/SiteClass.php';
+$wgAutoloadClasses['Huiji'] = $dir . '/HuijiClass.php';
 if (!class_exists("PageProps")){
 	$wgAutoloadClasses['PageProps'] = $dir . '/PageProps.php';
 }
@@ -113,39 +116,39 @@ $wgHooks['OpenSearchUrls'][] = 'HuijiHooks::onOpenSearchUrls';
 // See also http://www.mediawiki.org/wiki/Manual:$wgResourceModules
 // ResourceLoader modules are the de facto standard way to easily
 // load JavaScript and CSS files to the client.
-$wgResourceModules['ext.HuijiMiddleware.welcome'] = array(
-	'scripts' => array(
-		'modules/ext.HuijiMiddleware.welcome.js',
-	),
-	'styles' => array(
-		'modules/ext.HuijiMiddleware.welcome.css',
-	),
-	'messages' => array(
-		'example-welcome-title-loggedout',
-		'example-welcome-title-user',
-		'example-welcome-color-label',
-		'example-welcome-color-value',
-	),
+$wgResourceModules['ext.HuijiMiddleware.flash'] = array(
+	'scripts' => 'modules/ext.HuijiMiddleware.flash.js',
 	'dependencies' => array(
-		'mediawiki.util',
-		'mediawiki.user',
-		'mediawiki.Title',
 	),
 
 	'localBasePath' => $dir,
-	'remoteExtPath' => 'examples/' . $dirbasename,
+	'remoteExtPath' => 'HuijiMiddleware/' . $dirbasename,
+	'position' => 'bottom',
 );
-
-$wgResourceModules['ext.HuijiMiddleware.welcome.init'] = array(
-	'scripts' => 'modules/ext.HuijiMiddleware.welcome.init.js',
+$wgResourceModules['ext.HuijiMiddleware.LightBox'] = array(
+	'scripts' => 'modules/ext.HuijiMiddleware.LightBox.js',
 	'dependencies' => array(
-		'ext.HuijiMiddleware.welcome',
 	),
-
 	'localBasePath' => $dir,
-	'remoteExtPath' => 'examples/' . $dirbasename,
+	'remoteExtPath' => 'HuijiMiddleware/' . $dirbasename,
+	'position' => 'bottom',
 );
-
+$wgResourceModules['ext.HuijiMiddleware.querystring'] = array(
+	'scripts' => 'modules/ext.HuijiMiddleware.querystring.js',
+	'dependencies' => array(
+	),
+	'localBasePath' => $dir,
+	'remoteExtPath' => 'HuijiMiddleware/' . $dirbasename,
+	'position' => 'bottom',
+);
+$wgResourceModules['ext.HuijiMiddleware.video.init'] = array(
+	'scripts' => 'modules/ext.HuijiMiddleware.video.init.js',
+	'dependencies' => array(
+	),
+	'localBasePath' => $dir,
+	'remoteExtPath' => 'HuijiMiddleware/' . $dirbasename,
+	'position' => 'bottom',
+);
 /* Configuration */
 
 

@@ -1,4 +1,4 @@
-<?php
+js<?php
 Class HuijiFunctions {
         /* atomic lock with memecached */
         static function addLock( $lockKey, $timeout = 0, $lockExpireTime = 120 ){
@@ -309,6 +309,23 @@ Class HuijiFunctions {
 			return 1;
 		}
 	}
+	#    Output easy-to-read numbers
+    #    by james at bandit.co.nz
+    static function format_nice_number($n) {
+        // first strip any formatting;
+        $n = (0+str_replace(",","",$n));
+        
+        // is this a number?
+        if(!is_numeric($n)) return false;
+        
+        // now filter it;
+        if($n>1000000000000) return round(($n/1000000000000),1).'T';
+        else if($n>1000000000) return round(($n/1000000000),1).'B';
+        else if($n>1000000) return round(($n/1000000),1).'M';
+        else if($n>1000) return round(($n/1000),1).'K';
+        
+        return number_format($n);
+    }
 	/**
 	 * Convert all '@' character to user page link. Max ping allowed is 20.
 	 * @param String $text: The message to be converted.

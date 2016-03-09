@@ -66,7 +66,7 @@ class HuijiPrefix{
 			return '';
 		}
 	}
-	static function getAllprefix($showHidden = false){
+	static function getAllPrefix($showHidden = false){
 		return self::getAllPrefixes($showHidden);
 	}
 	static function getAllPrefixes($showHidden = false){
