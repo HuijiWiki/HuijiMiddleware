@@ -1,4 +1,4 @@
-js<?php
+<?php
 Class HuijiFunctions {
         /* atomic lock with memecached */
         static function addLock( $lockKey, $timeout = 0, $lockExpireTime = 120 ){
