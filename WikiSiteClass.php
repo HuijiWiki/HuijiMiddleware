@@ -208,6 +208,19 @@ class WikiSite extends Site{
 		}
 		return $res;
 	}
+	public function getEditCount( $fromTime, $toTime ){
+		$ueb = new UserEditBox();
+		return $ueb->getSiteEditCount(-1, $this->mPrefix, $fromTime, $toTime );
+	}
+	public function getViewCount( $fromTime, $toTime ){
+		$ueb = new UserEditBox();
+		return $ueb->getSiteViewCount(-1, $this->mPrefix, $fromTime, $toTime );
+	}
+	public function getEditedUserCount( $fromTime , $toTime ){
+		//TODO wait for new Interface
+		// $ueb = new UserEditBox();
+		// return $ueb->getSiteEditUserCount( $fromTime, $toTime );
+	}
 	public function getFollowers( $expanded = false ){
 		if (!$this->mFollowers){
 			// return $this->mFollowers;
@@ -329,6 +342,7 @@ class WikiSite extends Site{
 	public function getUsersFromGroup($group){
 		$ums = self::getSiteManager( $this->mPrefix, $group );
 		$result = array();
+		$count = array();
 		foreach( $ums as $value ){
             $user = User::newFromId( $value );
             if ( !($user->isAllowed('bot')) ) {
