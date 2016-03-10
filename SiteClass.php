@@ -1,6 +1,6 @@
 <?php
 abstract class site {
-	abstract protected function getType();
+	abstract protected function getGroup();
 	abstract protected function getPrefix();
 }
 
