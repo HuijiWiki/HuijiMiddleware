@@ -80,6 +80,7 @@ $wgAutoloadClasses['ApiQueryExample'] = $dir . '/api/ApiQueryExample.php';
 $wgAutoloadClasses['WikiSite'] = $dir . '/WikiSiteClass.php';
 $wgAutoloadClasses['Site'] = $dir . '/SiteClass.php';
 $wgAutoloadClasses['Huiji'] = $dir . '/HuijiClass.php';
+$wgAutoloadClasses['HuijiUser'] = $dir . '/HuijiUserClass.php';
 if (!class_exists("PageProps")){
 	$wgAutoloadClasses['PageProps'] = $dir . '/PageProps.php';
 }

@@ -140,7 +140,7 @@ class WikiSite extends Site{
 		return wfForeignMemcKey('huiji', '', 'WikiSite', $name, $this->mPrefix);
 	}
 	public function exists(){
-		return $this->mPrefix === '';
+		return $this->mPrefix != '';
 
 	}
 	public function getPrefix(){
