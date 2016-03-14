@@ -34,5 +34,40 @@ class HuijiHooks {
 		
 	}
 
+   public static function onRegisterMagicWords( &$magicWordsIds ) {
+	   // Add the following to a wiki page to see how it works:
+	   //  {{MYWORD}}
+	   $magicWordsIds[] = 'numberofalledits';
+	   $magicWordsIds[] = 'numberofallarticles';
+	   $magicWordsIds[] = 'numberofallactiveusers';
+	   $magicWordsIds[] = 'numberofallfiles';
+	   $magicWordsIds[] = 'numberofallsites';
+
+	   return true;
+   }
+ 
+   public static function onParserGetVariableValueSwitch( &$parser, &$cache, &$magicWordId, &$ret ) {
+   	    // Return value and cache should match. Cache is used to save
+        // additional call when it is used multiple times on a page.
+       	$huijiStats = Huiji::getInstance()->getStats();
+        if ( $magicWordId === 'numberofalledits' ) {
+            $ret = $cache['numberofalledits'] = $huijiStats['edits'];
+        }
+        if ( $magicWordId === 'numberofallarticles' ) {
+            $ret = $cache['numberofallarticles'] = $huijiStats['pages'];
+        }
+        if ( $magicWordId === 'numberofallactiveusers' ) {
+            $ret = $cache['numberofallactiveusers'] = $huijiStats['users'];
+        }
+        if ( $magicWordId === 'numberofallfiles' ) {
+            $ret = $cache['numberofallfiles'] = $huijiStats['files'];
+        }
+        if ( $magicWordId === 'numberofallsites' ) {
+            $ret = $cache['numberofallsites'] = $huijiStats['sites'];
+        }
+ 
+        return true;
+   }
+
 
 }

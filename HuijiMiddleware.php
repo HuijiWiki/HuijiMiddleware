@@ -112,6 +112,8 @@ $wgSpecialPages['invitationcode'] = 'SpecialInvitationCode';
 $wgHooks['SpecialSearchResultsPrepend'][] = 'HuijiHooks::onSpecialSearchResultsPrepend';
 $wgHooks['GetDoubleUnderscoreIDs'][] = 'HuijiHooks::onGetDoubleUnderscoreIDs';
 $wgHooks['OpenSearchUrls'][] = 'HuijiHooks::onOpenSearchUrls';
+$wgHooks['MagicWordwgVariableIDs'][] = 'HuijiHooks::onRegisterMagicWords';
+$wgHooks['ParserGetVariableValueSwitch'][] = 'HuijiHooks::onParserGetVariableValueSwitch';
 
 // Register modules
 // See also http://www.mediawiki.org/wiki/Manual:$wgResourceModules

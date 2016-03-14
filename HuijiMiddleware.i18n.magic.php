@@ -13,6 +13,11 @@ $magicWords['en'] = array(
 	'echo' => array( 0, 'echo' ),
 	'showme' => array( 0, 'showme' ),
 	'myword' => array( 0, 'MYWORD' ),
+	'numberofalledits' => array( 0, 'NUMBEROFALLEDITS' ),
+	'numberofallarticles' => array( 0, 'NUMBEROFALLARTICLES' ),
+	'numberofallactiveusers' => array( 0, 'NUMBEROFALLACTIVEUSERS' ),
+	'numberofallfiles' => array( 0, 'NUMBEROFALLFILES' ),
+	'numberofallsites' => array( 0, 'NUMBEROFALLSITES' ),
 	'rec' => array( 0, '__REC__' ),
 	'norec' => array(0, '__NOREC__'),
 

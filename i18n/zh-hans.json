@@ -15,5 +15,8 @@
     "apihelp-query+example-example-1": "Get all the information about foo.",
     "apihelp-query+example-example-2": "Get only information for the key \"do\"",
     "global-search-notice":"这是$1上的搜索结果。您还可以$2。",
-    "global-search-link":"在灰机全局搜索$1"
+    "global-search-link":"在灰机全局搜索$1",
+    "createacct-benefit-head1": "{{NUMBEROFALLEDITS}}",
+    "createacct-benefit-head2": "{{NUMBEROFALLARTICLES}}",
+    "createacct-benefit-head3": "{{NUMBEROFALLACTIVEUSERS}}"
 }

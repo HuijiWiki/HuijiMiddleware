@@ -1,10 +1,25 @@
 <?php
 class HuijiUser {
 	protected $mUser;
+	protected $mFollowingSites;
+	protected $mFollowingUsers;
+	protected $mFollowers;
 	private static $userCache;
 	const CACHE_MAX = 1000;
 	function __construct(){
 	}
+	/* Decorator functions */
+    public function __call($method, $args) {
+        return call_user_func_array(array($this->mUser, $method), $args);
+    }
+
+    public function __get($key) {
+        return $this->mUser->$key;
+    }
+
+    public function __set($key, $val) {
+        return $this->mUser->$key = $val;
+    }
 	private static function getUserCache() {
         if ( self::$userCache == null ) {
             self::$userCache = new HashBagOStuff( [ 'maxKeys' => self::CACHE_MAX ] );
@@ -20,7 +35,7 @@ class HuijiUser {
 		$u = new HuijiUser();
 		$u->mUser = $user;
 		return $u;
-	};
+	}
 	public static function newFromId($userId){
 		$cache = self::getUserCache();
 		$u = $cache->get($userId);
@@ -54,19 +69,29 @@ class HuijiUser {
 			return $usf->checkUserSiteFollow($this->mUser, $target->getPrefix());
 		} elseif( $target instanceof User ) {
 			$uuf = new UserUserFollow();
-			return $uuf->checkUserUserFollow($$this->mUser, $target);
+			return $uuf->checkUserUserFollow($this->mUser, $target);
 		} else {
 			return false;
 		}
 	}
 	public function getFollowerCount(){
+		//Trust Cache
+		if ($this->mFollowers != ''){
+			return count($this->mFollowers);
+		}
 		return UserUserFollow::getFollowerCount( $this->mUser );
 	}
-	public function getFollowingCount(){
+	public function getFollowingUsersCount(){
+		if ($this->mFollowingUsers != ''){
+			return count($this->mFollowingUsers);
+		}
 		return UserUserFollow::getFollowingCount( $this->mUser );
 	}
-	public function getSiteFollowingCount(){
-		return UserUserFollow::getFollowingCount( $this->mUser );
+	public function getFollowingSitesCount(){
+		if ($this->mFollowingSites != ''){
+			return count($this->mFollowingSites);
+		}
+		return UserSiteFollow::getFollowingCount( $this->mUser );
 	}
 	public function follow($target){
 		if ( $target instanceof Site ){
@@ -83,7 +108,7 @@ class HuijiUser {
 				return false;
 			}
 			$uuf = new UserUserFollow();
-			return $uuf->addUserUserFollow($$this->mUser, $target);
+			return $uuf->addUserUserFollow($this->mUser, $target);
 		} else {
 			return false;
 		}		
@@ -94,12 +119,80 @@ class HuijiUser {
 			return $usf->deleteUserSiteFollow($this->mUser, $target->getPrefix());
 		} elseif( $target instanceof User ) {
 			$uuf = new UserUserFollow();
-			return $uuf->deleteUserUserFollow($$this->mUser, $target);
+			return $uuf->deleteUserUserFollow($this->mUser, $target);
 		} else {
 			return false;
 		}			
 	}
+	public function getFollowers(){
+		$uuf = new UserUserFollow();
+		$this->mFollowers = $uuf->getFollowList($this->mUser, 2);
+		$cache = self::getUserCache();
+		$cache->set($this->mUser->getId(), $this);
+		return $this->mFollowers;
+
+	}
+	public function getFollowingUsers(){
+		$uuf = new UserUserFollow();
+		$this->mFollowingUsers = $uuf->getFollowList($this->mUser, 1);
+		//$this->mFollowingUsers = UserUserFollow::getFollowedByUser($this->mUser);
+		$cache = self::getUserCache();
+		$cache->set($this->mUser->getId(), $this);	
+		return $this->mFollowingUsers;
+
+	}
+	public function getFollowingSites($expanded = false, $viewPointUser = null){
+		$this->mFollowingSites = UserSiteFollow::getFullFollowedSites($this->mUser);
+		$cache = self::getUserCache();
+		$cache->set($this->mUser->getId(), $this);
+		if (!$expanded){
+			return $this->mFollowingSites;
+		} else {
+			if ($viewPointUser != null){
+				$viewPointHuijiUser = self::newFromUser($viewPointUser);
+				$vSites = $viewPointHuijiUser->getFollowingSites();
+				return UserSiteFollow::sortFollowedSiteWithDetails($this->mUser, $this->mFollowingSites, $vSites);
+			} else {
+				return UserSiteFollow::sortFollowedSiteWithDetails($this->mUser, $this->mFollowingSites, null);
+			}
+		}
+	}
 	public function getAvatar($size = 'l'){
 		return new wAvatar($this->mUser->getId(), $size);
 	}
+	public function getStats(){
+		$statsObj = new UserStats($this->mUser->getId(), $this->mUser->getName());
+		return $statsObj->getUserStats();
+	}
+	public function getLevel(){
+		$stats = $this->getStats();
+		return new UserLevel($stats['points']);
+	}
+	public function hasUserGift($giftId){
+		$ug = new UserGifts($this->mUser->getName());
+		$hasUserGift = $ug->doesUserHaveGiftOfTheSameGiftType($this->mUser->getId(), $giftId);
+		return $hasUserGift;
+	}
+	public function hasSystemGift($giftId){
+		$usg = new UserSystemGifts($this->mUser->getName());
+		$hasSystemGift = $ug->doesUserHaveGiftOfTheSameGiftType($this->mUser->getId(), $giftId);	
+		return $hasSystemGift;	
+	}
+	// public function sendUserGift($userIdTo, $giftId, $type, $message){
+	// 	$ug = new UserGifts($this->mUser->getName());
+	// 	$ug->sendGift($userIdTo, $giftId, $type, $message);
+	// }
+	// public function sendSystemGift( $giftId ){
+	// 	$usg = new UserSystemGifts($this->mUser->getName());
+	// 	$usg->sendSystemGift( $giftId );
+
+	// }
+	public function getProfile(){
+		$us = new UserStatus($this->mUser);
+		$json = $us->getAll();
+		$obj = json_decode($json);
+		return (array)$obj;
+	}
+
+
 }
