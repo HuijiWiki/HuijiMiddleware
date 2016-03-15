@@ -375,9 +375,9 @@ class WikiSite extends Site{
 			'site_best_rank',
 			array(
 				'site_rating'
-			)
+			),
 			array(
-				'site_prefix' => $site->mPrefix,
+				'site_prefix' => $this->mPrefix,
 			),
 			__METHOD__
 		);
@@ -408,7 +408,7 @@ class WikiSite extends Site{
 			$after = 'S';
 		} 
 		$dbw = wfGetDB(DB_MASTER);
-		$s = $dbw->upsert(
+		$s = $dbw->update(
 			'site_best_rank',
 			array(
 				'site_rating' => $after,
