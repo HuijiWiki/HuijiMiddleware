@@ -365,38 +365,88 @@ class WikiSite extends Site{
         return $result;
 	}
 	public function getRating(){
+		$key = $this->getCustomKey('getRating');
+		$r = $this->cache->get($key);
+		if ($r){
+			return $r;
+		}	
+		$dbr = wfGetDB(DB_SLAVE);
+		$s = $dbr->selectRow(
+			'site_best_rank',
+			array(
+				'site_rating'
+			)
+			array(
+				'site_prefix' => $site->mPrefix,
+			),
+			__METHOD__
+		);
+		if ($s != ''){
+			$this->cache->set($key, $s->site_rating);
+			return $s->site_rating;
+		}
+		$this->cache->set($key, 'NA');
+		return 'NA';
+
+	}
+	public function advanceRating(){
+		$now = $this->getRating();
+		$key = $this->getCustomKey('getRating');
+		if ($now = 'E'){
+			$after = 'D';
+		} 
+		if ($now = 'D'){
+			$after = 'C';
+		} 
+		if ($now = 'C'){
+			$after = 'B';
+		} 
+		if ($now = 'B'){
+			$after = 'A';
+		} 
+		if ($now = 'A'){
+			$after = 'S';
+		} 
+		$dbw = wfGetDB(DB_MASTER);
+		$s = $dbw->upsert(
+			'site_best_rank',
+			array(
+				'site_rating' => $after,
+			),
+			array(
+				'site_prefix' => $this->mPrefix,
+			),
+			__METHOD__
+		);
+		$this->cache->set($key, $after);
+		return $after;
+
+	}
+	public function getPotentialRating(){
 		// $stats = $this->getStats(false);
 		// return $stats['articles'];
-		$key = $this->getCustomKey('getSiteRating');
-		$this->mSiteRating = $this->cache->get($key);
-		if ( $this->mSiteRating ){
-			return $this->mSiteRating;
+		$stats = $this->getStats(false);
+		if (empty($this->getBestRank())){
+			return 'NA';
+		}
+		if (($this->getBestRank() == 1) and ($stats['articles'] > 500) and ($stats['users'] > 50)){
+			$this->mSiteRating = 'A';
 		} else {
-			$stats = $this->getStats(false);
-			if (empty($this->getBestRank())){
-				return 'N/A';
-			}
-			if (($this->getBestRank() == 1) and ($stats['articles'] > 500) and ($stats['users'] > 50)){
-				$this->mSiteRating = 'A';
+			if (($this->getBestRank() <= 3) and ($stats['articles'] > 100) and ($stats['users'] > 10)){
+				$this->mSiteRating = 'B';
 			} else {
-				if (($this->getBestRank() <= 3) and ($stats['articles'] > 100) and ($stats['users'] > 10)){
-					$this->mSiteRating = 'B';
-				} else {
-					if ( ($this->getBestRank() <= 10) and ($stats['articles'] > 20) and ($stats['users'] > 4) ){
-						$this->mSiteRating = 'C';
+				if ( ($this->getBestRank() <= 10) and ($stats['articles'] > 20) and ($stats['users'] > 4) ){
+					$this->mSiteRating = 'C';
+				}
+				else {
+					if ($this->getBestRank() <= 50){
+						$this->mSiteRating = 'D';
+					}	else {
+						$this->mSiteRating = 'E';
 					}
-					else {
-						if ($this->getBestRank() <= 50){
-							$this->mSiteRating = 'D';
-						}	else {
-							$this->mSiteRating = 'E';
-						}
 
-					}					
 				}					
-			}
-			
-			$this->cache->set($key, $this->mSiteRating, 24 * 60 * 60);
+			}					
 		}
 		return $this->mSiteRating;
 	}
