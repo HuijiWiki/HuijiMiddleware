@@ -1,4 +1,4 @@
- <?php 
+<?php 
 /***
  * A help class to translate huijiprefix and the actual site name.
  */

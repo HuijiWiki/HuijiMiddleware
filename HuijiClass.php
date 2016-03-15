@@ -42,7 +42,7 @@ class Huiji{
 		}
 		return $stats;
 	}
-	public function getSitePrefixes($showHidden){
+	public function getSitePrefixes($showHidden = false){
 		if ($showHidden){
 			if ($this->mAllPrefixes==''){
 				$this->mAllPrefixes = HuijiPrefix::getAllPrefixes($showHidden);

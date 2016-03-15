@@ -14,6 +14,7 @@ class WikiSite extends Site{
 	protected $mDate;
 	protected $cache;
 	protected $mFollowers;
+	protected $mSiteRating;
 	const CACHE_MAX = 1000;
 	private static $siteCache;
 
@@ -198,8 +199,9 @@ class WikiSite extends Site{
 				$res['pages'] = $arr['totalPages'];
 				$res['edits'] = $arr['totalEdits'];
 				$res['files'] = $arr['totalImages'];	
+				$this->cache->set($key, $res, 24 * 60 * 60);
 			}
-			$this->cache->set($key, $res, 24 * 60 * 60);	
+				
 		}
 		if ( $formatted ) { 
 			foreach($res as $key=>$value){
@@ -325,7 +327,8 @@ class WikiSite extends Site{
 		if ($data != ''){
 			return $data;
 		} else {
-			$rank = getSiteBestRank($this->mPrefix);
+			$rank = AllSitesInfo::getSiteBestRank($this->mPrefix);
+			return $rank;
 			$this->cache->set($key, $rank, 48 * 60 * 60);
 		}
 		return $rank;
@@ -360,6 +363,42 @@ class WikiSite extends Site{
         }
         array_multisort($count, SORT_DESC, $result);
         return $result;
+	}
+	public function getRating(){
+		// $stats = $this->getStats(false);
+		// return $stats['articles'];
+		$key = $this->getCustomKey('getSiteRating');
+		$this->mSiteRating = $this->cache->get($key);
+		if ( $this->mSiteRating ){
+			return $this->mSiteRating;
+		} else {
+			$stats = $this->getStats(false);
+			if (empty($this->getBestRank())){
+				return 'N/A';
+			}
+			if (($this->getBestRank() == 1) and ($stats['articles'] > 500) and ($stats['users'] > 50)){
+				$this->mSiteRating = 'A';
+			} else {
+				if (($this->getBestRank() <= 3) and ($stats['articles'] > 100) and ($stats['users'] > 10)){
+					$this->mSiteRating = 'B';
+				} else {
+					if ( ($this->getBestRank() <= 10) and ($stats['articles'] > 20) and ($stats['users'] > 4) ){
+						$this->mSiteRating = 'C';
+					}
+					else {
+						if ($this->getBestRank() <= 50){
+							$this->mSiteRating = 'D';
+						}	else {
+							$this->mSiteRating = 'E';
+						}
+
+					}					
+				}					
+			}
+			
+			$this->cache->set($key, $this->mSiteRating, 24 * 60 * 60);
+		}
+		return $this->mSiteRating;
 	}
 
 } 
