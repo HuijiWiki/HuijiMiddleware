@@ -392,19 +392,22 @@ class WikiSite extends Site{
 	public function advanceRating(){
 		$now = $this->getRating();
 		$key = $this->getCustomKey('getRating');
-		if ($now = 'E'){
+		if ($now == 'NA'){
+			$after = 'E';
+		}
+		if ($now == 'E'){
 			$after = 'D';
 		} 
-		if ($now = 'D'){
+		if ($now == 'D'){
 			$after = 'C';
 		} 
-		if ($now = 'C'){
+		if ($now == 'C'){
 			$after = 'B';
 		} 
-		if ($now = 'B'){
+		if ($now == 'B'){
 			$after = 'A';
 		} 
-		if ($now = 'A'){
+		if ($now == 'A'){
 			$after = 'S';
 		} 
 		$dbw = wfGetDB(DB_MASTER);
