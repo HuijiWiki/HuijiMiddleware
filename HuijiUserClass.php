@@ -160,9 +160,17 @@ class HuijiUser {
 	public function getAvatar($size = 'l'){
 		return new wAvatar($this->mUser->getId(), $size);
 	}
-	public function getStats(){
+	public function getStats( $prefix='' ){
 		$statsObj = new UserStats($this->mUser->getId(), $this->mUser->getName());
-		return $statsObj->getUserStats();
+		if ( $prefix === '' ) {
+			return $statsObj->getUserStats();
+		}else{
+			$result = array();
+			$result['edits'] = $statsObj->getSiteEditsCount( $this->mUser, $prefix );
+			return $result;
+		}
+		
+		// getSiteEditsCount( $user, $prefix )
 	}
 	public function getLevel(){
 		$stats = $this->getStats();

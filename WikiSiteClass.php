@@ -53,12 +53,23 @@ class WikiSite extends Site{
 	public static function NameFromPrefix( $prefix ){
 		return HuijiPrefix::prefixToSiteName($this->mPrefix);
 	}
-	public static function DbNameFromPrefix( $prefix ){
-		$dashPrefix = str_replace('.', '_', $prefix);
+	public static function DbIdFromPrefix( $prefix ){
 		if ($prefix == 'www'){
 			return 'huiji_home';
 		} else {
+			$dashPrefix = self::tableNameFromPrefix( $prefix );
 			return 'huiji_sites-'.$dashPrefix;
+		}
+	}
+	public static function tableNameFromPrefix($prefix){
+		if ($prefix == 'www'){
+			return '';
+		}
+		$site = WikiSite::newFromPrefix($prefix);
+		if ($site->getId() > 180){
+			return str_replace('.', '_', $prefix).'_';
+		} else {
+			return str_replace('.', '_', $prefix);
 		}
 	}
     /**
