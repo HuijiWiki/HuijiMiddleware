@@ -110,6 +110,7 @@ $wgSpecialPages['invitationcode'] = 'SpecialInvitationCode';
 
 // Hooks
 $wgHooks['SpecialSearchResultsPrepend'][] = 'HuijiHooks::onSpecialSearchResultsPrepend';
+$wgHooks['LoadExtensionSchemaUpdates'][] = 'HuijiHooks::addTables';
 $wgHooks['GetDoubleUnderscoreIDs'][] = 'HuijiHooks::onGetDoubleUnderscoreIDs';
 $wgHooks['OpenSearchUrls'][] = 'HuijiHooks::onOpenSearchUrls';
 $wgHooks['MagicWordwgVariableIDs'][] = 'HuijiHooks::onRegisterMagicWords';
