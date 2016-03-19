@@ -17,7 +17,7 @@ class HuijiHooks {
 		return true;
 	}
 
-	public static function addTable( $updater ) {
+	public static function addTables( $updater ) {
 		$dbt = $updater->getDB()->getType();
 		$file = __DIR__ . "/../VoteNY/vote.$dbt";
 		if ( file_exists( $file ) ) {
