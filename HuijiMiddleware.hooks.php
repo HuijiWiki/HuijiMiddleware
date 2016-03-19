@@ -20,12 +20,14 @@ class HuijiHooks {
 	public static function addTables( $updater ) {
 		$dbt = $updater->getDB()->getType();
 		$file = __DIR__ . "/../VoteNY/vote.$dbt";
+		echo $file;
 		if ( file_exists( $file ) ) {
 			$updater->addExtensionUpdate( array( 'addTable', 'Vote', $file, true ) );
 		} else {
 			throw new MWException( "VoteNY does not support $dbt." );
 		}
-		$file = "$dir/../PollNY/poll.sql";
+		$file = __DIR__ ."/../PollNY/poll.sql";
+		echo $file;
 		$updater->addExtensionUpdate( array( 'addTable', 'poll_choice', $file, true ) );
 		$updater->addExtensionUpdate( array( 'addTable', 'poll_question', $file, true ) );
 		$updater->addExtensionUpdate( array( 'addTable', 'poll_user_vote', $file, true ) );
