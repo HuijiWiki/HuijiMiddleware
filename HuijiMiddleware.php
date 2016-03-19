@@ -178,3 +178,7 @@ $wgExampleWelcomeColorDays = array(
 // Value of {{MYWORD}} constant
 $wgExampleMyWord = 'Awesome';
 
+// Default Site Options
+$wgDefaultSiteProperty['enable-voteny'] = 0;
+$wgDefaultSiteProperty['enable-pollny'] = 0;
+

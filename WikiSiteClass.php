@@ -443,10 +443,10 @@ class WikiSite extends Site{
 		if (empty($this->getBestRank())){
 			return 'NA';
 		}
-		if (($this->getBestRank() == 1) and ($stats['articles'] > 500) and ($stats['users'] > 50)){
+		if (($this->getBestRank() == 1) and ($stats['articles'] > 500) and ($stats['users'] > 50) and ($stats['edits'] > 10000 ) ){
 			$this->mSiteRating = 'A';
 		} else {
-			if (($this->getBestRank() <= 3) and ($stats['articles'] > 100) and ($stats['users'] > 10)){
+			if (($this->getBestRank() <= 3) and ($stats['articles'] > 100) and ($stats['users'] > 10) and ($stats['edits'] > 2000) ){
 				$this->mSiteRating = 'B';
 			} else {
 				if ( ($this->getBestRank() <= 10) and ($stats['articles'] > 20) and ($stats['users'] > 4) ){
@@ -464,6 +464,64 @@ class WikiSite extends Site{
 		}
 		return $this->mSiteRating;
 	}
+	public function getProperty($name){
+		global $wgDefaultSiteProperty;
+		$key = wfForeignMemcKey('huiji','', 'site_properties', 'getProperty', $this->mPrefix, $name );
+		$result = $this->cache->get($key);
+		if ($result){
+			return $result;
+		} else {
+			$dbr = wfGetDB(DB_SLAVE);
+			$s = $dbr->selectRow(
+				'site_properties',
+				'site_value',
+				array(
+					'site_id' => $this->mId,
+					'site_property' => $name,
+				),
+				__METHOD__
+			);
+			if (!empty($s)){
+				$this->cache->set($key, $s->site_value);
+				return $s->site_value;
+			} else {
+				$this->cache->set($key, $wgDefaultSiteProperty[$name]);
+				return $wgDefaultSiteProperty[$name];
+			}
+		}
+
+	}
+	public function setProperty($name, $value){
+		$key = wfForeignMemcKey('huiji','', 'site_properties', 'getProperty', $this->mPrefix, $name );
+		$dbw = wfGetDB(DB_MASTER);
+		$s = $dbw->upsert(
+			'site_properties',
+			array(
+				'site_id' => $this->mId,
+				'site_property' => $name,
+				'site_value' => $value,
+			),
+			array(
+				'site_id' => $this->mId,
+				'site_property' => $name,
+			),
+			array(
+				'site_value' => $value,
+			),
+			__METHOD__
+		);
+		$this->cache->set($key, $value);
+	}
 
 } 
+class RatingCompare{
+	public static $NA = -1;
+	public static $E = 0;
+	public static $D = 1;
+	public static $C = 2;
+	public static $B = 3;
+	public static $A = 4;
+	public static $S = 5;
+
+}
 ?>
