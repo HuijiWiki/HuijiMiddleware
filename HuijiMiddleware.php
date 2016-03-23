@@ -183,3 +183,7 @@ $wgExampleMyWord = 'Awesome';
 $wgDefaultSiteProperty['enable-voteny'] = 0;
 $wgDefaultSiteProperty['enable-pollny'] = 0;
 
+//Settings
+$wgSiteSettings['enable-voteny']['level'] = 'C';
+$wgSiteSettings['enable-pollny']['level'] = 'B';
+
