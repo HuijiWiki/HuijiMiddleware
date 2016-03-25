@@ -284,7 +284,7 @@ class WikiSite extends Site{
 		if ($this->mPrefix === ''){
 			return null;
 		}
-		if (class_exists(wSiteAvatar)){
+		if (class_exists('wSiteAvatar')){
 			return new wSiteAvatar($this->mPrefix, $size);
 		} else {
 			return null;
