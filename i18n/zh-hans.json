@@ -18,5 +18,6 @@
     "global-search-link":"在灰机全局搜索$1",
     "createacct-benefit-head1": "{{NUMBEROFALLEDITS}}",
     "createacct-benefit-head2": "{{NUMBEROFALLARTICLES}}",
-    "createacct-benefit-head3": "{{NUMBEROFALLACTIVEUSERS}}"
+    "createacct-benefit-head3": "{{NUMBEROFALLACTIVEUSERS}}",
+    "createwiki": "创建wiki"
 }

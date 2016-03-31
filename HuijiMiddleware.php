@@ -81,6 +81,8 @@ $wgAutoloadClasses['WikiSite'] = $dir . '/WikiSiteClass.php';
 $wgAutoloadClasses['Site'] = $dir . '/SiteClass.php';
 $wgAutoloadClasses['Huiji'] = $dir . '/HuijiClass.php';
 $wgAutoloadClasses['HuijiUser'] = $dir . '/HuijiUserClass.php';
+$wgAutoloadClasses['SpecialCreateWiki'] = __DIR__ . '/CreateWikiForm/SpecialCreateWiki.php';
+
 if (!class_exists("PageProps")){
 	$wgAutoloadClasses['PageProps'] = $dir . '/PageProps.php';
 }
@@ -107,6 +109,7 @@ $wgGroupPermissions['staff']['getinvitationcode'] = true;
 // Register special pages
 // See also http://www.mediawiki.org/wiki/Manual:Special_pages
 $wgSpecialPages['invitationcode'] = 'SpecialInvitationCode';
+$wgSpecialPages['CreateWiki'] = 'SpecialCreateWiki';
 
 // Hooks
 $wgHooks['SpecialSearchResultsPrepend'][] = 'HuijiHooks::onSpecialSearchResultsPrepend';
@@ -129,6 +132,24 @@ $wgResourceModules['ext.HuijiMiddleware.flash'] = array(
 	'remoteExtPath' => 'HuijiMiddleware/' . $dirbasename,
 	'position' => 'bottom',
 );
+
+//create wiki
+$wgResourceModules['ext.HuijiMiddleware.createwiki.js'] = array(
+	'scripts' => 'CreateWikiForm/createwiki.js',
+	'dependencies' => array(
+	),
+
+	'localBasePath' => $dir,
+	'remoteExtPath' => 'HuijiMiddleware/' . $dirbasename,
+	'position' => 'bottom',
+);
+$wgResourceModules['ext.HuijiMiddleware.createwiki.css'] = array(
+	'styles' => 'CreateWikiForm/createwiki.css',
+	'localBasePath' => $dir,
+	'remoteExtPath' => 'HuijiMiddleware/',
+	'position' => 'top',
+);
+
 $wgResourceModules['ext.HuijiMiddleware.LightBox'] = array(
 	'scripts' => 'modules/ext.HuijiMiddleware.LightBox.js',
 	'dependencies' => array(

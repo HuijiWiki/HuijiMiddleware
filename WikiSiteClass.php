@@ -512,6 +512,30 @@ class WikiSite extends Site{
 		);
 		$this->cache->set($key, $value);
 	}
+	public function getScore(){
+		$key = wfForeignMemcKey('huiji','', 'site_rank', 'getScore', $this->mPrefix );
+		$data = $this->cache->get($key);
+		if ($data != ''){
+			return $data;
+		}
+		$dbr = wfGetDB(DB_SLAVE);
+		$s = $dbr->selectRow(
+			'site_rank',
+			array(
+				'site_score'
+			),
+			array(
+				'site_prefix' => $this->mPrefix,
+				'site_rank_date' => date('Y-m-d',strtotime("-1 day")),
+			),
+			__METHOD__
+		);
+		if ( $s !== false ) {
+			$res = $s->site_score;
+		}
+		$this->cache->set($key, $res, 60*60*24);
+		return $res;
+	}
 
 } 
 class RatingCompare{
