@@ -81,7 +81,7 @@ $wgAutoloadClasses['WikiSite'] = $dir . '/WikiSiteClass.php';
 $wgAutoloadClasses['Site'] = $dir . '/SiteClass.php';
 $wgAutoloadClasses['Huiji'] = $dir . '/HuijiClass.php';
 $wgAutoloadClasses['HuijiUser'] = $dir . '/HuijiUserClass.php';
-$wgAutoloadClasses['SpecialCreateWiki'] = __DIR__ . '/CreateWikiForm/SpecialCreateWiki.php';
+//$wgAutoloadClasses['SpecialCreateWiki'] = __DIR__ . '/CreateWikiForm/SpecialCreateWiki.php';
 
 if (!class_exists("PageProps")){
 	$wgAutoloadClasses['PageProps'] = $dir . '/PageProps.php';
@@ -109,7 +109,7 @@ $wgGroupPermissions['staff']['getinvitationcode'] = true;
 // Register special pages
 // See also http://www.mediawiki.org/wiki/Manual:Special_pages
 $wgSpecialPages['invitationcode'] = 'SpecialInvitationCode';
-$wgSpecialPages['CreateWiki'] = 'SpecialCreateWiki';
+//$wgSpecialPages['CreateWiki'] = 'SpecialCreateWiki';
 
 // Hooks
 $wgHooks['SpecialSearchResultsPrepend'][] = 'HuijiHooks::onSpecialSearchResultsPrepend';
