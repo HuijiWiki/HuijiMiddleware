@@ -255,6 +255,7 @@ class WikiSite extends Site{
 				$userPageURL = htmlspecialchars( $userPage->getFullURL() );
 				$temp['userUrl'] = $userPageURL;
 				$user_id = User::idFromName($u_name);
+				$temp['userId'] = $user_id;
 				$stats = new UserStats( $user_id, $u_name );
 				$stats_data = $stats->getUserStats();
 				$user_level = new UserLevel( $stats_data['points'] );

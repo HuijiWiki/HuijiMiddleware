@@ -201,6 +201,43 @@ class HuijiUser {
 		$obj = json_decode($json);
 		return (array)$obj;
 	}
-
+	//if is_open==0 select all
+	public function getUserDesignation( $title_from, $is_open='1' ){
+		$dbr = wfGetDB( DB_SLAVE );
+		$params = $result = array();
+		if ( $is_open != 0 ) {
+			$params = array(
+					'is_open' => $is_open,
+					'user_to_id' => $this->mUser->getId(),
+					'title_from' => $title_from
+				);
+		}else{
+			$params = array(
+					'user_to_id' => $this->mUser->getId(),
+					'title_from' => $title_from
+				);
+		}
+		$row = $dbr -> select(
+				'user_title',
+				array(
+					'gift_id',
+					'title_content',
+					'is_open' 
+				),
+				$params,
+				__METHOD__
+			);
+		if ( $row ) {
+			foreach ($row as $key => $value) {
+				$result[] = array(
+						'gift_id' => $value->gift_id,
+						'title_content' => $value->title_content,
+						'is_open' => $value->is_open,
+						'title_from' => $title_from,
+					);
+			}
+		}
+		return $result;
+	}
 
 }
