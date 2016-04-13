@@ -41,15 +41,15 @@ class SpecialCreateWiki extends SpecialPage{
             <div class="form-group">
                 <h2 class="heading">创建信息</h2>
                 <div class="controls">
-                  <input type="text" id="name" class="floatLabel" name="wikiname" placeholder="wiki name please">
-                  <label for="name" class="">名称</label>
+                  <input type="text" id="name" class="floatLabel" name="wikiname" placeholder="如某某某中文维基，九个字以内为宜">
+                  <label for="name" class="">站点名称</label>
                 </div>
                 <div class="controls">
-                  <input type="text" id="url" class="floatLabel" name="domainprefix" placeholder="xxx.huiji.wiki">
-                  <label for="url">Wiki站点</label>
+                  <input type="text" id="url" class="floatLabel" name="domainprefix" placeholder="3个以上英文字母，不要包含.huiji.wiki">
+                  <label for="url">域名前缀</label>
                 </div>
                 <div class="controls">
-                    <input type="text" id="code" class="floatLabel" name="inv" placeholder="invitation code">
+                    <input type="text" id="code" class="floatLabel" name="inv" placeholder="请联系support@huiji.wiki索取">
                     <label for="code">邀请码</label>
                 </div>
                 <div class="controls">
@@ -71,7 +71,7 @@ class SpecialCreateWiki extends SpecialPage{
                 </div>
                 <div class="controls">
                     <textarea name="description" class="floatLabel" id="description"></textarea>
-                    <label for="descriptions" class="">Wiki描述</label>
+                    <label for="descriptions" class="">站点描述</label>
                     <div class="create-wiki-radio">
                         <div>
                             <input type="radio" name="manifest" id="optionsRadios1" value="internal" checked>
