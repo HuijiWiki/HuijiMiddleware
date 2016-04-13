@@ -45,7 +45,7 @@ class SpecialCreateWiki extends SpecialPage{
                   <label for="name" class="">站点名称</label>
                 </div>
                 <div class="controls">
-                  <input type="text" id="url" class="floatLabel" name="domainprefix" placeholder="3个以上英文字母，不要包含.huiji.wiki">
+                  <input type="text" id="url" class="floatLabel" name="domainprefix" placeholder="XXX.huiji.wiki, 前缀至少3个英文字母。">
                   <label for="url">域名前缀</label>
                 </div>
                 <div class="controls">
