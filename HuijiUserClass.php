@@ -220,6 +220,7 @@ class HuijiUser {
 		$row = $dbr -> select(
 				'user_title',
 				array(
+					'ut_id',
 					'gift_id',
 					'title_content',
 					'is_open' 
@@ -230,6 +231,7 @@ class HuijiUser {
 		if ( $row ) {
 			foreach ($row as $key => $value) {
 				$result[] = array(
+						'ut_id' => $value->ut_id,
 						'gift_id' => $value->gift_id,
 						'title_content' => $value->title_content,
 						'is_open' => $value->is_open,
