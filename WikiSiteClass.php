@@ -32,7 +32,7 @@ class WikiSite extends Site{
 	}
 	private static function getSiteCache() {
         if ( self::$siteCache == null ) {
-            self::$siteCache = new MemcachedPhpBagOStuff( [ 'maxKeys' => self::CACHE_MAX ] );
+            self::$siteCache = new HashBagOStuff( [ 'maxKeys' => self::CACHE_MAX ] );
 		}
 		return self::$siteCache;
 	}
@@ -45,7 +45,7 @@ class WikiSite extends Site{
 			$site = new WikiSite();
 			$site->setPrefix($prefix);
 			$site->loadFromRow();
-			$siteCache->set($prefix, $site, 60*60*24);
+			$siteCache->set($prefix, $site);
 			return $site;
 		}
 
@@ -240,7 +240,7 @@ class WikiSite extends Site{
 			$usf = new UserSiteFollow();
 			$this->mFollowers = $usf->getSiteFollowers($this->mPrefix);
 			$siteCache = self::getSiteCache();
-			$siteCache->set($this->mPrefix, $this, 60*60*24);
+			$siteCache->set($this->mPrefix, $this);
 			//return $this->mFollowers;
 		}
 		if (!$expanded){
@@ -394,10 +394,10 @@ class WikiSite extends Site{
 			__METHOD__
 		);
 		if ($s != ''){
-			$this->cache->set($key, $s->site_rating, 60*60*24);
+			$this->cache->set($key, $s->site_rating);
 			return $s->site_rating;
 		}
-		$this->cache->set($key, 'NA', 60*60*24);
+		$this->cache->set($key, 'NA');
 		return 'NA';
 
 	}
@@ -433,7 +433,7 @@ class WikiSite extends Site{
 			),
 			__METHOD__
 		);
-		$this->cache->set($key, $after, 60*60*24);
+		$this->cache->set($key, $after);
 		return $after;
 
 	}
@@ -483,10 +483,10 @@ class WikiSite extends Site{
 				__METHOD__
 			);
 			if (!empty($s)){
-				$this->cache->set($key, $s->site_value, 60*60*24);
+				$this->cache->set($key, $s->site_value);
 				return $s->site_value;
 			} else {
-				$this->cache->set($key, $wgDefaultSiteProperty[$name], 60*60*24);
+				$this->cache->set($key, $wgDefaultSiteProperty[$name]);
 				return $wgDefaultSiteProperty[$name];
 			}
 		}
@@ -511,7 +511,7 @@ class WikiSite extends Site{
 			),
 			__METHOD__
 		);
-		$this->cache->set($key, $value, 60*60*24);
+		$this->cache->set($key, $value);
 	}
 	public function getScore(){
 		$key = wfForeignMemcKey('huiji','', 'site_rank', 'getScore', $this->mPrefix );
