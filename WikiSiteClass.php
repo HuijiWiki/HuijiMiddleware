@@ -1,6 +1,6 @@
 <?php
 /**
- * Wiki Site Object
+ * WikiSite:get one site's detail info 
  */
 class WikiSite extends Site{
 	protected $mId;
@@ -36,6 +36,11 @@ class WikiSite extends Site{
 		}
 		return self::$siteCache;
 	}
+	/**
+	 * get site object by site prefix
+	 * @param  string $prefix site prefix such as 'lotr'、'asoiaf'..
+	 * @return object         site object
+	 */
 	public static function newFromPrefix( $prefix ){
 		$siteCache = self::getSiteCache();
 		$site = $siteCache->get($prefix);
@@ -50,9 +55,19 @@ class WikiSite extends Site{
 		}
 
 	}
+	/**
+	 * get site name by site prefix
+	 * @param string $prefix site prefix such as 'lotr'
+	 * @return string site name
+	 */
 	public static function NameFromPrefix( $prefix ){
 		return HuijiPrefix::prefixToSiteName($this->mPrefix);
 	}
+	/**
+	 * get site DB by $prefix
+	 * @param string $prefix 'www' or others
+	 * @return string site DB name
+	 */
 	public static function DbIdFromPrefix( $prefix ){
 		if ($prefix == 'www'){
 			return 'huiji_home';
@@ -61,6 +76,11 @@ class WikiSite extends Site{
 			return 'huiji_sites-'.$dashPrefix;
 		}
 	}
+	/**
+	 * get site table by $prefix
+	 * @param string $prefix 'www' or others
+	 * @return string site table name
+	 */
 	public static function tableNameFromPrefix($prefix){
 		if ($prefix == 'www'){
 			return '';
@@ -74,6 +94,8 @@ class WikiSite extends Site{
 	}
     /**
      * the site's sysop/staff
+     * @param string $prefix
+     * @param string $group user group
      * @return array user's avater
      */
     private static function getSiteManager( $prefix,$group ){
@@ -151,13 +173,25 @@ class WikiSite extends Site{
 	private function getCustomKey($name){
 		return wfForeignMemcKey('huiji', '', 'WikiSite', $name, $this->mPrefix);
 	}
+	/**
+	 * check this site is exists
+	 * @return blooen 
+	 */
 	public function exists(){
 		return $this->mPrefix != '';
 
 	}
+	/**
+	 * get this site prefix
+	 * @return string site's prefix
+	 */
 	public function getPrefix(){
 		return $this->mPrefix;
 	}
+	/**
+	 * check the site is Local site use gloabl $wgHuijiPrefix
+	 * @return boolean
+	 */
 	public function isLocal(){
 		global $wgHuijiPrefix;
 		if ($this->mPrefix == $wgHuijiPrefix){
@@ -166,16 +200,29 @@ class WikiSite extends Site{
 			return false;
 		}
 	}
+	/**
+	 * check user is following this site
+	 * @param  object $user user object
+	 * @return boolean
+	 */
 	public function isFollowedBy($user){
 		$usf = new UserSiteFollow();
 		return $usf->checkUserSiteFollow( $user, $this->mPrefix);
 	}
+	/**
+	 * get site's url
+	 * @return string site's url
+	 */
 	public function getUrl(){
 		if ($this->mPrefix === ''){
 			return '';
 		}
 		return HuijiPrefix::prefixToUrl($this->mPrefix);
 	}
+	/**
+	 * get site's name
+	 * @return string site's name
+	 */
 	public function getName(){
 		if ($this->mPrefix === ''){
 			return '';
@@ -187,6 +234,11 @@ class WikiSite extends Site{
 		$this->mName = HuijiPrefix::prefixToSiteName($this->mPrefix);
 		return $this->mName;
 	}
+	/**
+	 * get site stats is $formatted is true, those number will be fortamtted
+	 * @param  boolean $formatted
+	 * @return array    the site stats
+	 */
 	public function getStats( $formatted = true ){
 
 		$key = $this->getCustomKey('getStats');
@@ -221,19 +273,42 @@ class WikiSite extends Site{
 		}
 		return $res;
 	}
+	/**
+	 * get the site's some days edit count
+	 * @param  sting $fromTime  '2016-01-01'
+	 * @param  string $toTime   '2016-02-02'
+	 * @return array
+	 */
 	public function getEditCount( $fromTime, $toTime ){
 		$ueb = new UserEditBox();
 		return $ueb->getSiteEditCount(-1, $this->mPrefix, $fromTime, $toTime );
 	}
+	/**
+	 * get the site's some days view count
+	 * @param  sting $fromTime  '2016-01-01'
+	 * @param  string $toTime   '2016-02-02'
+	 * @return array
+	 */
 	public function getViewCount( $fromTime, $toTime ){
 		$ueb = new UserEditBox();
 		return $ueb->getSiteViewCount(-1, $this->mPrefix, $fromTime, $toTime );
 	}
+	/**
+	 * get the site's some days edit user count
+	 * @param  sting $fromTime  '2016-01-01'
+	 * @param  string $toTime   '2016-02-02'
+	 * @return array
+	 */
 	public function getEditedUserCount( $fromTime , $toTime ){
 		//TODO wait for new Interface
 		// $ueb = new UserEditBox();
 		// return $ueb->getSiteEditUserCount( $fromTime, $toTime );
 	}
+	/**
+	 * get site followers
+	 * @param  boolean $expanded if true return user detail info,eles return simple info
+	 * @return array
+	 */
 	public function getFollowers( $expanded = false ){
 		if (!$this->mFollowers){
 			// return $this->mFollowers;
@@ -281,6 +356,11 @@ class WikiSite extends Site{
 			return $request;
 		}
 	}
+	/**
+	 * get site's avatar
+	 * @param  sting $size avatar size such as s,m,l
+	 * @return object object(wSiteAvatar)
+	 */
 	public function getAvatar($size){
 		if ($this->mPrefix === ''){
 			return null;
@@ -292,46 +372,77 @@ class WikiSite extends Site{
 		}
 
 	}
+	/**
+	 * site's group
+	 * @return string always wiki
+	 */
 	public function getGroup(){
 		return 'wiki';
 	}
-	//TODO
+	/**
+	 * get site's description
+	 * @return string
+	 */
 	public function getDescription(){
 		if ($this->mPrefix === ''){
 			return '';
 		}
 		return $this->mDsp;
 	}
+	/**
+	 * get site's type
+	 * @return string
+	 */
 	public function getType(){
 		if ($this->mPrefix === ''){
 			return '';
 		}		
 		return $this->mType;
 	}
+	/**
+	 * get site's founder
+	 * @return object user info
+	 */
 	public function getFounder(){
 		if ($this->mPrefix === ''){
 			return '';
 		}		
 		return $this->mFounder;		
 	}
+	/**
+	 * get site's id
+	 * @return inter site's id
+	 */
 	public function getId(){
 		if ($this->mPrefix === ''){
 			return '';
 		}		
 		return $this->mId;
 	}
+	/**
+	 * get site's language
+	 * @return string
+	 */
 	public function getLang(){
 		if ($this->mPrefix === ''){
 			return '';
 		}		
 		return $this->mLang;		
 	}
+	/**
+	 * get site's create date
+	 * @return string 0000-00-00 00:00:00
+	 */
 	public function getDate(){
 		if ($this->mPrefix === ''){
 			return '';
 		}		
 		return $this->mDate;				
 	}
+	/**
+	 * get site's best rank
+	 * @return string
+	 */
 	public function getBestRank(){
 		$yesterday = date('Y-m-d',strtotime('-1 days'));
 		$key = $this->getCustomKey('getBestRank'.$yesterday);
@@ -345,15 +456,27 @@ class WikiSite extends Site{
 		}
 		return $rank;
 	}
+	/**
+	 * get user on this site edit count
+	 * @param object $user user object
+	 * @return string
+	 */
 	public function getUserEditsCountOnSite( $user ){
 		return UserStats::getSiteEditsCount( $user, $this->mPrefix );
 	}
-	//TODO: Setters
+	/**
+	 * set site prefix
+	 * @param string $prefix ex:'lotr'
+	 */
 	protected function setPrefix($prefix){
 		$this->mPrefix = $prefix;
 	}
 
-	//TODO: getAdmins
+	/**
+	 * get site's user group 
+	 * @param  string $group group name
+	 * @return array
+	 */
 	public function getUsersFromGroup($group){
 		$ums = self::getSiteManager( $this->mPrefix, $group );
 		$result = array();
@@ -376,6 +499,10 @@ class WikiSite extends Site{
         array_multisort($count, SORT_DESC, $result);
         return $result;
 	}
+	/**
+	 * get site's rating
+	 * @return string 'A'/'B'/'C'..
+	 */
 	public function getRating(){
 		$key = $this->getCustomKey('getRating');
 		$r = $this->cache->get($key);
@@ -401,6 +528,10 @@ class WikiSite extends Site{
 		return 'NA';
 
 	}
+	/**
+	 * up site's rating
+	 * @return string rating after change'A'/'B'/'C'..
+	 */
 	public function advanceRating(){
 		$now = $this->getRating();
 		$key = $this->getCustomKey('getRating');
@@ -437,6 +568,10 @@ class WikiSite extends Site{
 		return $after;
 
 	}
+	/**
+	 * set site's rating
+	 * @return string rating after change'A'/'B'/'C'..
+	 */
 	public function getPotentialRating(){
 		// $stats = $this->getStats(false);
 		// return $stats['articles'];
@@ -465,6 +600,9 @@ class WikiSite extends Site{
 		}
 		return $this->mSiteRating;
 	}
+	/**
+	 * getProperty
+	 */
 	public function getProperty($name){
 		global $wgDefaultSiteProperty;
 		$key = wfForeignMemcKey('huiji','', 'site_properties', 'getProperty', $this->mPrefix, $name );
@@ -492,6 +630,9 @@ class WikiSite extends Site{
 		}
 
 	}
+	/**
+	 * setProperty
+	 */
 	public function setProperty($name, $value){
 		$key = wfForeignMemcKey('huiji','', 'site_properties', 'getProperty', $this->mPrefix, $name );
 		$dbw = wfGetDB(DB_MASTER);
@@ -513,6 +654,10 @@ class WikiSite extends Site{
 		);
 		$this->cache->set($key, $value);
 	}
+	/**
+	 * get site's score from tb site_rank
+	 * @return string site's score 
+	 */
 	public function getScore(){
 		$key = wfForeignMemcKey('huiji','', 'site_rank', 'getScore', $this->mPrefix );
 		$data = $this->cache->get($key);

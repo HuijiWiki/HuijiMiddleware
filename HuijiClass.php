@@ -1,4 +1,7 @@
 <?php 
+/**
+ * Huiji Class to get some all site status
+ */
 class Huiji{
 	private static $isUnavailable = FALSE;
 	private static $instance = NULL;
@@ -19,6 +22,10 @@ class Huiji{
 			return NULL;
 		}
 	}
+	/**
+	 * get all site rank before today
+	 * @return array site rank array
+	 */
 	public function getRankings(){
 		$yesterday = date('Y-m-d',strtotime('-1 days'));
 		$rank = AllSitesInfo::getAllSitesRankData( '', $yesterday );
@@ -27,6 +34,10 @@ class Huiji{
         }
 		return $rank;
 	}
+	/**
+	 * count all site edits,files,pages,sites,users,
+	 * @return array 
+	 */
 	public function getStats(){
 		$key = wfForeignMemcKey('huiji', '', 'Huiji', 'getStats');
 		$stats = $this->cache->get($key);
@@ -42,6 +53,11 @@ class Huiji{
 		}
 		return $stats;
 	}
+	/**
+	 * get all site prefix 
+	 * @param  boolean $showHidden if false, just show the usual prefix,otherwise show all prefix(include the site be hidden)
+	 * @return array
+	 */
 	public function getSitePrefixes($showHidden = false){
 		if ($showHidden){
 			if ($this->mAllPrefixes==''){

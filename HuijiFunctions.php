@@ -1,24 +1,24 @@
 <?php
 Class HuijiFunctions {
-        /* atomic lock with memecached */
-        static function addLock( $lockKey, $timeout = 0, $lockExpireTime = 120 ){
-             $startTime = microtime(TRUE);
-             $cache = wfGetCache( CACHE_ANYTHING );
-             $key = wfMemcKey( 'huijimiddleware', 'huijifunctions', 'addLock', $lockKey);
-             while(!$cache->add( $key, 1, $lockExpireTime )){
-                 $now = microtime(TRUE);
-                 if ( ($now - $startTime) >= $timeout ){
-                     return false;
-                 }
-                 usleep(1000);
+    /* atomic lock with memecached */
+    static function addLock( $lockKey, $timeout = 0, $lockExpireTime = 120 ){
+         $startTime = microtime(TRUE);
+         $cache = wfGetCache( CACHE_ANYTHING );
+         $key = wfMemcKey( 'huijimiddleware', 'huijifunctions', 'addLock', $lockKey);
+         while(!$cache->add( $key, 1, $lockExpireTime )){
+             $now = microtime(TRUE);
+             if ( ($now - $startTime) >= $timeout ){
+                 return false;
              }
-             return true;              
-        }
-        static function releaseLock($lockKey){
-             $cache = wfGetCache( CACHE_ANYTHING );
-             $key = wfMemcKey( 'huijimiddleware', 'huijifunctions', 'addLock', $lockKey);
-             return $cache->delete($key);
-        }
+             usleep(1000);
+         }
+         return true;              
+    }
+    static function releaseLock($lockKey){
+         $cache = wfGetCache( CACHE_ANYTHING );
+         $key = wfMemcKey( 'huijimiddleware', 'huijifunctions', 'addLock', $lockKey);
+         return $cache->delete($key);
+    }
 	/**
 	 * The following four functions are borrowed
 	 * from includes/wikia/GlobalFunctionsNY.php
@@ -51,6 +51,11 @@ Class HuijiFunctions {
 		// }
 		return $timeStr;
 	}
+	/**
+	 * get time ago
+	 * @param  int $time timestamp
+	 * @return string
+	 */
 	static function getTimeAgo( $time ) {
 		$timeArray = self::dateDiff( time(), $time );
 		$timeStr = '';

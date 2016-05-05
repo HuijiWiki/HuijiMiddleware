@@ -362,7 +362,7 @@ a {
 
 /*create plan*/
 .creating-message{
-    padding-top: 150px;
+    padding-top: 15 0px;
     color: #fff;
     transition:all .5s;
     text-align: center;
