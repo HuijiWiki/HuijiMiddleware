@@ -49,7 +49,6 @@ class WikiSite extends Site{
 		} else {
 			$site = new WikiSite();
 			$site->setPrefix($prefix);
-			$site->loadFromRow();
 			$siteCache->set($prefix, $site);
 			return $site;
 		}
@@ -387,7 +386,14 @@ class WikiSite extends Site{
 		if ($this->mPrefix === ''){
 			return '';
 		}
+		if ($this->mDsp != ''){
+			return $this->mDsp;
+		}
+		$siteCache = self::getSiteCache();
+		$this->loadFromRow();
+		$siteCache->set($this->mPrefix, $this);
 		return $this->mDsp;
+		
 	}
 	/**
 	 * get site's type
@@ -396,7 +402,13 @@ class WikiSite extends Site{
 	public function getType(){
 		if ($this->mPrefix === ''){
 			return '';
-		}		
+		}	
+		if ($this->mType!= ''){
+			return $this->mType;
+		}
+		$siteCache = self::getSiteCache();
+		$this->loadFromRow();
+		$siteCache->set($this->mPrefix, $this);
 		return $this->mType;
 	}
 	/**
@@ -406,7 +418,14 @@ class WikiSite extends Site{
 	public function getFounder(){
 		if ($this->mPrefix === ''){
 			return '';
-		}		
+		}
+		if ($this->mFounder != ''){
+			return $this->mFounder;
+		} else {
+			$siteCache = self::getSiteCache();
+			$this->loadFromRow();
+			$siteCache->set($this->mPrefix, $this);			
+		}
 		return $this->mFounder;		
 	}
 	/**
@@ -416,7 +435,13 @@ class WikiSite extends Site{
 	public function getId(){
 		if ($this->mPrefix === ''){
 			return '';
+		}
+		if ($this->mId != ''){
+			return $this->mId;			
 		}		
+		$siteCache = self::getSiteCache();
+		$this->loadFromRow();
+		$siteCache->set($this->mPrefix, $this);	
 		return $this->mId;
 	}
 	/**
@@ -426,7 +451,13 @@ class WikiSite extends Site{
 	public function getLang(){
 		if ($this->mPrefix === ''){
 			return '';
-		}		
+		}
+		if ($this->mLang != ''){
+			return $this->mLang;
+		}
+		$siteCache = self::getSiteCache();
+		$this->loadFromRow();
+		$siteCache->set($this->mPrefix, $this);		
 		return $this->mLang;		
 	}
 	/**
@@ -436,7 +467,13 @@ class WikiSite extends Site{
 	public function getDate(){
 		if ($this->mPrefix === ''){
 			return '';
-		}		
+		}
+		if ($this->mDate != ''){
+			return $this->mDate;
+		}
+		$siteCache = self::getSiteCache();
+		$this->loadFromRow();
+		$siteCache->set($this->mPrefix, $this);			
 		return $this->mDate;				
 	}
 	/**
@@ -615,7 +652,7 @@ class WikiSite extends Site{
 				'site_properties',
 				'site_value',
 				array(
-					'site_id' => $this->mId,
+					'site_id' => $this->getId(),
 					'site_property' => $name,
 				),
 				__METHOD__
@@ -639,12 +676,12 @@ class WikiSite extends Site{
 		$s = $dbw->upsert(
 			'site_properties',
 			array(
-				'site_id' => $this->mId,
+				'site_id' => $this->getId(),
 				'site_property' => $name,
 				'site_value' => $value,
 			),
 			array(
-				'site_id' => $this->mId,
+				'site_id' => $this->getId(),
 				'site_property' => $name,
 			),
 			array(
