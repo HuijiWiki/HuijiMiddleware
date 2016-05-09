@@ -49,7 +49,7 @@ class SpecialCreateWiki extends SpecialPage{
                   <label for="url">域名前缀</label>
                 </div>
                 <div class="controls">
-                    <input type="text" id="code" class="floatLabel" name="inv" placeholder="请联系support@huiji.wiki索取">
+                    <input type="text" id="code" class="floatLabel" name="inv" placeholder="请填写建站申请表（推荐）或发信至support@huiji.wiki索取邀请码">
                     <label for="code">邀请码</label>
                 </div>
                 <div class="controls">
