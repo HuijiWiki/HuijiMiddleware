@@ -424,5 +424,27 @@ Class HuijiFunctions {
 		}
 		return $the_ip;
 	}
+	/**
+	 * Generate a trade number based on the given type.
+	 */
+	public static function getTradeNo($type){
+		$cache = wfGetCache(CACHE_MEMCACHED);
+		$key = wfForeignMemcKey('huiji', '', 'Huiji', 'getTradeNo', $type);
+		if (HuijiFunctions::addLock($key, 1000, 1000)){
+			$no = $cache->get($key);
+			if ($no != ''){
+				++$no;
+				$cache->set($key, $no, 60);
+				HuijiFunctions::releaseLock($key);
+				return $type.$no;
+			} else {
+				$no = time() * 1000000;
+				$cache->set($key, $no, 60);
+				HuijiFunctions::releaseLock($key);
+				return $type.$no;
+			}
+		}
+		return false;
+	}
 }
 ?>

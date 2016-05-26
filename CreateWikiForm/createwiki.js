@@ -90,7 +90,7 @@ $(function(){
         websocket.send(JSON.stringify(dataObj));
         setTimeout(function(){
             websocket.close();
-        },480000)
+        },3600000)
     }
     function onClose(evt) {
         if(flag!=1&&step!=6){
