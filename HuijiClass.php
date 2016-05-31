@@ -24,28 +24,6 @@ class Huiji{
 		}
 	}
 	/**
-	 * Generate a trade number based on the given type.
-	 */
-	public function getTradeNo($type){
-		HuijiFunctions::
-		$key = wfForeignMemcKey('huiji', '', 'Huiji', 'getTradeNo', $type);
-		if (HuijiFunctions::addLock($key, 1000, 1000)){
-			$no = $this->cache->get($key);
-			if ($no != ''){
-				++$no;
-				$this->cache->set($key, $no);
-				HuijiFunctions::releaseLock($key);
-				return $type.$no;
-			} else {
-				$no = microtime(TRUE) * 1000;
-				$this->cache->set($key, $no);
-				HuijiFunctions::releaseLock($key);
-				return $type.$no;
-			}
-		}
-		return false;
-	}
-	/**
 	 * get all site rank before today
 	 * @return array site rank array
 	 */

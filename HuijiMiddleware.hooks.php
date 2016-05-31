@@ -54,16 +54,19 @@ class HuijiHooks {
    public static function onRegisterMagicWords( &$magicWordsIds ) {
 	   // Add the following to a wiki page to see how it works:
 	   //  {{MYWORD}}
+   	   $magicWordsIds[] = 'numberoffollowers';
 	   $magicWordsIds[] = 'numberofalledits';
 	   $magicWordsIds[] = 'numberofallarticles';
 	   $magicWordsIds[] = 'numberofallactiveusers';
 	   $magicWordsIds[] = 'numberofallfiles';
 	   $magicWordsIds[] = 'numberofallsites';
+	   $magicWordsIds[] = 'sitedescription';
 
 	   return true;
    }
  
    public static function onParserGetVariableValueSwitch( &$parser, &$cache, &$magicWordId, &$ret ) {
+   		global $wgHuijiPrefix;
    	    // Return value and cache should match. Cache is used to save
         // additional call when it is used multiple times on a page.
        	$huijiStats = Huiji::getInstance()->getStats();
@@ -81,6 +84,15 @@ class HuijiHooks {
         }
         if ( $magicWordId === 'numberofallsites' ) {
             $ret = $cache['numberofallsites'] = $huijiStats['sites'];
+        }
+        if ( $magicWordId === 'numberoffollowers' ) {
+        	$site = WikiSite::newFromPrefix($wgHuijiPrefix);
+        	$stats = $site->getStats();
+        	$ret = $cache['numberoffollowers'] = $stats['followers'];
+        }
+        if ( $magicWordId === 'sitedescription') {
+        	$site = WikiSite::newFromPrefix($wgHuijiPrefix);
+        	$ret = $cache['sitedescription'] = $site->getDescription();
         }
  
         return true;
