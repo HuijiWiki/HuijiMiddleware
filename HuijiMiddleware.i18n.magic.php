@@ -16,6 +16,7 @@ $magicWords['en'] = array(
 	'numberofallfiles' => array( 0, 'NUMBEROFALLFILES' ),
 	'numberofallsites' => array( 0, 'NUMBEROFALLSITES' ),
 	'numberoffollowers' => array( 0, 'NUMBEROFFOLLOWERS'),
+	'numberoffollowers:r' => array( 0, 'NUMBEROFFOLLOWERS:R'),
 	'sitedescription' => array(0, 'SITEDESCRIPTION'),
 	'rec' => array( 0, '__REC__' ),
 	'norec' => array(0, '__NOREC__'),

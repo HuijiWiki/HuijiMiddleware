@@ -55,6 +55,7 @@ class HuijiHooks {
 	   // Add the following to a wiki page to see how it works:
 	   //  {{MYWORD}}
    	   $magicWordsIds[] = 'numberoffollowers';
+   	   $magicWordsIds[] = 'numberoffollowers:r';
 	   $magicWordsIds[] = 'numberofalledits';
 	   $magicWordsIds[] = 'numberofallarticles';
 	   $magicWordsIds[] = 'numberofallactiveusers';
@@ -88,6 +89,11 @@ class HuijiHooks {
         if ( $magicWordId === 'numberoffollowers' ) {
         	$site = WikiSite::newFromPrefix($wgHuijiPrefix);
         	$stats = $site->getStats();
+        	$ret = $cache['numberoffollowers'] = $stats['followers'];
+        }
+        if ( $magicWordId === 'numberoffollowers:r' ) {
+        	$site = WikiSite::newFromPrefix($wgHuijiPrefix);
+        	$stats = $site->getStats(false);
         	$ret = $cache['numberoffollowers'] = $stats['followers'];
         }
         if ( $magicWordId === 'sitedescription') {
