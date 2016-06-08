@@ -1,6 +1,6 @@
 <?php
 /**
- * HuijiUser calss
+ * HuijiUser class
  */
 class HuijiUser {
 	protected $mUser;
