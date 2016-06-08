@@ -82,6 +82,10 @@ $wgAutoloadClasses['Site'] = $dir . '/SiteClass.php';
 $wgAutoloadClasses['Huiji'] = $dir . '/HuijiClass.php';
 $wgAutoloadClasses['HuijiUser'] = $dir . '/HuijiUserClass.php';
 $wgAutoloadClasses['SpecialCreateWiki'] = __DIR__ . '/CreateWikiForm/SpecialCreateWiki.php';
+$wgAutoloadClasses['DiskFS'] = $dir . '/HuijiFS/DiskFS.php';
+$wgAutoloadClasses['HuijiFS'] = $dir . '/HuijiFS/HuijiFS.php';
+$wgAutoloadClasses['OssFS'] = $dir . '/HuijiFS/OssFS.php';
+require_once( "$IP/extensions/HuijiMiddleware/vendor/autoload.php");
 
 if (!class_exists("PageProps")){
 	$wgAutoloadClasses['PageProps'] = $dir . '/PageProps.php';
@@ -199,6 +203,34 @@ $wgExampleWelcomeColorDays = array(
 
 // Value of {{MYWORD}} constant
 $wgExampleMyWord = 'Awesome';
+
+//Use Aliyun oss to store files
+$wgUseOss = true;
+$wgOssAvatarPath = "http://av.huijiwiki.com";
+$wgOssStylePath = "";
+$wgOssEndpoint = "oss-cn-qingdao-internal.aliyuncs.com";
+$wgOssFSBucket = "huiji-fs";
+require_once "/var/www/html/Confidential.php";
+
+const FS_DISK = 0;
+const FS_OSS = 1;
+const FS_ANYTHING = 3;
+function wfGetFS($which = FS_ANY){
+	global $wgUseOss;
+	if ($which == FS_DISK){
+		return DiskFS::getInstance();
+	}
+	if ($which == FS_OSS){
+		return OssFS::getInstance();
+	}
+	if ($which == FS_ANYTHING){
+		if ($wgUseOss){
+			return OssFS::getInstance();
+		} else {
+			return DiskFS::getInstance();
+		}
+	}
+}
 
 // Default Site Options
 $wgDefaultSiteProperty['enable-voteny'] = 0;
