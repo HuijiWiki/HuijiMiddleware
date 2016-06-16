@@ -720,6 +720,53 @@ class WikiSite extends Site{
 		return $res;
 	}
 
+	/**
+	 * check site is reach DonationGoal
+	 * @param  string  $month ex: '2016-06'
+	 * @return boolean        if reached return true; else return false
+	 */
+	public function hasMetDonationGoal( $month ){
+		$key = wfForeignMemcKey( 'huiji', '' , 'site_month_donate_goal', $this->mPrefix, $month );
+		$data = $this->cache->get( $key );
+		if ( $data == null ) {
+			$donateResult = UserDonation::getDonationInfoByPrefix( $this->mPrefix, $month );
+			$monthDonate = array_sum($donateResult);
+			$this->cache->set( $key, $monthDonate );
+		}else{
+			$monthDonate = $data;
+		}
+		
+        $rating = $this->getRating();
+        switch ($rating) {
+            case 'A':
+                $goalDonate = 5000;
+                break;
+            case 'B':
+                $goalDonate = 1000;
+                break;
+            case 'C':
+                $goalDonate = 200;
+                break;
+            case 'D':
+                $goalDonate = 40;
+                break;
+            case 'E':
+                $goalDonate = 8;
+                break;
+            case 'NA':
+                $goalDonate = 200;
+                break;
+            default:
+                $goalDonate = 100;
+                break;
+        }
+        if ( $monthDonate < $goalDonate ) {
+        	return false;
+        }else{
+        	return true;
+        }
+	}
+
 } 
 class RatingCompare{
 	public static $NA = -1;
