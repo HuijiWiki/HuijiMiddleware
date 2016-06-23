@@ -360,11 +360,11 @@ class HuijiUser {
 			$this->mDesignationPrefix = htmlspecialchars($prefix);
 			$this->mDesignation .= htmlspecialchars($prefix);
 		}
-		$this->mDesignation .= $this->mUser->getName();
 		if ( count($suffixResult) > 0 ){
 			$this->mDesignation .= htmlspecialchars('<'.$suffix.'>');
 			$this->mDesignationSuffix = htmlspecialchars('<'.$suffix.'>');
 		}
+		$this->mDesignation .= $this->mUser->getName();
 		$cache->set($this->mUser->getId(), $this);
 		if ($splited){
 			return array($this->mDesignationPrefix, $this->mDesignationSuffix);
