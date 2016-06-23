@@ -361,8 +361,8 @@ class HuijiUser {
 			$this->mDesignation .= htmlspecialchars($prefix);
 		}
 		if ( count($suffixResult) > 0 ){
-			$this->mDesignation .= htmlspecialchars('<'.$suffix.'>');
-			$this->mDesignationSuffix = htmlspecialchars('<'.$suffix.'>');
+			$this->mDesignation .= htmlspecialchars($suffix);
+			$this->mDesignationSuffix = htmlspecialchars($suffix);
 		}
 		$this->mDesignation .= $this->mUser->getName();
 		$cache->set($this->mUser->getId(), $this);
