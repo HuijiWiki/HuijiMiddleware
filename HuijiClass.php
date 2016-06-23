@@ -88,6 +88,8 @@ class Huiji{
 		                        "brand-info" => "#5bc0de",
 		                        "brand-warning" => "#f0ad4e",
 		                        "brand-danger" => "#d9534f",
+		                        "btn-v-padding" => "6px",
+		                        "btn-h-padding" => "12px",
 		                        "detail-bg" => "false",
 		                        "detail-inner-bg" => "false",
 		                        "detail-color" => "false",
@@ -151,7 +153,12 @@ class Huiji{
                                 "detail-navbox-list-even-bg" => "false",
 		                        "detail-navbox-abovebelow-bg" => "false",
 		                        "detail-navbox-abovebelow-color" => "false",
-		                        "detail-navbox-abovebelow-a" => "false"
+		                        "detail-navbox-abovebelow-a" => "false",
+		                        "detail-vote-score-bg" => "false",
+		                        "detail-vote-score-color" => "false",
+		                        "detail-vote-star" => "false",
+		                        "detail-vote-active-star" => "false",
+                                "detail-vote-color" => "false",
 		                    );
 		return $this->defaultColor;
 	}

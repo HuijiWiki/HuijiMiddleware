@@ -1,12 +1,15 @@
 <?php
 /**
- * HuijiUser class
+ * HuijiUser calss
  */
 class HuijiUser {
 	protected $mUser;
 	protected $mFollowingSites;
 	protected $mFollowingUsers;
 	protected $mFollowers;
+	protected $mDesignation;
+	protected $mDesignationPrefix;
+	protected $mDesignationSuffix;
 	private static $userCache;
 	const CACHE_MAX = 1000;
 	function __construct(){
@@ -301,10 +304,78 @@ class HuijiUser {
 		$obj = json_decode($json);
 		return (array)$obj;
 	}
+	/** 
+	 * get aggregate Desigantion from cache
+	 * @param boolean default to false. If true, split the desination in an array with two element, prefix and suffix.
+	 * @return string/array desination;
+	 *
+	 */
+	public function getDesignation($splited = false){
+		if ($this->mDesignation !== null){
+			if ($splited){
+				return array($this->mDesignationPrefix, $this->mDesignationSuffix);
+			}
+			return $this->mDesignation;
+		} 
+		$cache = wfGetCache(CACHE_ANYTHING);
+		$dbr = wfGetDB(DB_SLAVE);
+		$prefixResult = $suffixResult = [];
+		$row = $dbr->select(
+				'user_title',
+				array(
+					'title_content',
+				),
+				array(
+					'title_from' => 'system_gift',
+					'user_to_id' => $this->mUser->getId(),
+					'is_open' => '2'
+				),
+				__METHOD__
+			);
+		if ( $row ) {
+			foreach ($row as $key => $value) {
+				$prefixResult[] = $value->title_content;
+			}
+		}
+		$row = $dbr->select(
+				'user_title',
+				array(
+					'title_content',
+				),
+				array(
+					'title_from' => 'gift',
+					'user_to_id' => $this->mUser->getId(),
+					'is_open' => '2'
+				),
+				__METHOD__
+			);
+		if ( $row ) {
+			foreach ($row as $key => $value) {
+				$suffixResult[] = $value->title_content;
+			}
+		}
+		$prefix = implode(',', $prefixResult );
+		$suffix = implode(',', $suffixResult );
+		if (count($prefixResult) > 0){
+			$this->mDesignationPrefix = htmlspecialchars($prefix);
+			$this->mDesignation .= htmlspecialchars($prefix);
+		}
+		$this->mDesignation .= $this->mUser->getName();
+		if ( count($suffixResult) > 0 ){
+			$this->mDesignation .= htmlspecialchars('<'.$suffix.'>');
+			$this->mDesignationSuffix = htmlspecialchars('<'.$suffix.'>');
+		}
+		$cache->set($this->mUser->getId(), $this);
+		if ($splited){
+			return array($this->mDesignationPrefix, $this->mDesignationSuffix);
+		}
+		return $this->mDesignation;
+	}
+
 	/**
-	 * get User Designation
-	 * @param  string $title_from the title from(gift or system gift)
-	 * @param  string $is_open    if is_open==0 select all,else select is_open=1
+	 * get User Designation (Don't use this externally, cuz there is no cache)
+	 * @param  string $title_from the title from(gift or system_gift)
+	 * @param  string $is_open    if is_open==0 select all, else select is_open=2
 	 * @return array
 	 */
 	public function getUserDesignation( $title_from, $is_open='1' ){
