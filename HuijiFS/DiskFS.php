@@ -27,11 +27,15 @@ class DiskFS implements HuijiFS{
 	public function put($path, $content){
 		$fullpath = self::VIRTUAL_ROOT . "/$path";
 		$parts = explode('/', $fullpath);
-        $file = array_pop($parts);
-        $dir = '';
-        foreach($parts as $part)
-            if(!is_dir($dir .= "/$part")) mkdir($dir);
-        file_put_contents("$dir/$file", $content);
+        	$file = array_pop($parts);
+        	$dir = '';
+	        foreach($parts as $part){
+	            if(!is_dir($dir .= "/$part")){
+	            	mkdir($dir);
+	            	chmod($dir, 777);
+	            } 
+	        }
+        	file_put_contents("$dir/$file", $content);
 		return true;
 		// return file_put_contents($fullpath, $content);
 	}
@@ -57,11 +61,16 @@ class DiskFS implements HuijiFS{
 	public function append($path, $content){
 		$fullpath = self::VIRTUAL_ROOT . "/$path";
 		$parts = explode('/', $fullpath);
-        $file = array_pop($parts);
-        $dir = '';
-        foreach($parts as $part)
-            if(!is_dir($dir .= "/$part")) mkdir($dir);
-        file_put_contents("$dir/$file", $content, FILE_APPEND);
+        	$file = array_pop($parts);
+        	$dir = '';
+		foreach($parts as $part){
+            		if(!is_dir($dir .= "/$part")){
+            			mkdir($dir);
+            			chmod($dir, 777);
+            		} 
+		}
+		file_put_contents("$dir/$file", $content, FILE_APPEND);
+		return true;
 	}
 }
 ?>
