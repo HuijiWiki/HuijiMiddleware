@@ -55,6 +55,17 @@ class Huiji{
 		return $stats;
 	}
 	/**
+	 *  get current FS
+	 */
+	 public function getFs(){
+	 	global $wgUseOss;
+	 	if ($wgUseOss){
+	 		return OssFS::getInstance();
+	 	} else {
+	 		return DiskFS::getInstance();
+	 	}
+	 }
+	/**
 	 * get all site prefix 
 	 * @param  boolean $showHidden if false, just show the usual prefix,otherwise show all prefix(include the site be hidden)
 	 * @return array
