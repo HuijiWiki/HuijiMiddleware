@@ -96,6 +96,8 @@ $wgExtensionMessagesFiles['HuijiMiddlewareAlias'] = $dir . '/HuijiMiddleware.i18
 $wgExtensionMessagesFiles['HuijiMiddlewareMagic'] = $dir . '/HuijiMiddleware.i18n.magic.php';
 
 $wgAPIListModules['HuijiMiddleware'] = 'ApiQueryExample';
+$wgAutoloadClasses['FeedbackApi'] = __DIR__. '/api/FeedbackApi.php';
+$wgAPIModules['feedback'] = 'FeedbackApi';
 
 global $wgAvailableRights, $wgGroupPermissions;
 $wgAvailableRights[] = 'getinvitationcode';
@@ -172,6 +174,15 @@ $wgResourceModules['ext.HuijiMiddleware.querystring'] = array(
 );
 $wgResourceModules['ext.HuijiMiddleware.video.init'] = array(
 	'scripts' => 'modules/ext.HuijiMiddleware.video.init.js',
+	'dependencies' => array(
+	),
+	'localBasePath' => $dir,
+	'remoteExtPath' => 'HuijiMiddleware/' . $dirbasename,
+	'position' => 'bottom',
+);
+$wgResourceModules['ext.HuijiMiddleware.feedback'] = array(
+	'scripts' => 'modules/ext.HuijiMiddleware.feedback.js',
+	'styles' => 'modules/ext.HuijiMiddleware.feedback.css',
 	'dependencies' => array(
 	),
 	'localBasePath' => $dir,

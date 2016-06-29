@@ -311,13 +311,17 @@ class HuijiUser {
 	 *
 	 */
 	public function getDesignation($splited = false){
+		if ($this->mUser == ''){
+			return '';
+		}
 		if ($this->mDesignation !== null){
 			if ($splited){
 				return array($this->mDesignationPrefix, $this->mDesignationSuffix);
 			}
 			return $this->mDesignation;
 		} 
-		$cache = wfGetCache(CACHE_ANYTHING);
+		$cache = self::getUserCache();
+
 		$dbr = wfGetDB(DB_SLAVE);
 		$prefixResult = $suffixResult = [];
 		$row = $dbr->select(
@@ -358,11 +362,11 @@ class HuijiUser {
 		$suffix = implode(',', $suffixResult );
 		if (count($prefixResult) > 0){
 			$this->mDesignationPrefix = htmlspecialchars($prefix);
-			$this->mDesignation .= htmlspecialchars($prefix);
+			$this->mDesignation .= '<span class="hidden-xs hidden-sm designation-prefix">'.htmlspecialchars($prefix).'</span>';
 		}
 		if ( count($suffixResult) > 0 ){
 			$this->mDesignation .= htmlspecialchars($suffix);
-			$this->mDesignationSuffix = htmlspecialchars($suffix);
+			$this->mDesignationSuffix = '<span class="hidden-xs hidden-sm designation-suffix">'.htmlspecialchars($suffix).'</span>';
 		}
 		$this->mDesignation .= $this->mUser->getName();
 		$cache->set($this->mUser->getId(), $this);
