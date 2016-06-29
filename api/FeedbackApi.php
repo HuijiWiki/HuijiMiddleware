@@ -2,25 +2,19 @@
 class FeedbackApi extends ApiBase {
 
     public function execute() {
-    	// $subject = $this->getMain()->getVal( 'subject' );
-    	// $body = $this->getMain()->getVal( 'body' );
-    	// $cookie = $this->getMain()->getVal( 'cookie' );
-    	// $browserinfo = $this->getMain()->getVal( 'browserinfo' );
-    	// $environment = $this->getMain()->getVal( 'environment' );
-    	// $currentpagesource = $this->getMain()->getVal( 'currentpagesource' );
-    	$imageData = $this->getMain()->getVal( 'data' );
+        $fb = $this->getMain()->getVal( 'feedback' );
         $user = $this->getUser();
         $subject = "用户bug反馈";
-        $body = json_decode($imageData);
+        $body = json_decode($fb);
         if ($user !=  ''){
-            if ($body[0]->Issue != ''){
-                $trueSubject = $user->getName().":".$body[0]->Issue;
+            if ($body->note != ''){
+                $trueSubject = $user->getName().":".$body->note;
             } else {
-                $trueSubject = $user->getName().":".$subject;
+                $trueSubject = $user->getName().":".$body->note;
             }
         } else {
-            if ($body[0]->Issue != ''){
-                $trueSubject = $body[0]->Issue;
+            if ($body->note != ''){
+                $trueSubject = $body->note;
             } else {
                 $trueSubject = $subject;
             }
@@ -28,8 +22,8 @@ class FeedbackApi extends ApiBase {
         $fs = wfGetFS(FS_OSS);
         $time = microtime();
         $id = HuijiFunctions::getTradeNo('FB');
-        $fs->put("Feedback/$id.html", $body[3]->source);
-        $data = str_replace('data:image/png;base64,', '', $body[1]);
+        $fs->put("Feedback/$id.html", $body->html);
+        $data = str_replace('data:image/png;base64,', '', $body->img);
         $data = str_replace(' ', '+', $data);
          
         $data = base64_decode($data);
@@ -38,21 +32,28 @@ class FeedbackApi extends ApiBase {
         $fs->put("Feedback/$id.png", file_get_contents("/tmp/$id.png"));
         imagedestroy($source_img);
         $trueBody = $this->getSection('Issue');
-        $trueBody .= $body[0]->Issue;
+        $trueBody .= $body->note;
         $trueBody .= $this->getSection('Cookie');
         foreach ($_COOKIE as $key => $value) {
            $trueBody .= $key. ":".$value.";".PHP_EOL;
         }
         $trueBody .= $this->getSection('URL');
-        $trueBody .= $body[2]->url;
+        $trueBody .= $body->url;
         $trueBody .= $this->getSection('源代码');
         $trueBody .= "http://fs.huijiwiki.com/Feedback/$id.html";
         $trueBody .= $this->getSection('Agent');
-        $trueBody .= $body[4]->agent;
+        foreach( $body->browser as $key=>$value ){
+            if (is_array($value)){
+                $trueBody .= $key. ":" .implode(", ",$value).";".PHP_EOL;
+            } else {
+                $trueBody .= $key. ":" .$value.";".PHP_EOL;
+            }
+            
+        }
         $trueBody .= $this->getSection('来源');
-        $trueBody .= $body[5]->referer;
+        $trueBody .= $body->referer;
         $trueBody .= $this->getSection('分辨率');
-        $trueBody .= $body[6]->w . "X" .$body[6]->h;
+        $trueBody .= $body->w . "X" .$body->h;
         $trueBody .= $this->getSection('截图');
         $trueBody .= "http://fs.huijiwiki.com/Feedback/$id.png";
 
@@ -92,10 +93,10 @@ class FeedbackApi extends ApiBase {
 
     public function getAllowedParams() {
         return array(
-            'data' => array(
+            'feedback' => array(
                 ApiBase::PARAM_REQUIRED => true,
                 ApiBase::PARAM_TYPE => 'string'
-            )
+            ),
         );
     }
 }

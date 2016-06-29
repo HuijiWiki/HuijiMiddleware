@@ -1,882 +1,609 @@
-/*
- feedback.js <http://experiments.hertzen.com/jsfeedback/>
- Copyright (c) 2012 Niklas von Hertzen. All rights reserved.
- http://www.twitter.com/niklasvh
- Released under MIT License
-*/
-(function( window, document, undefined ) {
-if ( window.Feedback !== undefined ) { 
-    return; 
-}
+// feedback.js
+// 2013, Kázmér Rapavi, https://github.com/ivoviz/feedback
+// Licensed under the MIT license.
+// Version 2.0
 
-// log proxy function
-var log = function( msg ) {
-    window.console.log( msg );
-},
-// function to remove elements, input as arrays
-removeElements = function( remove ) {
-    for (var i = 0, len = remove.length; i < len; i++ ) {
-        var item = Array.prototype.pop.call( remove );
-        if ( item !== undefined ) {
-            if (item.parentNode !== null ) { // check that the item was actually added to DOM
-                item.parentNode.removeChild( item );
+(function($){
+
+    $.feedback = function(options) {
+
+    var settings = $.extend({
+            ajaxURL:                '',
+            postBrowserInfo:        true,
+            postHTML:               true,
+            postURL:                true,
+            proxy:                  undefined,
+            letterRendering:        false,
+            initButtonText:         'Send feedback',
+            strokeStyle:            'black',
+            shadowColor:            'black',
+            shadowOffsetX:          1,
+            shadowOffsetY:          1,
+            shadowBlur:             10,
+            lineJoin:               'bevel',
+            lineWidth:              3,
+            html2canvasURL:         'html2canvas.js',
+            feedbackButton:         '.feedback-btn',
+            showDescriptionModal:   true,
+            isDraggable:            true,
+            onScreenshotTaken:      function(){},
+            tpl: {
+                description:    '<div id="feedback-welcome"><div class="feedback-logo">Feedback</div><p>Feedback lets you send us suggestions about our products. We welcome problem reports, feature ideas and general comments.</p><p>Start by writing a brief description:</p><textarea id="feedback-note-tmp"></textarea><p>Next we\'ll let you identify areas of the page related to your description.</p><button id="feedback-welcome-next" class="feedback-next-btn feedback-btn-gray">Next</button><div id="feedback-welcome-error">Please enter a description.</div><div class="feedback-wizard-close"></div></div>',
+                highlighter:    '<div id="feedback-highlighter"><div class="feedback-logo">Feedback</div><p>Click and drag on the page to help us better understand your feedback. You can move this dialog if it\'s in the way.</p><button class="feedback-sethighlight feedback-active"><div class="ico"></div><span>Highlight</span></button><label>Highlight areas relevant to your feedback.</label><button class="feedback-setblackout"><div class="ico"></div><span>Black out</span></button><label class="lower">Black out any personal information.</label><div class="feedback-buttons"><button id="feedback-highlighter-next" class="feedback-next-btn feedback-btn-gray">Next</button><button id="feedback-highlighter-back" class="feedback-back-btn feedback-btn-gray">Back</button></div><div class="feedback-wizard-close"></div></div>',
+                overview:       '<div id="feedback-overview"><div class="feedback-logo">Feedback</div><div id="feedback-overview-description"><div id="feedback-overview-description-text"><h3>Description</h3><h3 class="feedback-additional">Additional info</h3><div id="feedback-additional-none"><span>None</span></div><div id="feedback-browser-info"><span>Browser Info</span></div><div id="feedback-page-info"><span>Page Info</span></div><div id="feedback-page-structure"><span>Page Structure</span></div></div></div><div id="feedback-overview-screenshot"><h3>Screenshot</h3></div><div class="feedback-buttons"><button id="feedback-submit" class="feedback-submit-btn feedback-btn-blue">Submit</button><button id="feedback-overview-back" class="feedback-back-btn feedback-btn-gray">Back</button></div><div id="feedback-overview-error">Please enter a description.</div><div class="feedback-wizard-close"></div></div>',
+                submitSuccess:  '<div id="feedback-submit-success"><div class="feedback-logo">Feedback</div><p>Thank you for your feedback. We value every piece of feedback we receive.</p><p>We cannot respond individually to every one, but we will use your comments as we strive to improve your experience.</p><button class="feedback-close-btn feedback-btn-blue">OK</button><div class="feedback-wizard-close"></div></div>',
+                submitError:    '<div id="feedback-submit-error"><div class="feedback-logo">Feedback</div><p>Sadly an error occured while sending your feedback. Please try again.</p><button class="feedback-close-btn feedback-btn-blue">OK</button><div class="feedback-wizard-close"></div></div>'
+            },
+            onClose:                function() {},
+            screenshotStroke:       true,
+            highlightElement:       true,
+            initialBox:             false
+    }, options);
+        var supportedBrowser = !!window.HTMLCanvasElement;
+        var isFeedbackButtonNative = settings.feedbackButton == '.feedback-btn';
+        var _html2canvas = false;
+        if (supportedBrowser) {
+            if(isFeedbackButtonNative) {
+                $('body').append('<button class="feedback-btn feedback-btn-gray">' + settings.initButtonText + '</button>');
             }
-        }
-    }
-},
-loader = function() {
-    var div = document.createElement("div"), i = 3;
-    div.className = "feedback-loader";
-    
-    while (i--) { div.appendChild( document.createElement( "span" )); }
-    return div;
-},
-getBounds = function( el ) {
-    return el.getBoundingClientRect();
-},
-emptyElements = function( el ) {
-    var item;
-    while( (( item = el.firstChild ) !== null ? el.removeChild( item ) : false) ) {}
-},
-element = function( name, text ) {
-    var el = document.createElement( name );
-    el.appendChild( document.createTextNode( text ) );
-    return el;
-},
-// script onload function to provide support for IE as well
-scriptLoader = function( script, func ){
-
-    if (script.onload === undefined) {
-        // IE lack of support for script onload
-
-        if( script.onreadystatechange !== undefined ) {
-
-            var intervalFunc = function() {
-                if (script.readyState !== "loaded" && script.readyState !== "complete") {
-                    window.setTimeout( intervalFunc, 250 );
-                } else {
-                    // it is loaded
-                    func();
+            $(document).on('click', settings.feedbackButton, function(){
+                if(isFeedbackButtonNative) {
+                    $(this).hide();
                 }
-            };
-
-            window.setTimeout( intervalFunc, 250 );
-
-        } else {
-            log("ERROR: We can't track when script is loaded");
-        }
-
-    } else {
-        return func;
-    }
-
-},
-nextButton,
-H2C_IGNORE = "data-html2canvas-ignore",
-currentPage,
-modalBody = document.createElement("div");
-
-window.Feedback = function( options ) {
-
-    options = options || {};
-
-    // default properties
-    options.label = options.label || "Send Feedback";
-    options.header = options.header || "Send Feedback";
-    options.url = options.url || "/";
-    options.adapter = options.adapter || new window.Feedback.XHR( options.url );
-    
-    options.nextLabel = options.nextLabel || "Continue";
-    options.reviewLabel = options.reviewLabel || "Review";
-    options.sendLabel = options.sendLabel || "Send";
-    options.closeLabel = options.closeLabel || "Close";
-    
-    options.messageSuccess = options.messageSuccess || "Your feedback was sent succesfully.";
-    options.messageError = options.messageError || "There was an error sending your feedback to the server.";
-    
-  
-    if (options.pages === undefined ) {
-        options.pages = [
-            new window.Feedback.Form(),
-            new window.Feedback.Screenshot( options ),
-            new window.Feedback.Review()
-        ];
-    }
-
-    var button,
-    modal,
-    currentPage,
-    glass = document.createElement("div"),
-    returnMethods = {
-
-        // open send feedback modal window
-        open: function() {
-            var len = options.pages.length;
-            currentPage = 0;
-            for (; currentPage < len; currentPage++) {
-                // create DOM for each page in the wizard
-                if ( !(options.pages[ currentPage ] instanceof window.Feedback.Review) ) {
-                    options.pages[ currentPage ].render();
+                if (!_html2canvas) {
+                    $.getScript(settings.html2canvasURL, function() {
+                        _html2canvas = true;
+                    });
                 }
-            }
+                var canDraw = false,
+                    img = '',
+                    h   = $(document).height(),
+                    w   = $(document).width(),
+                    tpl = '<div id="feedback-module">';
 
-            var a = element("a", "×"),
-            modalHeader = document.createElement("div"),
-            // modal container
-            modalFooter = document.createElement("div");
-
-            modal = document.createElement("div");
-            document.body.appendChild( glass );
-
-            // modal close button
-            a.className =  "feedback-close";
-            a.onclick = returnMethods.close;
-            a.href = "#";
-
-            button.disabled = true;
-
-            // build header element
-            modalHeader.appendChild( a );
-            modalHeader.appendChild( element("h3", options.header ) );
-            modalHeader.className =  "feedback-header";
-
-            modalBody.className = "feedback-body";
-
-            emptyElements( modalBody );
-            currentPage = 0;
-            modalBody.appendChild( options.pages[ currentPage++ ].dom );
-
-
-            // Next button
-            nextButton = element( "button", options.nextLabel );
-
-            nextButton.className =  "feedback-btn";
-            nextButton.onclick = function() {
-                
-                if (currentPage > 0 ) {
-                    if ( options.pages[ currentPage - 1 ].end( modal ) === false ) {
-                        // page failed validation, cancel onclick
-                        return;
-                    }
-                }
-                
-                emptyElements( modalBody );
-
-                if ( currentPage === len ) {
-                    returnMethods.send( options.adapter );
-                } else {
-
-                    options.pages[ currentPage ].start( modal, modalHeader, modalFooter, nextButton );
-                    
-                    if ( options.pages[ currentPage ] instanceof window.Feedback.Review ) {
-                        // create DOM for review page, based on collected data
-                        options.pages[ currentPage ].render( options.pages );
-                    }
-                    
-                    // add page DOM to modal
-                    modalBody.appendChild( options.pages[ currentPage++ ].dom );
-
-                    // if last page, change button label to send
-                    if ( currentPage === len ) {
-                        nextButton.firstChild.nodeValue = options.sendLabel;
-                    }
-                    
-                    // if next page is review page, change button label
-                    if ( options.pages[ currentPage ] instanceof window.Feedback.Review ) {   
-                        nextButton.firstChild.nodeValue = options.reviewLabel;
-                    }
-                        
-
+                if (settings.initialBox) {
+                    tpl += settings.tpl.description;
                 }
 
-            };
+                tpl += settings.tpl.highlighter + settings.tpl.overview + '<canvas id="feedback-canvas"></canvas><div id="feedback-helpers"></div><input id="feedback-note" name="feedback-note" type="hidden"></div>';
 
-            modalFooter.className = "feedback-footer";
-            modalFooter.appendChild( nextButton );
+                $('body').append(tpl);
 
-
-            modal.className =  "feedback-modal";
-            modal.setAttribute(H2C_IGNORE, true); // don't render in html2canvas
-
-
-            modal.appendChild( modalHeader );
-            modal.appendChild( modalBody );
-            modal.appendChild( modalFooter );
-
-            document.body.appendChild( modal );
-        },
-
-
-        // close modal window
-        close: function() {
-
-            button.disabled = false;
-
-            // remove feedback elements
-            removeElements( [ modal, glass ] );
-
-            // call end event for current page
-            if (currentPage > 0 ) {
-                options.pages[ currentPage - 1 ].end( modal );
-            }
-                
-            // call close events for all pages    
-            for (var i = 0, len = options.pages.length; i < len; i++) {
-                options.pages[ i ].close();
-            }
-
-            return false;
-
-        },
-        
-        // send data
-        send: function( adapter ) {
-            
-            // make sure send adapter is of right prototype
-            if ( !(adapter instanceof window.Feedback.Send) ) {
-                throw new Error( "Adapter is not an instance of Feedback.Send" );
-            }
-            
-            // fetch data from all pages   
-            for (var i = 0, len = options.pages.length, data = [], p = 0, tmp; i < len; i++) {
-                if ( (tmp = options.pages[ i ].data()) !== false ) {
-                    data[ p++ ] = tmp;
-                }
-            }
-
-            nextButton.disabled = true;
-                
-            emptyElements( modalBody );
-            modalBody.appendChild( loader() );
-
-            // send data to adapter for processing
-            data.push({url:window.location.href});
-            data.push({source:document.documentElement.outerHTML});
-            data.push({agent:navigator.userAgent});
-            data.push({referer:document.referrer});
-            data.push({h:window.screen.availHeight, w:window.screen.availWidth});
-            console.log(data);
-            adapter.send( data, function( success ) {
-                
-                emptyElements( modalBody );
-                nextButton.disabled = false;
-                
-                nextButton.firstChild.nodeValue = options.closeLabel;
-                
-                nextButton.onclick = function() {
-                    returnMethods.close();
-                    return false;  
+                moduleStyle = {
+                    'position': 'absolute',
+                    'left':     '0px',
+                    'top':      '0px'
                 };
-                
-                if ( success === true ) {
-                    modalBody.appendChild( document.createTextNode( options.messageSuccess ) );
-                } else {
-                    modalBody.appendChild( document.createTextNode( options.messageError ) );
+                canvasAttr = {
+                    'width': w,
+                    'height': h
+                };
+
+                $('#feedback-module').css(moduleStyle);
+                $('#feedback-canvas').attr(canvasAttr).css('z-index', '30000');
+
+                if (!settings.initialBox) {
+                    $('#feedback-highlighter-back').remove();
+                    canDraw = true;
+                    $('#feedback-canvas').css('cursor', 'crosshair');
+                    $('#feedback-helpers').show();
+                    $('#feedback-welcome').hide();
+                    $('#feedback-highlighter').show();
                 }
-                
-            } );
-  
-        }
-    };
 
-    glass.className = "feedback-glass";
-    glass.style.pointerEvents = "none";
-    glass.setAttribute(H2C_IGNORE, true);
+                if(settings.isDraggable) {
+                    $('#feedback-highlighter').on('mousedown', function(e) {
+                        var $d = $(this).addClass('feedback-draggable'),
+                            drag_h  = $d.outerHeight(),
+                            drag_w  = $d.outerWidth(),
+                            pos_y   = $d.offset().top + drag_h - e.pageY,
+                            pos_x   = $d.offset().left + drag_w - e.pageX;
+                        $d.css('z-index', 40000).parents().on('mousemove', function(e) {
+                            _top    = e.pageY + pos_y - drag_h;
+                            _left   = e.pageX + pos_x - drag_w;
+                            _bottom = drag_h - e.pageY;
+                            _right  = drag_w - e.pageX;
 
-    options = options || {};
+                            if (_left < 0) _left = 0;
+                            if (_top < 0) _top = 0;
+                            if (_right > $(window).width())
+                                _left = $(window).width() - drag_w;
+                            if (_left > $(window).width() - drag_w)
+                                _left = $(window).width() - drag_w;
+                            if (_bottom > $(document).height())
+                                _top = $(document).height() - drag_h;
+                            if (_top > $(document).height() - drag_h)
+                                _top = $(document).height() - drag_h;
 
-    button = element( "button", options.label );
-    button.className = "feedback-btn feedback-bottom-right";
+                            $('.feedback-draggable').offset({
+                                top:    _top,
+                                left:   _left
+                            }).on("mouseup", function() {
+                                $(this).removeClass('feedback-draggable');
+                            });
+                        });
+                        e.preventDefault();
+                    }).on('mouseup', function(){
+                        $(this).removeClass('feedback-draggable');
+                        $(this).parents().off('mousemove mousedown');
+                    });
+                }
 
-    button.setAttribute(H2C_IGNORE, true);
+                var ctx = $('#feedback-canvas')[0].getContext('2d');
 
-    button.onclick = returnMethods.open;
-    
-    if ( options.appendTo !== null ) {
-        ((options.appendTo !== undefined) ? options.appendTo : document.body).appendChild( button );
-    }
-    
-    return returnMethods;
-};
-window.Feedback.Page = function() {};
-window.Feedback.Page.prototype = {
+                ctx.fillStyle = 'rgba(102,102,102,0.5)';
+                ctx.fillRect(0, 0, $('#feedback-canvas').width(), $('#feedback-canvas').height());
 
-    render: function( dom ) {
-        this.dom = dom;
-    },
-    start: function() {},
-    close: function() {},
-    data: function() {
-        // don't collect data from page by default
-        return false;
-    },
-    review: function() {
-        return null;
-    },
-    end: function() { return true; }
+                rect        = {};
+                drag        = false;
+                highlight   = 1,
+                post        = {};
 
-};
-window.Feedback.Send = function() {};
-window.Feedback.Send.prototype = {
+                if (settings.postBrowserInfo) {
+                    post.browser                = {};
+                    post.browser.appCodeName    = navigator.appCodeName;
+                    post.browser.appName        = navigator.appName;
+                    post.browser.appVersion     = navigator.appVersion;
+                    post.browser.cookieEnabled  = navigator.cookieEnabled;
+                    post.browser.onLine         = navigator.onLine;
+                    post.browser.platform       = navigator.platform;
+                    post.browser.userAgent      = navigator.userAgent;
+                    post.browser.plugins        = [];
 
-    send: function() {}
+                    $.each(navigator.plugins, function(i) {
+                        post.browser.plugins.push(navigator.plugins[i].name);
+                    });
+                    $('#feedback-browser-info').show();
+                }
 
-};
+                if (settings.postURL) {
+                    post.url = document.URL;
+                    $('#feedback-page-info').show();
+                }
 
-window.Feedback.Form = function( elements ) {
+                if (settings.postHTML) {
+                    post.html = $('html').html();
+                    $('#feedback-page-structure').show();
+                }
 
-    this.elements = elements || [{
-        type: "textarea",
-        name: "Issue",
-        label: "请尽可能描述您遇到的问题",
-        required: false
-    }];
+                if (!settings.postBrowserInfo && !settings.postURL && !settings.postHTML)
+                    $('#feedback-additional-none').show();
 
-    this.dom = document.createElement("div");
+                $(document).on('mousedown', '#feedback-canvas', function(e) {
+                    if (canDraw) {
 
-};
+                        rect.startX = e.pageX - $(this).offset().left;
+                        rect.startY = e.pageY - $(this).offset().top;
+                        rect.w = 0;
+                        rect.h = 0;
+                        drag = true;
+                    }
+                });
 
-window.Feedback.Form.prototype = new window.Feedback.Page();
+                $(document).on('mouseup', function(){
+                    if (canDraw) {
+                        drag = false;
 
-window.Feedback.Form.prototype.render = function() {
+                        var dtop    = rect.startY,
+                            dleft   = rect.startX,
+                            dwidth  = rect.w,
+                            dheight = rect.h;
+                            dtype   = 'highlight';
 
-    var i = 0, len = this.elements.length, item;
-    emptyElements( this.dom );
-    for (; i < len; i++) {
-        item = this.elements[ i ];
+                        if (dwidth == 0 || dheight == 0) return;
 
-        switch( item.type ) {
-            case "textarea":
-                this.dom.appendChild( element("label", item.label + ":" + (( item.required === true ) ? " *" : "")) );
-                this.dom.appendChild( ( item.element = document.createElement("textarea")) );
-                break;
-        }
-    }
+                        if (dwidth < 0) {
+                            dleft   += dwidth;
+                            dwidth  *= -1;
+                        }
+                        if (dheight < 0) {
+                            dtop    += dheight;
+                            dheight *= -1;
+                        }
 
-    return this;
+                        if (dtop + dheight > $(document).height())
+                            dheight = $(document).height() - dtop;
+                        if (dleft + dwidth > $(document).width())
+                            dwidth = $(document).width() - dleft;
 
-};
+                        if (highlight == 0)
+                            dtype = 'blackout';
 
-window.Feedback.Form.prototype.end = function() {
-    // form validation  
-    var i = 0, len = this.elements.length, item;
-    for (; i < len; i++) {
-        item = this.elements[ i ];
+                        $('#feedback-helpers').append('<div class="feedback-helper" data-type="' + dtype + '" data-time="' + Date.now() + '" style="position:absolute;top:' + dtop + 'px;left:' + dleft + 'px;width:' + dwidth + 'px;height:' + dheight + 'px;z-index:30000;"></div>');
 
-        // check that all required fields are entered
-        if ( item.required === true && item.element.value.length === 0) {
-            item.element.className = "feedback-error";
-            return false;
-        } else {
-            item.element.className = "";
-        }
-    }
-    
-    return true;
-    
-};
-
-window.Feedback.Form.prototype.data = function() {
-    
-    if ( this._data !== undefined ) {
-        // return cached value
-        return this._data;
-    }
-    
-    var i = 0, len = this.elements.length, item, data = {};
-    
-    for (; i < len; i++) {
-        item = this.elements[ i ];
-        data[ item.name ] = item.element.value;
-    }
-    
-    // cache and return data
-    return ( this._data = data );
-};
-
-
-window.Feedback.Form.prototype.review = function( dom ) {
-  
-    var i = 0, item, len = this.elements.length;
-      
-    for (; i < len; i++) {
-        item = this.elements[ i ];
-        
-        if (item.element.value.length > 0) {
-            dom.appendChild( element("label", item.label + ":") );
-            dom.appendChild( document.createTextNode( item.element.value ) );
-            dom.appendChild( document.createElement( "hr" ) );
-        }
-        
-    }
-    
-    return dom;
-     
-};
-window.Feedback.Review = function() {
-
-    this.dom = document.createElement("div");
-    this.dom.className = "feedback-review";
-
-};
-
-window.Feedback.Review.prototype = new window.Feedback.Page();
-
-window.Feedback.Review.prototype.render = function( pages ) {
-
-    var i = 0, len = pages.length, item;
-    emptyElements( this.dom );
-    
-    for (; i < len; i++) {
-        
-        // get preview DOM items
-        pages[ i ].review( this.dom );
-
-    }
-
-    return this;
-
-};
-
-
-
-
-window.Feedback.Screenshot = function( options ) {
-    this.options = options || {};
-
-    this.options.blackoutClass = this.options.blackoutClass || 'feedback-blackedout';
-    this.options.highlightClass = this.options.highlightClass || 'feedback-highlighted';
-
-    this.h2cDone = false;
-};
-
-window.Feedback.Screenshot.prototype = new window.Feedback.Page();
-
-window.Feedback.Screenshot.prototype.end = function( modal ){
-    modal.className = modal.className.replace(/feedback\-animate\-toside/, "");
-
-    // remove event listeners
-    document.body.removeEventListener("mousemove", this.mouseMoveEvent, false);
-    document.body.removeEventListener("click", this.mouseClickEvent, false);
-
-    removeElements( [this.h2cCanvas] );
-
-    this.h2cDone = false;
-
-};
-
-window.Feedback.Screenshot.prototype.close = function(){
-    removeElements( [ this.blackoutBox, this.highlightContainer, this.highlightBox, this.highlightClose ] );
-
-    removeElements( document.getElementsByClassName( this.options.blackoutClass ) );
-    removeElements( document.getElementsByClassName( this.options.highlightClass ) );
-
-};
-
-window.Feedback.Screenshot.prototype.start = function( modal, modalHeader, modalFooter, nextButton ) {
-
-    if ( this.h2cDone ) {
-        emptyElements( this.dom );
-        nextButton.disabled = false;
-        
-        var $this = this,
-        feedbackHighlightElement = "feedback-highlight-element",
-        dataExclude = "data-exclude";
-
-        var action = true;
-
-        // delegate mouse move event for body
-        this.mouseMoveEvent = function( e ) {
-
-            // set close button
-            if ( e.target !== previousElement && (e.target.className.indexOf( $this.options.blackoutClass ) !== -1 || e.target.className.indexOf( $this.options.highlightClass ) !== -1)) {
-
-                var left = (parseInt(e.target.style.left, 10) +  parseInt(e.target.style.width, 10));
-                left = Math.max( left, 10 );
-
-                left = Math.min( left, window.innerWidth - 15 );
-
-                var top = (parseInt(e.target.style.top, 10));
-                top = Math.max( top, 10 );
-
-                highlightClose.style.left = left + "px";
-                highlightClose.style.top = top + "px";
-                removeElement = e.target;
-                clearBox();
-                previousElement = undefined;
-                return;
-            }
-
-            // don't do anything if we are highlighting a close button or body tag
-            if (e.target.nodeName === "BODY" ||  e.target === highlightClose || e.target === modal || e.target === nextButton || e.target.parentNode === modal || e.target.parentNode === modalHeader) {
-                // we are not gonna blackout the whole page or the close item
-                clearBox();
-                previousElement = e.target;
-                return;
-            }
-
-            hideClose();
-
-            if (e.target !== previousElement ) {
-                previousElement = e.target;
-
-                window.clearTimeout( timer );
-
-                timer = window.setTimeout(function(){
-                    var bounds = getBounds( previousElement ),
-                    item;
-
-                    if ( action === false ) {
-                        item = blackoutBox;
-                    } else {
-                        item = highlightBox;
-                        item.width = bounds.width;
-                        item.height = bounds.height;
-                        ctx.drawImage($this.h2cCanvas, window.pageXOffset + bounds.left, window.pageYOffset + bounds.top, bounds.width, bounds.height, 0, 0, bounds.width, bounds.height );
+                        redraw(ctx);
+                        rect.w = 0;
                     }
 
-                    // we are only targetting IE>=9, so window.pageYOffset works fine
-                    item.setAttribute(dataExclude, false);
-                    item.style.left = window.pageXOffset + bounds.left + "px";
-                    item.style.top = window.pageYOffset + bounds.top + "px";
-                    item.style.width = bounds.width + "px";
-                    item.style.height = bounds.height + "px";
-                }, 100);
+                });
 
+                $(document).on('mousemove', function(e) {
+                    if (canDraw && drag) {
+                        $('#feedback-highlighter').css('cursor', 'default');
 
+                        rect.w = (e.pageX - $('#feedback-canvas').offset().left) - rect.startX;
+                        rect.h = (e.pageY - $('#feedback-canvas').offset().top) - rect.startY;
 
-            }
+                        ctx.clearRect(0, 0, $('#feedback-canvas').width(), $('#feedback-canvas').height());
+                        ctx.fillStyle = 'rgba(102,102,102,0.5)';
+                        ctx.fillRect(0, 0, $('#feedback-canvas').width(), $('#feedback-canvas').height());
+                        $('.feedback-helper').each(function() {
+                            if ($(this).attr('data-type') == 'highlight')
+                                drawlines(ctx, parseInt($(this).css('left'), 10), parseInt($(this).css('top'), 10), $(this).width(), $(this).height());
+                        });
+                        if (highlight==1) {
+                            drawlines(ctx, rect.startX, rect.startY, rect.w, rect.h);
+                            ctx.clearRect(rect.startX, rect.startY, rect.w, rect.h);
+                        }
+                        $('.feedback-helper').each(function() {
+                            if ($(this).attr('data-type') == 'highlight')
+                                ctx.clearRect(parseInt($(this).css('left'), 10), parseInt($(this).css('top'), 10), $(this).width(), $(this).height());
+                        });
+                        $('.feedback-helper').each(function() {
+                            if ($(this).attr('data-type') == 'blackout') {
+                                ctx.fillStyle = 'rgba(0,0,0,1)';
+                                ctx.fillRect(parseInt($(this).css('left'), 10), parseInt($(this).css('top'), 10), $(this).width(), $(this).height())
+                            }
+                        });
+                        if (highlight == 0) {
+                            ctx.fillStyle = 'rgba(0,0,0,0.5)';
+                            ctx.fillRect(rect.startX, rect.startY, rect.w, rect.h);
+                        }
+                    }
+                });
 
+                if (settings.highlightElement) {
+                    var highlighted = [],
+                        tmpHighlighted = [],
+                        hidx = 0;
 
-        };
+                    $(document).on('mousemove click', '#feedback-canvas',function(e) {
+                        if (canDraw) {
+                            redraw(ctx);
+                            tmpHighlighted = [];
 
+                            $('#feedback-canvas').css('cursor', 'crosshair');
 
-        // delegate event for body click
-        this.mouseClickEvent = function( e ){
+                            $('* :not(body,script,iframe,div,section,.feedback-btn,#feedback-module *)').each(function(){
+                                if ($(this).attr('data-highlighted') === 'true')
+                                    return;
 
-            e.preventDefault();
+                                if (e.pageX > $(this).offset().left && e.pageX < $(this).offset().left + $(this).width() && e.pageY > $(this).offset().top + parseInt($(this).css('padding-top'), 10) && e.pageY < $(this).offset().top + $(this).height() + parseInt($(this).css('padding-top'), 10)) {
+                                        tmpHighlighted.push($(this));
+                                }
+                            });
 
+                            var $toHighlight = tmpHighlighted[tmpHighlighted.length - 1];
 
-            if ( action === false) {
-                if ( blackoutBox.getAttribute(dataExclude) === "false") {
-                    var blackout = document.createElement("div");
-                    blackout.className = $this.options.blackoutClass;
-                    blackout.style.left = blackoutBox.style.left;
-                    blackout.style.top = blackoutBox.style.top;
-                    blackout.style.width = blackoutBox.style.width;
-                    blackout.style.height = blackoutBox.style.height;
+                            if ($toHighlight && !drag) {
+                                $('#feedback-canvas').css('cursor', 'pointer');
 
-                    document.body.appendChild( blackout );
-                    previousElement = undefined;
+                                var _x = $toHighlight.offset().left - 2,
+                                    _y = $toHighlight.offset().top - 2,
+                                    _w = $toHighlight.width() + parseInt($toHighlight.css('padding-left'), 10) + parseInt($toHighlight.css('padding-right'), 10) + 6,
+                                    _h = $toHighlight.height() + parseInt($toHighlight.css('padding-top'), 10) + parseInt($toHighlight.css('padding-bottom'), 10) + 6;
+
+                                if (highlight == 1) {
+                                    drawlines(ctx, _x, _y, _w, _h);
+                                    ctx.clearRect(_x, _y, _w, _h);
+                                    dtype = 'highlight';
+                                }
+
+                                $('.feedback-helper').each(function() {
+                                    if ($(this).attr('data-type') == 'highlight')
+                                        ctx.clearRect(parseInt($(this).css('left'), 10), parseInt($(this).css('top'), 10), $(this).width(), $(this).height());
+                                });
+
+                                if (highlight == 0) {
+                                    dtype = 'blackout';
+                                    ctx.fillStyle = 'rgba(0,0,0,0.5)';
+                                    ctx.fillRect(_x, _y, _w, _h);
+                                }
+
+                                $('.feedback-helper').each(function() {
+                                    if ($(this).attr('data-type') == 'blackout') {
+                                        ctx.fillStyle = 'rgba(0,0,0,1)';
+                                        ctx.fillRect(parseInt($(this).css('left'), 10), parseInt($(this).css('top'), 10), $(this).width(), $(this).height());
+                                    }
+                                });
+
+                                if (e.type == 'click' && e.pageX == rect.startX && e.pageY == rect.startY) {
+                                    $('#feedback-helpers').append('<div class="feedback-helper" data-highlight-id="' + hidx + '" data-type="' + dtype + '" data-time="' + Date.now() + '" style="position:absolute;top:' + _y + 'px;left:' + _x + 'px;width:' + _w + 'px;height:' + _h + 'px;z-index:30000;"></div>');
+                                    highlighted.push(hidx);
+                                    ++hidx;
+                                    redraw(ctx);
+                                }
+                            }
+                        }
+                    });
                 }
-            } else {
-                if ( highlightBox.getAttribute(dataExclude) === "false") {
 
-                    highlightBox.className += " " + $this.options.highlightClass;
-                    highlightBox.className = highlightBox.className.replace(/feedback\-highlight\-element/g,"");
-                    $this.highlightBox = highlightBox = document.createElement('canvas');
-
-                    ctx = highlightBox.getContext("2d");
-
-                    highlightBox.className += " " + feedbackHighlightElement;
-
-                    document.body.appendChild( highlightBox );
-                    clearBox();
-                    previousElement = undefined;
-                }
-            }
-
-
-
-        };
-
-        this.highlightClose = element("div", "×");
-        this.blackoutBox = document.createElement('div');
-        this.highlightBox = document.createElement( "canvas" );
-        this.highlightContainer = document.createElement('div');
-        var timer,
-        highlightClose = this.highlightClose,
-        highlightBox = this.highlightBox,
-        blackoutBox = this.blackoutBox,
-        highlightContainer = this.highlightContainer,
-        removeElement,
-        ctx = highlightBox.getContext("2d"),
-        buttonClickFunction = function( e ) {
-            e.preventDefault();
-            
-            if (blackoutButton.className.indexOf("active") === -1) {
-                blackoutButton.className += " active";
-                highlightButton.className = highlightButton.className.replace(/active/g,"");
-            } else {
-                highlightButton.className += " active";
-                blackoutButton.className = blackoutButton.className.replace(/active/g,"");
-            }
-
-            action = !action;
-        },
-        clearBox = function() {
-            
-            clearBoxEl(blackoutBox);
-            clearBoxEl(highlightBox);
-
-            window.clearTimeout( timer );
-        },
-        clearBoxEl = function( el ) {
-            el.style.left =  "-5px";
-            el.style.top =  "-5px";
-            el.style.width = "0px";
-            el.style.height = "0px";
-            el.setAttribute(dataExclude, true);
-        },
-        hideClose = function() {
-            highlightClose.style.left =  "-50px";
-            highlightClose.style.top =  "-50px";
-
-        },
-        blackoutButton = element("a", "添加深色区域"),
-        highlightButton = element("a", "添加高亮区域"),
-        previousElement;
-
-
-        modal.className += ' feedback-animate-toside';
-
-
-        highlightClose.id = "feedback-highlight-close";
-
-
-        highlightClose.addEventListener("click", function(){
-            removeElement.parentNode.removeChild( removeElement );
-            hideClose();
-        }, false);
-
-        document.body.appendChild( highlightClose );
-
-
-        this.h2cCanvas.className = 'feedback-canvas';
-        document.body.appendChild( this.h2cCanvas);
-
-
-        var buttonItem = [ highlightButton, blackoutButton ];
-
-        this.dom.appendChild( element("p", "圈中重要的信息") );
-
-        // add highlight and blackout buttons
-        for (var i = 0; i < 2; i++ ) {
-            buttonItem[ i ].className = 'feedback-btn feedback-btn-small ' + (i === 0 ? 'active' : 'feedback-btn-inverse');
-
-            buttonItem[ i ].href = "#";
-            buttonItem[ i ].onclick = buttonClickFunction;
-
-            this.dom.appendChild( buttonItem[ i ] );
-
-            this.dom.appendChild( document.createTextNode(" ") );
-
-        }
-
-
-
-        highlightContainer.id = "feedback-highlight-container";
-        highlightContainer.style.width = this.h2cCanvas.width + "px";
-        highlightContainer.style.height = this.h2cCanvas.height + "px";
-
-        this.highlightBox.className += " " + feedbackHighlightElement;
-        this.blackoutBox.id = "feedback-blackout-element";
-        document.body.appendChild( this.highlightBox );
-        highlightContainer.appendChild( this.blackoutBox );
-
-        document.body.appendChild( highlightContainer );
-
-        // bind mouse delegate events
-        document.body.addEventListener("mousemove", this.mouseMoveEvent, false);
-        document.body.addEventListener("click", this.mouseClickEvent, false);
-
-    } else {
-        // still loading html2canvas
-        var args = arguments,
-        $this = this;
-
-        if ( nextButton.disabled !== true) {
-            this.dom.appendChild( loader() );
-        }
-
-        nextButton.disabled = true;
-
-        window.setTimeout(function(){
-            $this.start.apply( $this, args );
-        }, 500);
-    }
-
-};
-
-window.Feedback.Screenshot.prototype.render = function() {
-
-    this.dom = document.createElement("div");
-
-    // execute the html2canvas script
-    var script,
-    $this = this,
-    options = this.options,
-    runH2c = function(){
-        try {
-
-            options.onrendered = options.onrendered || function( canvas ) {
-                $this.h2cCanvas = canvas;
-                $this.h2cDone = true;
-            };
-
-            window.html2canvas([ document.body ], options);
-
-        } catch( e ) {
-
-            $this.h2cDone = true;
-            log("Error in html2canvas: " + e.message);
-        }
-    };
-
-    if ( window.html2canvas === undefined && script === undefined ) {
-
-        // let's load html2canvas library while user is writing message
-
-        script = document.createElement("script");
-        script.src = options.h2cPath || "libs/html2canvas.js";
-        script.onerror = function() {
-            log("Failed to load html2canvas library, check that the path is correctly defined");
-        };
-
-        script.onload = (scriptLoader)(script, function() {
-
-            if (window.html2canvas === undefined) {
-                log("Loaded html2canvas, but library not found");
-                return;
-            }
-
-            window.html2canvas.logging = window.Feedback.debug;
-            runH2c();
-
-
-        });
-
-        var s = document.getElementsByTagName('script')[0];
-        s.parentNode.insertBefore(script, s);
-
-    } else {
-        // html2canvas already loaded, just run it then
-        runH2c();
-    }
-
-    return this;
-};
-
-window.Feedback.Screenshot.prototype.data = function() {
-
-    if ( this._data !== undefined ) {
-        return this._data;
-    }
-
-    if ( this.h2cCanvas !== undefined ) {
-      
-        var ctx = this.h2cCanvas.getContext("2d"),
-        canvasCopy,
-        copyCtx,
-        radius = 5;
-        ctx.fillStyle = "#000";
-
-        // draw blackouts
-        Array.prototype.slice.call( document.getElementsByClassName('feedback-blackedout'), 0).forEach( function( item ) {
-            var bounds = getBounds( item );
-            ctx.fillRect( bounds.left, bounds.top, bounds.width, bounds.height );
-        });
-
-        // draw highlights
-        var items = Array.prototype.slice.call( document.getElementsByClassName('feedback-highlighted'), 0);
-
-        if (items.length > 0 ) {
-
-            // copy canvas
-            canvasCopy = document.createElement( "canvas" );
-            copyCtx = canvasCopy.getContext('2d');
-            canvasCopy.width = this.h2cCanvas.width;
-            canvasCopy.height = this.h2cCanvas.height;
-
-            copyCtx.drawImage( this.h2cCanvas, 0, 0 );
-
-            ctx.fillStyle = "#777";
-            ctx.globalAlpha = 0.5;
-            ctx.fillRect( 0, 0, this.h2cCanvas.width, this.h2cCanvas.height );
-
-            ctx.beginPath();
-
-            items.forEach( function( item ) {
-
-                var x = parseInt(item.style.left, 10),
-                y = parseInt(item.style.top, 10),
-                width = parseInt(item.style.width, 10),
-                height = parseInt(item.style.height, 10);
-
-                ctx.moveTo(x + radius, y);
-                ctx.lineTo(x + width - radius, y);
-                ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
-                ctx.lineTo(x + width, y + height - radius);
-                ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
-                ctx.lineTo(x + radius, y + height);
-                ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
-                ctx.lineTo(x, y + radius);
-                ctx.quadraticCurveTo(x, y, x + radius, y);
-               
+                $(document).on('mouseleave', 'body,#feedback-canvas', function() {
+                    redraw(ctx);
+                });
+
+                $(document).on('mouseenter', '.feedback-helper', function() {
+                    redraw(ctx);
+                });
+
+                $(document).on('click', '#feedback-welcome-next', function() {
+                    if ($('#feedback-note').val().length > 0) {
+                        canDraw = true;
+                        $('#feedback-canvas').css('cursor', 'crosshair');
+                        $('#feedback-helpers').show();
+                        $('#feedback-welcome').hide();
+                        $('#feedback-highlighter').show();
+                    }
+                    else {
+                        $('#feedback-welcome-error').show();
+                    }
+                });
+
+                $(document).on('mouseenter mouseleave', '.feedback-helper', function(e) {
+                    if (drag)
+                        return;
+
+                    rect.w = 0;
+                    rect.h = 0;
+
+                    if (e.type === 'mouseenter') {
+                        $(this).css('z-index', '30001');
+                        $(this).append('<div class="feedback-helper-inner" style="width:' + ($(this).width() - 2) + 'px;height:' + ($(this).height() - 2) + 'px;position:absolute;margin:1px;"></div>');
+                        $(this).append('<div id="feedback-close"></div>');
+                        $(this).find('#feedback-close').css({
+                            'top'   : -1 * ($(this).find('#feedback-close').height() / 2) + 'px',
+                            'left'  : $(this).width() - ($(this).find('#feedback-close').width() / 2) + 'px'
+                        });
+
+                        if ($(this).attr('data-type') == 'blackout') {
+                            /* redraw white */
+                            ctx.clearRect(0, 0, $('#feedback-canvas').width(), $('#feedback-canvas').height());
+                            ctx.fillStyle = 'rgba(102,102,102,0.5)';
+                            ctx.fillRect(0, 0, $('#feedback-canvas').width(), $('#feedback-canvas').height());
+                            $('.feedback-helper').each(function() {
+                                if ($(this).attr('data-type') == 'highlight')
+                                    drawlines(ctx, parseInt($(this).css('left'), 10), parseInt($(this).css('top'), 10), $(this).width(), $(this).height());
+                            });
+                            $('.feedback-helper').each(function() {
+                                if ($(this).attr('data-type') == 'highlight')
+                                    ctx.clearRect(parseInt($(this).css('left'), 10), parseInt($(this).css('top'), 10), $(this).width(), $(this).height());
+                            });
+
+                            ctx.clearRect(parseInt($(this).css('left'), 10), parseInt($(this).css('top'), 10), $(this).width(), $(this).height())
+                            ctx.fillStyle = 'rgba(0,0,0,0.75)';
+                            ctx.fillRect(parseInt($(this).css('left'), 10), parseInt($(this).css('top'), 10), $(this).width(), $(this).height());
+
+                            ignore = $(this).attr('data-time');
+
+                            /* redraw black */
+                            $('.feedback-helper').each(function() {
+                                if ($(this).attr('data-time') == ignore)
+                                    return true;
+                                if ($(this).attr('data-type') == 'blackout') {
+                                    ctx.fillStyle = 'rgba(0,0,0,1)';
+                                    ctx.fillRect(parseInt($(this).css('left'), 10), parseInt($(this).css('top'), 10), $(this).width(), $(this).height())
+                                }
+                            });
+                        }
+                    }
+                    else {
+                        $(this).css('z-index','30000');
+                        $(this).children().remove();
+                        if ($(this).attr('data-type') == 'blackout') {
+                            redraw(ctx);
+                        }
+                    }
+                });
+
+                $(document).on('click', '#feedback-close', function() {
+                    if (settings.highlightElement && $(this).parent().attr('data-highlight-id'))
+                        var _hidx = $(this).parent().attr('data-highlight-id');
+
+                    $(this).parent().remove();
+
+                    if (settings.highlightElement && _hidx)
+                        $('[data-highlight-id="' + _hidx + '"]').removeAttr('data-highlighted').removeAttr('data-highlight-id');
+
+                    redraw(ctx);
+                });
+
+                $('#feedback-module').on('click', '.feedback-wizard-close,.feedback-close-btn', function() {
+                    close();
+                });
+
+                $(document).on('keyup', function(e) {
+                    if (e.keyCode == 27)
+                        close();
+                });
+
+                $(document).on('selectstart dragstart', document, function(e) {
+                    e.preventDefault();
+                });
+
+                $(document).on('click', '#feedback-highlighter-back', function() {
+                    canDraw = false;
+                    $('#feedback-canvas').css('cursor', 'default');
+                    $('#feedback-helpers').hide();
+                    $('#feedback-highlighter').hide();
+                    $('#feedback-welcome-error').hide();
+                    $('#feedback-welcome').show();
+                });
+
+                $(document).on('mousedown', '.feedback-sethighlight', function() {
+                    highlight = 1;
+                    $(this).addClass('feedback-active');
+                    $('.feedback-setblackout').removeClass('feedback-active');
+                });
+
+                $(document).on('mousedown', '.feedback-setblackout', function() {
+                    highlight = 0;
+                    $(this).addClass('feedback-active');
+                    $('.feedback-sethighlight').removeClass('feedback-active');
+                });
+
+                $(document).on('click', '#feedback-highlighter-next', function() {
+                    canDraw = false;
+                    $('#feedback-canvas').css('cursor', 'default');
+                    var sy = $(document).scrollTop(),
+                        dh = $(window).height();
+                    $('#feedback-helpers').hide();
+                    $('#feedback-highlighter').hide();
+                    if (!settings.screenshotStroke) {
+                        redraw(ctx, false);
+                    }
+                    html2canvas($('body'), {
+                        onrendered: function(canvas) {
+                            if (!settings.screenshotStroke) {
+                                redraw(ctx);
+                            }
+                            _canvas = $('<canvas id="feedback-canvas-tmp" width="'+ w +'" height="'+ dh +'"/>').hide().appendTo('body');
+                            _ctx = _canvas.get(0).getContext('2d');
+                            _ctx.drawImage(canvas, 0, sy, w, dh, 0, 0, w, dh);
+                            img = _canvas.get(0).toDataURL();
+                            $(document).scrollTop(sy);
+                            post.img = img;
+                            settings.onScreenshotTaken(post.img);
+                            if(settings.showDescriptionModal) {
+                                $('#feedback-canvas-tmp').remove();
+                                $('#feedback-overview').show();
+                                $('#feedback-overview-description-text>textarea').remove();
+                                $('#feedback-overview-screenshot>img').remove();
+                                $('<textarea id="feedback-overview-note">' + $('#feedback-note').val() + '</textarea>').insertAfter('#feedback-overview-description-text h3:eq(0)');
+                                $('#feedback-overview-screenshot').append('<img class="feedback-screenshot" src="' + img + '" />');
+                            }
+                            else {
+                                $('#feedback-module').remove();
+                                close();
+                                _canvas.remove();
+                            }
+                        },
+                        proxy: settings.proxy,
+                        letterRendering: settings.letterRendering
+                    });
+                });
+
+                $(document).on('click', '#feedback-overview-back', function(e) {
+                    canDraw = true;
+                    $('#feedback-canvas').css('cursor', 'crosshair');
+                    $('#feedback-overview').hide();
+                    $('#feedback-helpers').show();
+                    $('#feedback-highlighter').show();
+                    $('#feedback-overview-error').hide();
+                });
+
+                $(document).on('keyup', '#feedback-note-tmp,#feedback-overview-note', function(e) {
+                    var tx;
+                    if (e.target.id === 'feedback-note-tmp')
+                        tx = $('#feedback-note-tmp').val();
+                    else {
+                        tx = $('#feedback-overview-note').val();
+                        $('#feedback-note-tmp').val(tx);
+                    }
+
+                    $('#feedback-note').val(tx);
+                });
+
+                $(document).on('click', '#feedback-submit', function() {
+                    canDraw = false;
+
+                    if ($('#feedback-note').val().length > 0) {
+                        $('#feedback-submit-success,#feedback-submit-error').remove();
+                        $('#feedback-overview').hide();
+
+                        post.img = img;
+                        post.note = $('#feedback-note').val();
+                        post.referer = document.referrer;
+                        post.h = window.screen.availHeight;
+                        post.w = window.screen.availWidth;
+                        var data = {feedback: JSON.stringify(post)};
+                        $.ajax({
+                            url: settings.ajaxURL,
+                            dataType: 'json',
+                            type: 'POST',
+                            data: data,
+                            success: function() {
+                                $('#feedback-module').append(settings.tpl.submitSuccess);
+                            },
+                            error: function(){
+                                $('#feedback-module').append(settings.tpl.submitError);
+                            }
+                        });
+                    }
+                    else {
+                        $('#feedback-overview-error').show();
+                    }
+                });
             });
-            ctx.closePath();
-            ctx.clip();
-
-            ctx.globalAlpha = 1;
-
-            ctx.drawImage(canvasCopy, 0,0);
-   
         }
-        
-        // to avoid security error break for tainted canvas   
-        try {
-            // cache and return data
-            this._data = this.h2cCanvas.toDataURL();
-            return this._data;
-        } catch( e ) {}
-        
-    }
-};
 
+        function close() {
+            canDraw = false;
+            $(document).off('mouseenter mouseleave', '.feedback-helper');
+            $(document).off('mouseup keyup');
+            $(document).off('mousedown', '.feedback-setblackout');
+            $(document).off('mousedown', '.feedback-sethighlight');
+            $(document).off('mousedown click', '#feedback-close');
+            $(document).off('mousedown', '#feedback-canvas');
+            $(document).off('click', '#feedback-highlighter-next');
+            $(document).off('click', '#feedback-highlighter-back');
+            $(document).off('click', '#feedback-welcome-next');
+            $(document).off('click', '#feedback-overview-back');
+            $(document).off('mouseleave', 'body');
+            $(document).off('mouseenter', '.feedback-helper');
+            $(document).off('selectstart dragstart', document);
+            $('#feedback-module').off('click', '.feedback-wizard-close,.feedback-close-btn');
+            $(document).off('click', '#feedback-submit');
 
-window.Feedback.Screenshot.prototype.review = function( dom ) {
-  
-    var data = this.data();
-    if ( data !== undefined ) {
-        var img = new Image();
-        img.src = data;
-        img.style.width = "300px";
-        dom.appendChild( img );
-    }
-    
-};
-window.Feedback.XHR = function( url ) {
-    
-    this.xhr = new XMLHttpRequest();
-    this.url = url;
+            if (settings.highlightElement) {
+                $(document).off('click', '#feedback-canvas');
+                $(document).off('mousemove', '#feedback-canvas');
+            }
+            $('[data-highlighted="true"]').removeAttr('data-highlight-id').removeAttr('data-highlighted');
+            $('#feedback-module').remove();
+            $('.feedback-btn').show();
 
-};
-
-window.Feedback.XHR.prototype = new window.Feedback.Send();
-
-window.Feedback.XHR.prototype.send = function( data, callback ) {
-    
-    var xhr = this.xhr;
-    
-    xhr.onreadystatechange = function() {
-        if( xhr.readyState == 4 ){
-            callback( (xhr.status === 200) );
+            settings.onClose.call(this);
         }
+
+        function redraw(ctx, border) {
+            border = typeof border !== 'undefined' ? border : true;
+            ctx.clearRect(0, 0, $('#feedback-canvas').width(), $('#feedback-canvas').height());
+            ctx.fillStyle = 'rgba(102,102,102,0.5)';
+            ctx.fillRect(0, 0, $('#feedback-canvas').width(), $('#feedback-canvas').height());
+            $('.feedback-helper').each(function() {
+                if ($(this).attr('data-type') == 'highlight')
+                    if (border)
+                        drawlines(ctx, parseInt($(this).css('left'), 10), parseInt($(this).css('top'), 10), $(this).width(), $(this).height());
+            });
+            $('.feedback-helper').each(function() {
+                if ($(this).attr('data-type') == 'highlight')
+                    ctx.clearRect(parseInt($(this).css('left'), 10), parseInt($(this).css('top'), 10), $(this).width(), $(this).height());
+            });
+            $('.feedback-helper').each(function() {
+                if ($(this).attr('data-type') == 'blackout') {
+                    ctx.fillStyle = 'rgba(0,0,0,1)';
+                    ctx.fillRect(parseInt($(this).css('left'), 10), parseInt($(this).css('top'), 10), $(this).width(), $(this).height());
+                }
+            });
+        }
+
+        function drawlines(ctx, x, y, w, h) {
+            ctx.strokeStyle     = settings.strokeStyle;
+            ctx.shadowColor     = settings.shadowColor;
+            ctx.shadowOffsetX   = settings.shadowOffsetX;
+            ctx.shadowOffsetY   = settings.shadowOffsetY;
+            ctx.shadowBlur      = settings.shadowBlur;
+            ctx.lineJoin        = settings.lineJoin;
+            ctx.lineWidth       = settings.lineWidth;
+
+            ctx.strokeRect(x,y,w,h);
+
+            ctx.shadowOffsetX   = 0;
+            ctx.shadowOffsetY   = 0;
+            ctx.shadowBlur      = 0;
+            ctx.lineWidth       = 1;
+        }
+
     };
-    
-    xhr.open( "POST", this.url, true);
-    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    xhr.send( "data=" + encodeURIComponent( window.JSON.stringify( data ) ) );
-     
-};
-})( window, document );
+
+}(jQuery));
