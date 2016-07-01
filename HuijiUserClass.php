@@ -361,12 +361,12 @@ class HuijiUser {
 		$prefix = implode(',', $prefixResult );
 		$suffix = implode(',', $suffixResult );
 		if (count($prefixResult) > 0){
-			$this->mDesignationPrefix = htmlspecialchars($prefix);
-			$this->mDesignation .= '<span class="hidden-xs hidden-sm designation-prefix">'.htmlspecialchars($prefix).'</span>';
+			$this->mDesignationPrefix = '<span class="hidden-xs hidden-sm designation-prefix">'.htmlspecialchars($prefix).'</span>';
+			$this->mDesignation .= $this->mDesignationPrefix;
 		}
 		if ( count($suffixResult) > 0 ){
-			$this->mDesignation .= htmlspecialchars($suffix);
 			$this->mDesignationSuffix = '<span class="hidden-xs hidden-sm designation-suffix">'.htmlspecialchars($suffix).'</span>';
+			$this->mDesignation .= $this->mDesignationSuffix;
 		}
 		$this->mDesignation .= $this->mUser->getName();
 		$cache->set($this->mUser->getId(), $this);
