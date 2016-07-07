@@ -119,7 +119,7 @@ class HuijiHooks {
 							"s" => $site->getAvatar('s')->getAvatarUrlPath(),
 							);
 		foreach($wgDefaultSiteProperty as $key => $property){
-			$data['property'][$key] = $this->getProperty($key);
+			$data['property'][$key] = $site->getProperty($key);
 		}
 
 	}
