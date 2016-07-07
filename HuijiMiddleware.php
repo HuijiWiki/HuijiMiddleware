@@ -85,6 +85,9 @@ $wgAutoloadClasses['SpecialCreateWiki'] = __DIR__ . '/CreateWikiForm/SpecialCrea
 $wgAutoloadClasses['DiskFS'] = $dir . '/HuijiFS/DiskFS.php';
 $wgAutoloadClasses['HuijiFS'] = $dir . '/HuijiFS/HuijiFS.php';
 $wgAutoloadClasses['OssFS'] = $dir . '/HuijiFS/OssFS.php';
+$wgAutoloadClasses['ApiQueryHuijiUserInfo'] = __DIR__. '/api/ApiQueryHuijiUserInfo.php';
+$wgAutoloadClasses['ApiQueryHuijiUsers'] = __DIR__. '/api/ApiQueryHuijiUsers.php';
+$wgAutoloadClasses['FeedbackApi'] = __DIR__. '/api/FeedbackApi.php';
 require_once( "$IP/extensions/HuijiMiddleware/vendor/autoload.php");
 
 if (!class_exists("PageProps")){
@@ -95,8 +98,10 @@ $wgMessagesDirs['HuijiMiddleware'] = __DIR__ . '/i18n';
 $wgExtensionMessagesFiles['HuijiMiddlewareAlias'] = $dir . '/HuijiMiddleware.i18n.alias.php';
 $wgExtensionMessagesFiles['HuijiMiddlewareMagic'] = $dir . '/HuijiMiddleware.i18n.magic.php';
 
+//API modules
 $wgAPIListModules['HuijiMiddleware'] = 'ApiQueryExample';
-$wgAutoloadClasses['FeedbackApi'] = __DIR__. '/api/FeedbackApi.php';
+$wgAPIListModules['huijiusers'] = 'ApiQueryHuijiUsers';
+$wgAPIMetaModules['huijiuserinfo'] = 'ApiQueryHuijiUserInfo';
 $wgAPIModules['feedback'] = 'FeedbackApi';
 
 global $wgAvailableRights, $wgGroupPermissions;
@@ -124,6 +129,8 @@ $wgHooks['GetDoubleUnderscoreIDs'][] = 'HuijiHooks::onGetDoubleUnderscoreIDs';
 $wgHooks['OpenSearchUrls'][] = 'HuijiHooks::onOpenSearchUrls';
 $wgHooks['MagicWordwgVariableIDs'][] = 'HuijiHooks::onRegisterMagicWords';
 $wgHooks['ParserGetVariableValueSwitch'][] = 'HuijiHooks::onParserGetVariableValueSwitch';
+$wgHooks['APIQuerySiteInfoStatisticsInfo'][] = 'HuijiHooks::onAPIQuerySiteInfoStatisticsInfo';
+$wgHooks['APIQuerySiteInfoGeneralInfo'][] = 'HuijiHooks::onAPIQuerySiteInfoGeneralInfo'; 
 
 // Register modules
 // See also http://www.mediawiki.org/wiki/Manual:$wgResourceModules

@@ -10,6 +10,8 @@ class HuijiUser {
 	protected $mDesignation;
 	protected $mDesignationPrefix;
 	protected $mDesignationSuffix;
+	protected $mDesignationPrefixPlaintext;
+	protected $mDesignationSuffixPlaintext;
 	private static $userCache;
 	const CACHE_MAX = 1000;
 	function __construct(){
@@ -95,7 +97,7 @@ class HuijiUser {
 	 */
 	public function isFollowedBy( $user ){
 		$uuf = new UserUserFollow();
-		return $uuf->checkUserUserFollow($user, $this->mUser);
+		return ($uuf->checkUserUserFollow($user, $this->mUser)!==false);
 	}
 	/**
 	 * check current is following target user
@@ -190,6 +192,9 @@ class HuijiUser {
 	 * @return array
 	 */
 	public function getFollowers(){
+		if ($this->mFollowers != ''){
+			return $this->mFollowers;
+		}		
 		$uuf = new UserUserFollow();
 		$this->mFollowers = $uuf->getFollowList($this->mUser, 2);
 		$cache = self::getUserCache();
@@ -202,6 +207,9 @@ class HuijiUser {
 	 * @return array
 	 */
 	public function getFollowingUsers(){
+		if ($this->mFollowingUsers != ''){
+			return $this->mFollowingUsers;
+		}
 		$uuf = new UserUserFollow();
 		$this->mFollowingUsers = $uuf->getFollowList($this->mUser, 1);
 		//$this->mFollowingUsers = UserUserFollow::getFollowedByUser($this->mUser);
@@ -310,7 +318,7 @@ class HuijiUser {
 	 * @return string/array desination;
 	 *
 	 */
-	public function getDesignation($splited = false){
+	public function getDesignation($splited = false, $plaintext = false){
 		if ($this->mUser == ''){
 			return '';
 		}
@@ -361,17 +369,25 @@ class HuijiUser {
 		$prefix = implode(',', $prefixResult );
 		$suffix = implode(',', $suffixResult );
 		if (count($prefixResult) > 0){
+			$this->mDesignationPrefixPlaintext = htmlspecialchars($prefix);
 			$this->mDesignationPrefix = '<span class="hidden-xs hidden-sm designation-prefix">'.htmlspecialchars($prefix).'</span>';
 			$this->mDesignation .= $this->mDesignationPrefix;
 		}
 		if ( count($suffixResult) > 0 ){
+			$this->mDesignationSuffixPlaintext = htmlspecialchars($suffix);
 			$this->mDesignationSuffix = '<span class="hidden-xs hidden-sm designation-suffix">'.htmlspecialchars($suffix).'</span>';
 			$this->mDesignation .= $this->mDesignationSuffix;
 		}
 		$this->mDesignation .= $this->mUser->getName();
 		$cache->set($this->mUser->getId(), $this);
-		if ($splited){
+		if ($splited && !$plaintext){
 			return array($this->mDesignationPrefix, $this->mDesignationSuffix);
+		}
+		if ($splited && $plaintext){
+			return array($this->mDesignationPrefixPlaintext, $this->mDesignationSuffixPlaintext);
+		}
+		if (!$splited && $plaintext){
+			return $this->mDesignationPrefixPlaintext.$this->mDesignationSuffixPlaintext.$this->mUser->getName();
 		}
 		return $this->mDesignation;
 	}

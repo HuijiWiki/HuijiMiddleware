@@ -376,6 +376,9 @@ class WikiSite extends Site{
 	 * @return string always wiki
 	 */
 	public function getGroup(){
+		if (class_exists('HuijiTrans')){
+			return 'trans';
+		}
 		return 'wiki';
 	}
 	/**
@@ -718,6 +721,16 @@ class WikiSite extends Site{
 		}
 		$this->cache->set($key, $res, 60*60*24);
 		return $res;
+	}
+	/**
+	 * get Total amount of doantion received by this site.
+	 * @return int
+	 *
+	 **/
+	public function getDonationSum(){
+		$siteArr = UserDonation::getDonationRankByPrefix($this->mPrefix, null);
+		$sum = array_sum($siteArr);
+		return $sum;
 	}
 
 	/**

@@ -120,6 +120,7 @@ class Huiji{
 		                        "detail-wikitable-color" => "false",
 		                        "detail-wikitable-a" => "false",
 		                        "detail-wikitable-border" => "false",
+		                        "detail-wikitable-th-bg" => "false",
 		                        "detail-infobox-bg" => "false",
 		                        "detail-infobox-color" => "false",
 		                        "detail-infobox-a" => "false",

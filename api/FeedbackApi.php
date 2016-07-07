@@ -56,30 +56,6 @@ class FeedbackApi extends ApiBase {
         $trueBody .= $body->w . "X" .$body->h;
         $trueBody .= $this->getSection('截图');
         $trueBody .= "http://fs.huijiwiki.com/Feedback/$id.png";
-
-
-        // wfDebug($imageData);
-        // $trueBody = $body[0]->issue;
-        // $
-        // $trueBody .= $this->getSection("cookie");
-        // $trueBody .= $cookie;
-        // $trueBody .= $this->getSection("browserinfo");
-        // $trueBody .= $browserinfo;
-        // $trueBody .= $this->getSection("environment");
-        // $trueBody .= $environment;
-        // $trueBody .= $this->getSection("currentpagesource");
-        // $trueBody .= $currentpagesource;
-        // $trueBody .= $this->getSection("imageData");
-        // $trueBody .= $imageData;
-
-        // if (
-        //     $user->isBlocked() ||
-        //     !$user->isAllowed( 'edit' ) ||
-        //     wfReadOnly()
-        // ) {
-        //     return true;
-        // }
-        //$imageData = substr($imageData, 0, 50);
         
         $res = UserMailer::send(new MailAddress('xigu+4v9xc1lkbgfsjexbgigj@boards.trello.com', 'trello', 'trello'), new MailAddress("no-reply@huiji.wiki"), $trueSubject, $trueBody);
 
