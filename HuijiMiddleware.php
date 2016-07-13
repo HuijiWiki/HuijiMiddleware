@@ -131,6 +131,7 @@ $wgHooks['MagicWordwgVariableIDs'][] = 'HuijiHooks::onRegisterMagicWords';
 $wgHooks['ParserGetVariableValueSwitch'][] = 'HuijiHooks::onParserGetVariableValueSwitch';
 $wgHooks['APIQuerySiteInfoStatisticsInfo'][] = 'HuijiHooks::onAPIQuerySiteInfoStatisticsInfo';
 $wgHooks['APIQuerySiteInfoGeneralInfo'][] = 'HuijiHooks::onAPIQuerySiteInfoGeneralInfo'; 
+$wgHooks['GetPreferences'][] = 'HuijiHooks::onGetPreferences';
 
 // Register modules
 // See also http://www.mediawiki.org/wiki/Manual:$wgResourceModules
@@ -249,6 +250,8 @@ function wfGetFS($which = FS_ANY){
 		}
 	}
 }
+$wgDefaultUserOptions['showeditjs'] = 0;
+$wgDefaultUserOptions['showeditcss'] = 0;
 
 // Default Site Options
 $wgDefaultSiteProperty['enable-voteny'] = 0;

@@ -19,5 +19,8 @@
     "createacct-benefit-head1": "{{NUMBEROFALLEDITS}}",
     "createacct-benefit-head2": "{{NUMBEROFALLARTICLES}}",
     "createacct-benefit-head3": "{{NUMBEROFALLACTIVEUSERS}}",
-    "createwiki": "创建wiki"
+    "createwiki": "创建wiki",
+    "usecodemirror-pref": "启用源代码编辑器高亮",
+    "showeditjs-pref": "在管理员选项中添加编辑js链接",
+    "showeditcss-pref": "在管理员选项中添加编辑css链接"
 }

@@ -137,6 +137,30 @@ class HuijiHooks {
 		$data['donategoalmet'] = (bool)($site->hasMetDonationGoal($month)==false)?"false":"true"; 
 
 	}
+	public static function onGetPreferences( $user, &$preferences ){
+		// $preferences['usecodemirror'] = array(
+		// 	'type' => 'toggle',
+		// 	'label-message' => 'usecodemirror-pref',
+		// 	'section' => "editing/advancedediting"
+		// );
+		$preferences['showeditcss'] = array(
+			'type' => 'toggle',
+			'label-message' => 'showeditcss-pref',
+			'section' => "rendering/advancedrendering"
+		);
+		$preferences['showeditjs'] = array(
+			'type' => 'toggle',
+			'label-message' => 'showeditjs-pref',
+			'section' => "rendering/advancedrendering"
+		);
+	// $preferences['mypref'] = array(
+	// 	'type' => 'toggle',
+	// 	'label-message' => 'tog-mypref', // a system message
+	// 	'section' => 'personal/info',
+	// );
+		return true;
+	}
+
 
 
 }
