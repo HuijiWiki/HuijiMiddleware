@@ -23,7 +23,7 @@ class HuijiPrefix{
 	 */
 	public static function prefixToSiteName( $prefix ){
 		global $wgMemc;
-		$key = wfForeignMemcKey( 'huiji',' ','prefixToSiteName', $prefix );
+		$key = wfForeignMemcKey( 'huiji','','prefixToSiteName', $prefix );
 		$data = $wgMemc->get($key);
 		if ($data != ''){
 			return $data;
