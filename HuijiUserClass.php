@@ -66,6 +66,9 @@ class HuijiUser {
 		}
 		$u = new HuijiUser();
 		$u->mUser = User::NewFromId($userId);
+		if ($u->mUser == null){
+			return null;
+		}
 		return $u;
 	}
 	/**
@@ -81,6 +84,9 @@ class HuijiUser {
 		}
 		$u = new HuijiUser();
 		$u->mUser = User::NewFromName($userName);
+		if ($u->mUser == null){
+			return null;
+		}
 		return $u;
 	}
 	/**
@@ -159,12 +165,12 @@ class HuijiUser {
 			$usf = new UserSiteFollow();
 			return $usf->addUserSiteFollow($this->mUser, $target->getPrefix());
 		} elseif( $target instanceof User ) {
-			if ($target->getId() == 0){
-				return false;
-			} 
-			if ($target->getId() == $this->mUser->getId()){
-				return false;
-			}
+			// if ($target->getId() == 0){
+			// 	return false;
+			// } 
+			// if ($target->getId() == $this->mUser->getId()){
+			// 	return false;
+			// }
 			$uuf = new UserUserFollow();
 			return $uuf->addUserUserFollow($this->mUser, $target);
 		} else {
@@ -203,7 +209,7 @@ class HuijiUser {
 
 	}
 	/**
-	 * get the current user following users
+	 * get the current user's following users
 	 * @return array
 	 */
 	public function getFollowingUsers(){

@@ -36,6 +36,9 @@ class WikiSite extends Site{
 		}
 		return self::$siteCache;
 	}
+	public static function newFromDb(){
+
+	}
 	/**
 	 * get site object by site prefix
 	 * @param  string $prefix site prefix such as 'lotr'、'asoiaf'..
@@ -68,11 +71,27 @@ class WikiSite extends Site{
 	 * @return string site DB name
 	 */
 	public static function DbIdFromPrefix( $prefix ){
-		if ($prefix == 'www'){
+		if ($prefix === 'www'){
 			return 'huiji_home';
 		} else {
 			$dashPrefix = self::tableNameFromPrefix( $prefix );
 			return 'huiji_sites-'.$dashPrefix;
+		}
+	}
+	/**
+	 * get site DB by $prefix
+	 * @param string $prefix 'www' or others
+	 * @return string site DB name
+	 */
+	public static function prefixFromDbId( $dbId ){
+		if ($dbId === "huiji_home"){
+			return 'www';
+		} else {
+			$str = str_replace("huiji_sites-", '', $dbId);
+			if (substr($str, strlen($str) - 1, strlen($str)) === "_" ){
+				$str = substr($str, 0, strlen($str)-1);
+			}
+			return str_replace("_", ".", $str);
 		}
 	}
 	/**
@@ -209,14 +228,22 @@ class WikiSite extends Site{
 		return $usf->checkUserSiteFollow( $user, $this->mPrefix);
 	}
 	/**
-	 * get site's url
-	 * @return string site's url
+	 * get site's host
+	 * @return string site's host (including the tail /).
 	 */
 	public function getUrl(){
 		if ($this->mPrefix === ''){
 			return '';
 		}
 		return HuijiPrefix::prefixToUrl($this->mPrefix);
+	}
+
+	/**
+	 * get API endpoint
+	 * @return string API endpoint
+	 */
+	public function getApi(){
+		return $this->getUrl()."api.php";
 	}
 	/**
 	 * get site's name
@@ -363,6 +390,9 @@ class WikiSite extends Site{
 	public function getAvatar($size){
 		if ($this->mPrefix === ''){
 			return null;
+		}
+		if ($size == ''){
+			$size = 'm';
 		}
 		if (class_exists('wSiteAvatar')){
 			return new wSiteAvatar($this->mPrefix, $size);

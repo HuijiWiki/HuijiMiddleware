@@ -103,6 +103,14 @@ class HuijiHooks {
 
 	    return true;
 	}
+
+	public static function onSetupParserFunction( &$parser ){
+		$parser->setFunctionHook( 'css', 'HuijiHooks::renderObseleteParserFunction' );
+	}
+	public static function renderObseleteParserFunction($parser, $stuff){
+		return array( "<!-- #CSS is obselete and no longer supported, please remove it -->", 'noparse' => true, 'isHTML' => true );
+	}
+
 	public static function onAPIQuerySiteInfoGeneralInfo($api, &$data){
 		global $wgHuijiPrefix, $wgDefaultSiteProperty;
 		if (class_exists("TransSite")){

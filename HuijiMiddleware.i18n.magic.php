@@ -20,6 +20,7 @@ $magicWords['en'] = array(
 	'sitedescription' => array(0, 'SITEDESCRIPTION'),
 	'rec' => array( 0, '__REC__' ),
 	'norec' => array(0, '__NOREC__'),
+	'css' => array(0, 'css'),
 
 );
 

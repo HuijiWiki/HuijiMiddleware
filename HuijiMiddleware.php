@@ -87,6 +87,7 @@ $wgAutoloadClasses['HuijiFS'] = $dir . '/HuijiFS/HuijiFS.php';
 $wgAutoloadClasses['OssFS'] = $dir . '/HuijiFS/OssFS.php';
 $wgAutoloadClasses['ApiQueryHuijiUserInfo'] = __DIR__. '/api/ApiQueryHuijiUserInfo.php';
 $wgAutoloadClasses['ApiQueryHuijiUsers'] = __DIR__. '/api/ApiQueryHuijiUsers.php';
+$wgAutoloadClasses['ApiQueryAllHuijiUsers'] = __DIR__. '/api/ApiQueryAllHuijiUsers.php';
 $wgAutoloadClasses['FeedbackApi'] = __DIR__. '/api/FeedbackApi.php';
 require_once( "$IP/extensions/HuijiMiddleware/vendor/autoload.php");
 
@@ -102,6 +103,7 @@ $wgExtensionMessagesFiles['HuijiMiddlewareMagic'] = $dir . '/HuijiMiddleware.i18
 $wgAPIListModules['HuijiMiddleware'] = 'ApiQueryExample';
 $wgAPIListModules['huijiusers'] = 'ApiQueryHuijiUsers';
 $wgAPIMetaModules['huijiuserinfo'] = 'ApiQueryHuijiUserInfo';
+$wgAPIListModules['allhuijiusers'] = 'ApiQueryAllHuijiUsers';
 $wgAPIModules['feedback'] = 'FeedbackApi';
 
 global $wgAvailableRights, $wgGroupPermissions;
@@ -132,6 +134,7 @@ $wgHooks['ParserGetVariableValueSwitch'][] = 'HuijiHooks::onParserGetVariableVal
 $wgHooks['APIQuerySiteInfoStatisticsInfo'][] = 'HuijiHooks::onAPIQuerySiteInfoStatisticsInfo';
 $wgHooks['APIQuerySiteInfoGeneralInfo'][] = 'HuijiHooks::onAPIQuerySiteInfoGeneralInfo'; 
 $wgHooks['GetPreferences'][] = 'HuijiHooks::onGetPreferences';
+$wgHooks['ParserFirstCallInit'][] = 'HuijiHooks::onSetupParserFunction';
 
 // Register modules
 // See also http://www.mediawiki.org/wiki/Manual:$wgResourceModules
