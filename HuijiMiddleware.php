@@ -266,3 +266,4 @@ $wgDefaultSiteProperty['enable-semantic-mediawiki'] = 0;
 $wgSiteSettings['enable-voteny']['level'] = 'C';
 $wgSiteSettings['enable-pollny']['level'] = 'B';
 $wgSiteSettings['hide-bots-in-concile']['level'] = 'NA';
+$wgSiteSettings['enable-semantic-mediawiki']['level'] = 'NA';
