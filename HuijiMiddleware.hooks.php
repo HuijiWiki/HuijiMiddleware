@@ -118,6 +118,7 @@ class HuijiHooks {
 		}
 		$data['group'] = $site->getGroup();
 		$data['prefix'] = $site->getPrefix();
+		$data['description'] = $site->getDescription();
 		$data['avatar'] = array(
 							"l" => $site->getAvatar('l')->getAvatarUrlPath(),
 							"ml" => $site->getAvatar('ml')->getAvatarUrlPath(),

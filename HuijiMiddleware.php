@@ -260,6 +260,7 @@ $wgDefaultUserOptions['showeditcss'] = 0;
 $wgDefaultSiteProperty['enable-voteny'] = 0;
 $wgDefaultSiteProperty['enable-pollny'] = 0;
 $wgDefaultSiteProperty['hide-bots-in-concile'] = 0;
+$wgDefaultSiteProperty['enable-semantic-mediawiki'] = 0;
 
 //Settings
 $wgSiteSettings['enable-voteny']['level'] = 'C';
