@@ -90,11 +90,152 @@ class HuijiUser {
 		return $u;
 	}
 	/**
+	 * initiate a user instance based on the open id from 
+	 * external oauth services, such as qq.
+	 * @param string $openId
+	 * @param string $type
+	 * @return mixed false if there is not user correspond to 
+	 *                id. Otherwise return a HuijiUser object.
+	 */
+	public static function newFromOpenId($openId, $type){
+		$dbr = wfGetDB( DB_SLAVE );
+		$res = $dbr->select(
+			'oauth',
+			array(
+				'user_id'
+			),
+			array(
+				'open_id' => $openId,
+				'o_type' => $type
+			),
+			__METHOD__
+		);
+		if ($res){
+			foreach($res as $value){
+				return self::newFromId($value->user_id);
+			}
+		}
+		return false;
+	}
+
+
+	/**
+	 * determine if this user has an linked account of given type.
+	 * @param string $type
+	 * @return boolean
+	 */
+	public function hasLinkedAccount($type){
+		$dbr = wfGetDB( DB_SLAVE );
+		$res = $dbr->select(
+			'oauth',
+			array(
+				'open_id'
+			),
+			array(
+				'user_id' => $this->mId,
+				'o_type' => $type
+			),
+			__METHOD__
+		);
+		if ($res){
+			foreach($res as $value){
+				return true;
+			}
+		}
+		return false;	
+	}
+
+	/**
+	 * get an array of openIds attached to this user.
+	 * @return an associate array with type as key.
+	 *
+	 */
+	public function getOpenIds(){
+		$dbr = wfGetDB(DB_SLAVE);
+		$res = $dbr->select(
+			'oauth',
+			array(
+				'open_id',
+				'o_type'
+			),
+			array(
+				'user_id' => $this->mId,
+			),
+			__METHOD__
+		);
+		$ret = [];
+		if ($res){
+			foreach ($res as $value) {
+				$ret[$value->o_type] = $value->open_id;
+			}
+		}
+		return $ret;
+	}
+	/**
+	 * Remove linked account in database
+	 * @param string $openId the given id.
+	 * @param string $type
+	 */
+	public function unlinkAccount($openId, $type){
+		$dbr = wfGetDB( DB_SLAVE );
+		$res = $dbr->delete(
+			'oauth',
+			array(
+				'open_id' => $openId,
+				'o_type' => $type,
+				'user_id' => $this->mId,
+			),
+			__METHOD__
+		);
+	}
+	/**
+	 * add linked account in database
+	 * @param string $openId the given id.
+	 * @param string $type
+	 */
+	public function linkAccount($openId, $type){
+		$dbr = wfGetDB( DB_SLAVE );
+		$res = $dbr->insert(
+			'oauth',
+			array(
+				'open_id' => $openId,
+				'o_type' => $type,
+				'user_id' => $this->mId,
+			),
+			__METHOD__
+		);
+	}
+	/**
+	 * determine if there is an associate user account in database
+	 * @param string $openId the given id.
+	 * @param string $type
+	 */
+	public static function isOpenIdFree( $openId, $type ){
+		$dbr = wfGetDB( DB_SLAVE );
+		$res = $dbr->select(
+			'oauth',
+			array(
+				'user_id'
+			),
+			array(
+				'open_id' => $openId,
+				'o_type' => $type
+			),
+			__METHOD__
+		);
+		if ($res){
+			foreach($res as $value){
+				return false;
+			}
+		}
+		return true;	
+	}
+	/**
 	 * get current user obj
 	 * @return object user object
 	 */
 	public function getUser(){
-		return $this->$mUser;
+		return $this->mUser;
 	}
 	/**
 	 * check target user is following current user

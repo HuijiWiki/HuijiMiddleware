@@ -5,7 +5,9 @@
  * @file
  * @ingroup Extensions
  */
-
+use MediaWiki\Auth\AuthManager;
+use MediaWiki\Session\SessionManager;
+use MediaWiki\Session\SessionId;
 class HuijiHooks {
 	public static function onSpecialSearchResultsPrepend( $specialSearch, $output, $term ) { 
 		global $wgServer, $wgSitename;
@@ -167,7 +169,23 @@ class HuijiHooks {
 	// );
 		return true;
 	}
+	public static function onSpecialPageBeforeExecute($page, $subpage){
 
+		if ( $page instanceof AuthManagerSpecialPage ){
+			$request = $page->getRequest();
+			$badSessionId = $request->getSession()->getId();
+			$goodSessionId = $request->getVal('sid');
+			if ($goodSessionId != '' && $goodSessionId != $badSessionId ){
+				$session = MediaWiki\Session\SessionManager::singleton()->getSessionById($goodSessionId, false, $request);
+				$session->sessionWithRequest($request);
+				$session->persist();
+				$request->setSessionId(new SessionId($goodSessionId));
+			}
+
+		}
+		return true;
+
+	}
 
 
 }

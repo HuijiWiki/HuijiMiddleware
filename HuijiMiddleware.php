@@ -67,6 +67,7 @@ $wgExtensionCredits['other'][] = array(
 // Initialize an easy to use shortcut:
 $dir = dirname( __FILE__ );
 $dirbasename = basename( $dir );
+require_once "/var/www/html/Confidential.php";
 
 // Register files
 // MediaWiki need to know which PHP files contains your class. It has a
@@ -89,6 +90,28 @@ $wgAutoloadClasses['ApiQueryHuijiUserInfo'] = __DIR__. '/api/ApiQueryHuijiUserIn
 $wgAutoloadClasses['ApiQueryHuijiUsers'] = __DIR__. '/api/ApiQueryHuijiUsers.php';
 $wgAutoloadClasses['ApiQueryAllHuijiUsers'] = __DIR__. '/api/ApiQueryAllHuijiUsers.php';
 $wgAutoloadClasses['FeedbackApi'] = __DIR__. '/api/FeedbackApi.php';
+
+$wgAutoloadClasses['QQLogin\\Auth\\QQPrimaryAuthenticationProvider'] = __DIR__. '/Auth/QQPrimaryAuthenticationProvider.php';
+$wgAutoloadClasses['QQLogin\\Auth\\QQAuthenticationRequest'] = __DIR__. '/Auth/QQAuthenticationRequest.php';
+$wgAutoloadClasses['QQLogin\\Auth\\QQRemoveAuthenticationRequest'] = __DIR__. '/Auth/QQRemoveAuthenticationRequest.php';
+$wgAutoloadClasses['QQLogin\\Auth\\QQServerAuthenticationRequest'] = __DIR__. '/Auth/QQServerAuthenticationRequest.php';
+$wgAutoloadClasses['QQLogin\\Auth\\QQUserInfoAuthenticationRequest'] = __DIR__. '/Auth/QQUserInfoAuthenticationRequest.php';
+
+$wgAutoloadClasses['WeiboLogin\\Auth\\WeiboPrimaryAuthenticationProvider'] = __DIR__. '/Auth/WeiboPrimaryAuthenticationProvider.php';
+$wgAutoloadClasses['WeiboLogin\\Auth\\WeiboAuthenticationRequest'] = __DIR__. '/Auth/WeiboAuthenticationRequest.php';
+$wgAutoloadClasses['WeiboLogin\\Auth\\WeiboRemoveAuthenticationRequest'] = __DIR__. '/Auth/WeiboRemoveAuthenticationRequest.php';
+$wgAutoloadClasses['WeiboLogin\\Auth\\WeiboServerAuthenticationRequest'] = __DIR__. '/Auth/WeiboServerAuthenticationRequest.php';
+$wgAutoloadClasses['WeiboLogin\\Auth\\WeiboUserInfoAuthenticationRequest'] = __DIR__. '/Auth/WeiboUserInfoAuthenticationRequest.php';
+
+$wgAuthManagerAutoConfig['primaryauth']["WeiboLogin\\Auth\\GooglePrimaryAuthenticationProvider"] =  [
+		'class' => 	"WeiboLogin\\Auth\\WeiboPrimaryAuthenticationProvider",
+		'sort' => 2,
+	];
+
+$wgAuthManagerAutoConfig['primaryauth']["QQLogin\\Auth\\GooglePrimaryAuthenticationProvider"] =  [
+		'class' => 	"QQLogin\\Auth\\QQPrimaryAuthenticationProvider",
+		'sort' => 1,
+	];
 require_once( "$IP/extensions/HuijiMiddleware/vendor/autoload.php");
 
 if (!class_exists("PageProps")){
@@ -135,6 +158,7 @@ $wgHooks['APIQuerySiteInfoStatisticsInfo'][] = 'HuijiHooks::onAPIQuerySiteInfoSt
 $wgHooks['APIQuerySiteInfoGeneralInfo'][] = 'HuijiHooks::onAPIQuerySiteInfoGeneralInfo'; 
 $wgHooks['GetPreferences'][] = 'HuijiHooks::onGetPreferences';
 $wgHooks['ParserFirstCallInit'][] = 'HuijiHooks::onSetupParserFunction';
+$wgHooks['SpecialPageBeforeExecute'][] = 'HuijiHooks::onSpecialPageBeforeExecute';
 
 // Register modules
 // See also http://www.mediawiki.org/wiki/Manual:$wgResourceModules
@@ -200,6 +224,14 @@ $wgResourceModules['ext.HuijiMiddleware.feedback'] = array(
 	'remoteExtPath' => 'HuijiMiddleware/' . $dirbasename,
 	'position' => 'bottom',
 );
+$wgResourceModules['ext.HuijiMiddleware.callbackqq.js'] = array(
+	'scripts' => 'modules/ext.HuijiMiddleware.callbackqq.js',
+	'dependencies' => array(
+	),
+	'localBasePath' => $dir,
+	'remoteExtPath' => 'HuijiMiddleware/' . $dirbasename,
+	'position' => 'bottom',
+);
 /* Configuration */
 
 
@@ -232,7 +264,7 @@ $wgOssAvatarPath = "http://av.huijiwiki.com";
 $wgOssStylePath = "";
 $wgOssEndpoint = "oss-cn-qingdao-internal.aliyuncs.com";
 $wgOssFSBucket = "huiji-fs";
-require_once "/var/www/html/Confidential.php";
+
 
 const FS_DISK = 0;
 const FS_OSS = 1;
