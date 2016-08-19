@@ -33,7 +33,7 @@ class QQRemoveAuthenticationRequest extends AuthenticationRequest {
 	public function describeCredentials() {
 		$openid = $this->QQId;
 		return [
-			'provider' => wfMessage( 'QQlogin-auth-service-name' ),
+			'provider' => wfMessage( 'qqlogin-auth-service-name' ),
 			'account' =>
 				new \RawMessage( '$1', [ $openid ] ),
 		];

@@ -111,6 +111,7 @@ class QQPrimaryAuthenticationProvider extends AbstractPrimaryAuthenticationProvi
 				) ];
 				break;
 			case AuthManager::ACTION_REMOVE:
+			case AuthManager::ACTION_UNLINK:
 				$user = User::newFromName( $options['username'] );
 				if ( !$user || !$this->hasConnectedQQAccount( $user ) ) {
 					return [];

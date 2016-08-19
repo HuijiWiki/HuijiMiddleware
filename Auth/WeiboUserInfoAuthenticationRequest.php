@@ -22,10 +22,10 @@ class WeiboUserInfoAuthenticationRequest extends AuthenticationRequest {
 	public function describeCredentials() {
 		$WeiboUser = $this->userInfo['nickname'];
 		return [
-			'provider' => wfMessage( 'Weibologin-auth-service-name' ),
+			'provider' => wfMessage( 'weibologin-auth-service-name' ),
 			'account' =>
 				$WeiboUser ? new \RawMessage( '$1', [ $WeiboUser ] ) :
-					wfMessage( 'Weibologin-auth-service-unknown-account' )
+					wfMessage( 'weibologin-auth-service-unknown-account' )
 		];
 	}
 }

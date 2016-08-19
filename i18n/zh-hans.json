@@ -46,6 +46,8 @@
     "weibologin-link-same":"您已经绑定过该微博账号了，无需再次操作",
     "qqlogin-link-same":"您已经绑定过该QQ账号了，无需再次操作",
     "linkaccounts":"绑定账户",
-    "unlinkaccounts":"解绑账户"
+    "unlinkaccounts":"解绑账户",
+    "qqlogin-auth-service-name":"QQ账号",
+    "weibologin-auth-service-name":"微博账号"
 
 }

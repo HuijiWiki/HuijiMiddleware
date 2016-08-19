@@ -11,12 +11,12 @@ use MediaWiki\Auth\AuthManager;
  * connection between a Weibo account and a local wiki account.
  */
 class WeiboRemoveAuthenticationRequest extends AuthenticationRequest {
-	private $WeiboId = null;
+	private $weiboId = null;
 	public function __construct( $WeiboId ) {
 		$this->WeiboId = $WeiboId;
 	}
 	public function getUniqueId() {
-		return parent::getUniqueId() . ':' . $this->WeiboId;
+		return parent::getUniqueId() . ':' . $this->weiboId;
 	}
 	public function getFieldInfo() {
 		return [];
@@ -28,12 +28,12 @@ class WeiboRemoveAuthenticationRequest extends AuthenticationRequest {
 	 * @return String
 	 */
 	public function getWeiboId() {
-		return $this->WeiboId;
+		return $this->weiboId;
 	}
 	public function describeCredentials() {
 		$openid = $this->WeiboId;
 		return [
-			'provider' => wfMessage( 'Weibologin-auth-service-name' ),
+			'provider' => wfMessage( 'weibologin-auth-service-name' ),
 			'account' =>
 				new \RawMessage( '$1', [ $openid ] ),
 		];

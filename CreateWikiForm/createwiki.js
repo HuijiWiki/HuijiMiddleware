@@ -186,11 +186,11 @@ $(function(){
                     flag = 6;
                 }
                 if(flag==4){
-                    $('.creating-message').append('<p>提升创建者站点权限失败，但不影响站点使用，请创建者联系support@huiji.wiki帮助。<a href="http://'+$('.create-wiki-form #url').val()+'">点击这里</a>跳转至您创建的站点></p>');
+                    $('.creating-message').append('<p>提升创建者站点权限失败，但不影响站点使用，请创建者联系support@huiji.wiki帮助。<a href="http://'+$('.create-wiki-form #url').val()+'?action=purge">点击这里</a>跳转至您创建的站点></p>');
                 }else if(flag==6){
-                    $('.creating-message').append('<p>搜索功能开启失败，但不影响站点使用，请创建者联系support@huiji.wiki帮助。<a href="http://'+$('.create-wiki-form #url').val()+'">点击这里</a>跳转至您创建的站点></p>');
+                    $('.creating-message').append('<p>搜索功能开启失败，但不影响站点使用，请创建者联系support@huiji.wiki帮助。<a href="http://'+$('.create-wiki-form #url').val()+'?action=purge">点击这里</a>跳转至您创建的站点></p>');
                 }else if(flag==0){
-                    window.location.href = 'http://'+$('.create-wiki-form #url').val();
+                    window.location.href = 'http://'+$('.create-wiki-form #url').val()+"?action=purge";
                 }
                 websocket.close();
             }

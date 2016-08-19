@@ -111,6 +111,7 @@ class WeiboPrimaryAuthenticationProvider extends AbstractPrimaryAuthenticationPr
 				) ];
 				break;
 			case AuthManager::ACTION_REMOVE:
+			case AuthManager::ACTION_UNLINK:
 				$user = User::newFromName( $options['username'] );
 				if ( !$user || !$this->hasConnectedWeiboAccount( $user ) ) {
 					return [];

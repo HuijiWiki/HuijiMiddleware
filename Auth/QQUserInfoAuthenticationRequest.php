@@ -22,10 +22,10 @@ class QQUserInfoAuthenticationRequest extends AuthenticationRequest {
 	public function describeCredentials() {
 		$QQUser = $this->userInfo['nickname'];
 		return [
-			'provider' => wfMessage( 'QQlogin-auth-service-name' ),
+			'provider' => wfMessage( 'qqlogin-auth-service-name' ),
 			'account' =>
 				$QQUser ? new \RawMessage( '$1', [ $QQUser ] ) :
-					wfMessage( 'QQlogin-auth-service-unknown-account' )
+					wfMessage( 'qqlogin-auth-service-unknown-account' )
 		];
 	}
 }
