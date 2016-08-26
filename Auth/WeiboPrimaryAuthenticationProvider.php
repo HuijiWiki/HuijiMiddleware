@@ -209,7 +209,7 @@ class WeiboPrimaryAuthenticationProvider extends AbstractPrimaryAuthenticationPr
 				return $resp;
 			}
 		}
-		return $this->beginWeiboAuthentication( $reqs, self::WeiboLOGIN_BUTTONREQUEST_NAME );
+		return $this->beginWeiboAuthentication( $reqs, self::WEIBOLOGIN_BUTTONREQUEST_NAME );
 	}
 	public function continuePrimaryAccountCreation( $user, $creator, array $reqs ) {
 		$request = AuthenticationRequest::getRequestByClass( $reqs,

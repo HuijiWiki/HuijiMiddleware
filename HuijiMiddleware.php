@@ -159,7 +159,7 @@ $wgHooks['APIQuerySiteInfoGeneralInfo'][] = 'HuijiHooks::onAPIQuerySiteInfoGener
 $wgHooks['GetPreferences'][] = 'HuijiHooks::onGetPreferences';
 $wgHooks['ParserFirstCallInit'][] = 'HuijiHooks::onSetupParserFunction';
 $wgHooks['SpecialPageBeforeExecute'][] = 'HuijiHooks::onSpecialPageBeforeExecute';
-
+$wgHooks['EditPageCopyrightWarning'][] = 'HuijiHooks::onEditPageCopyrightWarning';
 // Register modules
 // See also http://www.mediawiki.org/wiki/Manual:$wgResourceModules
 // ResourceLoader modules are the de facto standard way to easily
@@ -293,9 +293,15 @@ $wgDefaultSiteProperty['enable-voteny'] = 0;
 $wgDefaultSiteProperty['enable-pollny'] = 0;
 $wgDefaultSiteProperty['hide-bots-in-concile'] = 0;
 $wgDefaultSiteProperty['enable-semantic-mediawiki'] = 0;
-
+$wgDefaultSiteProperty['enable-blogpage'] = 0;
 //Settings
 $wgSiteSettings['enable-voteny']['level'] = 'C';
 $wgSiteSettings['enable-pollny']['level'] = 'B';
 $wgSiteSettings['hide-bots-in-concile']['level'] = 'NA';
 $wgSiteSettings['enable-semantic-mediawiki']['level'] = 'NA';
+$wgSiteSettings['enable-blogpage'] = array(
+	'title' => '博客组件',
+	'description' => '允许用户在博客命名空间下(NS_BLOG)撰写不开放编辑的文章。',
+	'value' => "<span class='toggle' data-value='false' data-state='true'></span>",
+	'level' => 'A',
+);

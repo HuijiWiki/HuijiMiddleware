@@ -48,6 +48,8 @@
     "linkaccounts":"绑定账户",
     "unlinkaccounts":"解绑账户",
     "qqlogin-auth-service-name":"QQ账号",
-    "weibologin-auth-service-name":"微博账号"
+    "weibologin-auth-service-name":"微博账号",
+    "huiji-copyrightwarning-blog":"请注意您对本页面的所有贡献都默认遵守灰机Blog发布协议，请查看[[h:灰机wiki:用户编辑条款|用户编辑条款]]的细节。您必须保证所提交内容是由您自己创作、不受版权保护或已经获得授权的。",
+    "huiji-copyrightwarning" : "请注意您对本页面的所有贡献都默认遵守{{SITENAME}}发布协议，请查看[[project:版权]]页面获取用户编辑条款的细节。您必须保证所提交内容的来源与本维基的共享协议不相悖。"
 
 }

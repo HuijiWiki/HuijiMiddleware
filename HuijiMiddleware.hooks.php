@@ -9,6 +9,15 @@ use MediaWiki\Auth\AuthManager;
 use MediaWiki\Session\SessionManager;
 use MediaWiki\Session\SessionId;
 class HuijiHooks {
+	public static function onEditPageCopyrightWarning( $title, &$msg ) {
+		if(defined('NS_BLOG') && $title->getNamespace() == NS_BLOG){
+			$msg = ['huiji-copyrightwarning-blog'];
+		} else {
+			$msg = ['huiji-copyrightwarning'];
+		}
+		
+		// $msg = 'huiji-copyrightwarning';
+	}
 	public static function onSpecialSearchResultsPrepend( $specialSearch, $output, $term ) { 
 		global $wgServer, $wgSitename;
 		$globalSearch = SpecialPage::getTitleFor('GlobalSearch');
