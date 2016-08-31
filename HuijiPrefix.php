@@ -9,7 +9,7 @@ class HuijiPrefix{
 	 * @return bool
 	 */
 	public static function hasPrefix( $prefix ){
-		$result = self::getAllPrefix();
+		$result = self::getAllPrefix(true);
 		if (in_array($prefix, $result)){
 			return true;
 		} else {
