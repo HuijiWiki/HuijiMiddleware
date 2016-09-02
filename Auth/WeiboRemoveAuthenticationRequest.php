@@ -13,13 +13,13 @@ use MediaWiki\Auth\AuthManager;
 class WeiboRemoveAuthenticationRequest extends AuthenticationRequest {
 	private $weiboId = null;
 	public function __construct( $WeiboId ) {
-		$this->WeiboId = $WeiboId;
+		$this->weiboId = $WeiboId;
 	}
 	public function getUniqueId() {
 		return parent::getUniqueId() . ':' . $this->weiboId;
 	}
 	public function getFieldInfo() {
-		return [ $this->QQId => [
+		return [ $this->weinoId => [
 			'type' => 'button',
 			'label' => 'unlink-account-weibo',
 			'help' => 'unlink-accounts-weibo-help'
