@@ -594,8 +594,9 @@ class WikiSite extends Site{
 			$this->cache->set($key, $s->site_rating);
 			return $s->site_rating;
 		}
-		$this->cache->set($key, 'NA');
-		return 'NA';
+		//Since 2016.08.31, lowest rating is E.
+		$this->cache->set($key, 'E');
+		return 'E';
 
 	}
 	/**

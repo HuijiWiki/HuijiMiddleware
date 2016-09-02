@@ -19,7 +19,11 @@ class QQRemoveAuthenticationRequest extends AuthenticationRequest {
 		return parent::getUniqueId() . ':' . $this->QQId;
 	}
 	public function getFieldInfo() {
-		return [];
+		return [ $this->QQId => [
+			'type' => 'button',
+			'label' => 'Remove QQ',
+			'help' => null
+		]];
 	}
 	/**
 	 * Returns the QQ ID, that should be removed from the valid

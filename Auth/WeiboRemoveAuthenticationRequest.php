@@ -19,7 +19,11 @@ class WeiboRemoveAuthenticationRequest extends AuthenticationRequest {
 		return parent::getUniqueId() . ':' . $this->weiboId;
 	}
 	public function getFieldInfo() {
-		return [];
+		return [ $this->QQId => [
+			'type' => 'button',
+			'label' => 'unlink-account-weibo',
+			'help' => 'unlink-accounts-weibo-help'
+		]];
 	}
 	/**
 	 * Returns the Weibo ID, that should be removed from the valid
