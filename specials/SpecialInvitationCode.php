@@ -34,7 +34,7 @@ class SpecialInvitationCode extends SpecialPage {
 		$this->setHeaders();
 		// If the user doesn't have the required 'SendToFollowers' permission, display an error
 		if ( !$user->isAllowed( 'getinvitationcode' ) ) {
-			$out->permissionRequired( 'getinvitationcode' );
+			//$out->permissionRequired( 'getinvitationcode' );
 			return;
 		}
 		$out->setPageTitle( $this->msg( 'huijimiddleware-invitationcode' ) );
