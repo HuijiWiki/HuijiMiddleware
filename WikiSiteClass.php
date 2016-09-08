@@ -813,7 +813,7 @@ class WikiSite extends Site{
 
 } 
 class RatingCompare{
-	public static $NA = 100;
+	public static $NA = -1;
 	public static $E = 0;
 	public static $D = 1;
 	public static $C = 2;
