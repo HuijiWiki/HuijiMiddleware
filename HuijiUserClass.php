@@ -503,7 +503,7 @@ class HuijiUser {
 		}
 		$key2 = wfForeignMemcKey('huiji', '', 'user_title', 'gift', $this->mUser->getId());
 		$suffixResult = $wgMemc->get($key2);
-		if ($key2 == ''){
+		if ($suffixResult == ''){
 			$suffixResult = [];
 			$row = $dbr->select(
 					'user_title',
