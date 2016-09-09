@@ -466,6 +466,7 @@ class HuijiUser {
 	 *
 	 */
 	public function getDesignation($splited = false, $plaintext = false){
+		global $wgMemc;
 		if ($this->mUser == ''){
 			return '';
 		}
@@ -476,42 +477,52 @@ class HuijiUser {
 			return $this->mDesignation;
 		} 
 		$cache = self::getUserCache();
-
 		$dbr = wfGetDB(DB_SLAVE);
-		$prefixResult = $suffixResult = [];
-		$row = $dbr->select(
-				'user_title',
-				array(
-					'title_content',
-				),
-				array(
-					'title_from' => 'system_gift',
-					'user_to_id' => $this->mUser->getId(),
-					'is_open' => '2'
-				),
-				__METHOD__
-			);
-		if ( $row ) {
-			foreach ($row as $key => $value) {
-				$prefixResult[] = $value->title_content;
+		$key = wfForeignMemcKey('huiji', '', 'user_title', 'system_gift', $this->mUser->getId());
+		$prefixResult = $wgMemc->get($key);
+		if ($prefixResult == ''){
+			$prefixResult = [];
+			$row = $dbr->select(
+					'user_title',
+					array(
+						'title_content',
+					),
+					array(
+						'title_from' => 'system_gift',
+						'user_to_id' => $this->mUser->getId(),
+						'is_open' => '2'
+					),
+					__METHOD__
+				);
+			if ( $row ) {
+				foreach ($row as $key => $value) {
+					$prefixResult[] = $value->title_content;
+				}
 			}
+			$wgMemc->set($key, $prefixResult, 60 * 60 * 24 * 90);
 		}
-		$row = $dbr->select(
-				'user_title',
-				array(
-					'title_content',
-				),
-				array(
-					'title_from' => 'gift',
-					'user_to_id' => $this->mUser->getId(),
-					'is_open' => '2'
-				),
-				__METHOD__
-			);
-		if ( $row ) {
-			foreach ($row as $key => $value) {
-				$suffixResult[] = $value->title_content;
+		$key2 = wfForeignMemcKey('huiji', '', 'user_title', 'gift', $this->mUser->getId());
+		$suffixResult = $wgMemc->get($key2);
+		if ($key2 == ''){
+			$suffixResult = [];
+			$row = $dbr->select(
+					'user_title',
+					array(
+						'title_content',
+					),
+					array(
+						'title_from' => 'gift',
+						'user_to_id' => $this->mUser->getId(),
+						'is_open' => '2'
+					),
+					__METHOD__
+				);
+			if ( $row ) {
+				foreach ($row as $key => $value) {
+					$suffixResult[] = $value->title_content;
+				}
 			}
+			$wgMemc->set($key2, $suffixResult, 60 * 60 * 24 * 90);
 		}
 		$prefix = implode(',', $prefixResult );
 		$suffix = implode(',', $suffixResult );
