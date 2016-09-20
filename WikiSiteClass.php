@@ -650,17 +650,17 @@ class WikiSite extends Site{
 		if (empty($this->getBestRank())){
 			return 'NA';
 		}
-		if (($this->getBestRank() == 1) and ($stats['articles'] > 500) and ($stats['followers'] > 250) and ($stats['edits'] > 10000 ) ){
+		if (($this->getBestRank() == 10) and ($stats['articles'] > 1000) and ($stats['followers'] > 250) and ($stats['edits'] > 10000 ) ){
 			$this->mSiteRating = 'A';
 		} else {
-			if (($this->getBestRank() <= 3) and ($stats['articles'] > 100) and ($stats['followers'] > 50) and ($stats['edits'] > 2000) ){
+			if ( ($stats['articles'] > 200) and ($stats['followers'] > 50) and ($stats['edits'] > 2000) ){
 				$this->mSiteRating = 'B';
 			} else {
-				if ( ($this->getBestRank() <= 10) and ($stats['articles'] > 20) and ($stats['followers'] > 10) ){
+				if ( ($stats['articles'] > 40) and ($stats['followers'] > 10) ){
 					$this->mSiteRating = 'C';
 				}
 				else {
-					if ($this->getBestRank() <= 50){
+					if ( ($stats['articles'] > 10) ){
 						$this->mSiteRating = 'D';
 					}	else {
 						$this->mSiteRating = 'E';
