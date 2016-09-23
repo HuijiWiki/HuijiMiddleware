@@ -68,6 +68,7 @@ $wgExtensionCredits['other'][] = array(
 $dir = dirname( __FILE__ );
 $dirbasename = basename( $dir );
 require_once "/var/www/html/Confidential.php";
+require_once __DIR__."/EventEmitter/EventEmitterClass.php";
 
 // Register files
 // MediaWiki need to know which PHP files contains your class. It has a
@@ -102,6 +103,8 @@ $wgAutoloadClasses['WeiboLogin\\Auth\\WeiboAuthenticationRequest'] = __DIR__. '/
 $wgAutoloadClasses['WeiboLogin\\Auth\\WeiboRemoveAuthenticationRequest'] = __DIR__. '/Auth/WeiboRemoveAuthenticationRequest.php';
 $wgAutoloadClasses['WeiboLogin\\Auth\\WeiboServerAuthenticationRequest'] = __DIR__. '/Auth/WeiboServerAuthenticationRequest.php';
 $wgAutoloadClasses['WeiboLogin\\Auth\\WeiboUserInfoAuthenticationRequest'] = __DIR__. '/Auth/WeiboUserInfoAuthenticationRequest.php';
+
+//$wgAutoloadClasses['EventEmitter'] = __DIR__. '/EventEmitter/EventEmitterClass.php';
 
 $wgAuthManagerAutoConfig['primaryauth']["WeiboLogin\\Auth\\GooglePrimaryAuthenticationProvider"] =  [
 		'class' => 	"WeiboLogin\\Auth\\WeiboPrimaryAuthenticationProvider",
@@ -231,6 +234,12 @@ $wgResourceModules['ext.HuijiMiddleware.callbackqq.js'] = array(
 	'localBasePath' => $dir,
 	'remoteExtPath' => 'HuijiMiddleware/' . $dirbasename,
 	'position' => 'bottom',
+);
+$wgResourceModules['ext.HuijiMiddleware.eventemitter'] = array(
+	'scripts' => 'EventEmitter/EventEmitter.js',
+	'localBasePath' => $dir,
+	'remoteExtPath' => 'HuijiMiddleware/' . $dirbasename,
+	'position' => 'bottom',	
 );
 /* Configuration */
 

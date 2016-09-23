@@ -19,7 +19,7 @@ class WikiSite extends Site{
 	private static $siteCache;
 
 	function __construct() {
-		$this->cache = wfGetCache( CACHE_ANYTHING );	
+		$this->cache = wfGetCache( CACHE_MEMCACHED );	
 		// if (HuijiPrefix::hasPrefix($prefix)){
 		// 	$this->mPrefix = $prefix;					
 		// } else {
