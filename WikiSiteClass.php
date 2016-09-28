@@ -267,31 +267,25 @@ class WikiSite extends Site{
 	 */
 	public function getStats( $formatted = true ){
 
-		$key = $this->getCustomKey('getStats');
-		$data = $this->cache->get($key);
-		if ($data != ''){
-			$res = $data;
+		if ($this->mPrefix === ''){
+			$res['followers'] = 0;
+			$res['articles'] = 0;
+			$res['users'] = 0;
+			$res['pages'] = 0;
+			$res['edits'] = 0;
+			$res['files'] = 0;	
 		} else {
-			if ($this->mPrefix === ''){
-				$res['followers'] = 0;
-				$res['articles'] = 0;
-				$res['users'] = 0;
-				$res['pages'] = 0;
-				$res['edits'] = 0;
-				$res['files'] = 0;	
-			} else {
-				$res = array();
-				$res['followers'] = UserSiteFollow::getFollowerCount( $this->mPrefix );
-				$arr = AllSitesInfo::getPageInfoByPrefix($this->mPrefix);
-				$res['articles'] = $arr['totalArticles'];
-				$res['users'] = $arr['totalUsers'];
-				$res['pages'] = $arr['totalPages'];
-				$res['edits'] = $arr['totalEdits'];
-				$res['files'] = $arr['totalImages'];	
-				$this->cache->set($key, $res, 60);
-			}
-				
+			$res = array();
+			$res['followers'] = UserSiteFollow::getFollowerCount( $this->mPrefix );
+			$arr = AllSitesInfo::getPageInfoByPrefix($this->mPrefix);
+			$res['articles'] = $arr['totalArticles'];
+			$res['users'] = $arr['totalUsers'];
+			$res['pages'] = $arr['totalPages'];
+			$res['edits'] = $arr['totalEdits'];
+			$res['files'] = $arr['totalImages'];	
+			
 		}
+				
 		if ( $formatted ) { 
 			foreach($res as $key=>$value){
 				$res[$key] = HuijiFunctions::format_nice_number($value);

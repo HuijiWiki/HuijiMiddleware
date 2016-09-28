@@ -1,4 +1,5 @@
 <?php
+
 $wgHooks['NewRevisionFromEditComplete'][] = 'EventEmitter::onNewRevisionFromEditComplete';
 $wgHooks['ArticleDelete'][] = 'EventEmitter::onArticleDelete';
 $wgHooks['ArticleUndelete'][] = 'EventEmitter::onArticleUndelete';
@@ -19,14 +20,75 @@ $wgHooks['SocialProfile::unfollowUser'][] = "EventEmitter::onUnfollowUser";
 $wgHooks['SocialProfile::followSite'][] = "EventEmitter::onFollowSite";
 $wgHooks['SocialProfile::unfollowSite'][] = "EventEmitter::onUnfollowSite";
 $wgHooks['BeforePageDisplay'][] = "EventEmitter::onBeforePageDisplay";
+$wgHooks['SocialProfile::advancement'][] = "EventEmitter::onAdvancement";
 
+
+include("httpProducer.php");
 class EventEmitter{
 
 	/**
 	 * Called when a new edit is made
 	 */
+
 	public static function onNewRevisionFromEditComplete( $article, Revision $rev, $baseID, User $user ) {
-		global $wgHuijiPrefix;
+       		global $wgHuijiPrefix, $wgSitename,$wgIsProduction;
+//        	if($wgIsProduction == false) return;
+        	if($rev == null || $article == null || $user == null) return;
+
+		//content
+		$content = $rev->getContent(Revision::RAW);
+		//user name 
+		$user_name = $user->getName();
+                //use id
+		$user_id = $user->getId();
+		//site prefix
+		$site_prefix = $wgHuijiPrefix;
+		//site name
+                $site_name = $wgSitename;
+		//page title
+                $page_title = $article->getTitle()->getText();
+		//page id
+                $page_id = $article->getId();
+		//page namespace
+                $page_ns = $article->getTitle()->getNamespace();
+		//page isNew
+		$page_isNew = $rev->getPrevious() == null ? true : false;
+		//timestamp
+		$timestamp = $rev->getTimestamp();
+		//client ip
+	        $client_ip = isset($_SERVER[ 'HTTP_X_FORWARDED_FOR' ]) ? $_SERVER[ 'HTTP_X_FORWARDED_FOR' ] : "";
+		//client userAgent
+                $client_userAgent = isset($_SERVER[ 'HTTP_USER_AGENT' ]) ? $_SERVER[ 'HTTP_USER_AGENT' ] : "";
+       		//page category
+		if($content){
+        		$options = $content->getContentHandler()->makeParserOptions( 'canonical' );
+        		$output = $content->getParserOutput( $article->getTitle(), $rev->getId(), $options,true);
+        		$page_category = array_map( 'strval', array_keys( $output->getCategories() ) );
+		}else{
+			$page_category = array();
+		}		
+
+
+	        $data = array(
+			'user_name' => $user_name,
+                	'user_id' => $user_id,
+                	'site_prefix' => $wgHuijiPrefix,
+                	'site_name' => $wgSitename,
+                	'page_title' => $page_title,
+                	'page_id' => $page_id,
+               	 	'page_ns' => $page_ns,
+			'page_category' => $page_category,
+			'page_isNew' => $page_isNew,
+			//'timestamp' => isset($_SERVER[ 'REQUEST_TIME' ]) ? $_SERVER[ 'REQUEST_TIME' ] : "",
+			'timestamp' => $timestamp,
+			
+	                'client_ip'=> $client_ip,
+                	'client_userAgent' => $client_userAgent,
+		); 
+	
+
+		HttpProducer::getIns()->process($wgHuijiPrefix.$page_id,"edit",json_encode($data));
+		wfErrorLog(json_encode($data),"/var/log/mediawiki/SocialProfile.log");	
 
 		//format payload
 
@@ -132,7 +194,7 @@ class EventEmitter{
 	/**
 	 * Called when an achievement is send 
 	 */
-	public static function onAchievementSend( int $receiverId, int $giftId, int $sgId, $description ){
+	public static function onAchievementSend($receiverId, $giftId, $sgId, $description ){
 
 	}
 
@@ -177,6 +239,13 @@ class EventEmitter{
 	 */
 	public static function onBeforePageDisplay(OutputPage &$out, Skin &$skin){
 		$out->addModules(['ext.HuijiMiddleware.eventemitter']);
+	}
+
+	/**
+	 * Called when a user levels up
+	 */
+	public static function onAdvancement( $userId, $level ){
+
 	}
 
 }
