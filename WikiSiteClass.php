@@ -288,7 +288,7 @@ class WikiSite extends Site{
 				$res['pages'] = $arr['totalPages'];
 				$res['edits'] = $arr['totalEdits'];
 				$res['files'] = $arr['totalImages'];	
-				$this->cache->set($key, $res, 24 * 60 * 60);
+				$this->cache->set($key, $res, 60);
 			}
 				
 		}
