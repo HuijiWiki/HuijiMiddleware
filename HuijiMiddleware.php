@@ -104,6 +104,10 @@ $wgAutoloadClasses['WeiboLogin\\Auth\\WeiboRemoveAuthenticationRequest'] = __DIR
 $wgAutoloadClasses['WeiboLogin\\Auth\\WeiboServerAuthenticationRequest'] = __DIR__. '/Auth/WeiboServerAuthenticationRequest.php';
 $wgAutoloadClasses['WeiboLogin\\Auth\\WeiboUserInfoAuthenticationRequest'] = __DIR__. '/Auth/WeiboUserInfoAuthenticationRequest.php';
 
+$wgAutoloadClasses['OssFileBackend'] = __DIR__ . '/HuijiFS/OssFileBackend.php';
+$wgAutoloadClasses['OssFileBackendList'] = $dir . '/HuijiFS/OssFileBackend.php';
+$wgAutoloadClasses['AzureFileBackendDirList'] = $dir . '/HuijiFS/OssFileBackend.php';
+$wgAutoloadClasses['AzureFileBackendFileList'] = $dir . '/HuijiFS/OssFileBackend.php';
 //$wgAutoloadClasses['EventEmitter'] = __DIR__. '/EventEmitter/EventEmitterClass.php';
 
 $wgAuthManagerAutoConfig['primaryauth']["WeiboLogin\\Auth\\GooglePrimaryAuthenticationProvider"] =  [
@@ -241,6 +245,7 @@ $wgResourceModules['ext.HuijiMiddleware.eventemitter'] = array(
 	'remoteExtPath' => 'HuijiMiddleware/' . $dirbasename,
 	'position' => 'bottom',	
 );
+
 /* Configuration */
 
 
@@ -272,8 +277,48 @@ $wgUseOss = true;
 $wgOssAvatarPath = "http://av.huijiwiki.com";
 $wgOssStylePath = "";
 $wgOssEndpoint = "oss-cn-qingdao-internal.aliyuncs.com";
+$wgOssPath = "huijistatic.com";
 $wgOssFSBucket = "huiji-fs";
 
+$wgFileBackends[] = array(
+    'name'         => 'localOss',
+    'class'        => 'OssFileBackend',
+    'lockManager'  => 'nullLockManager',
+);
+
+$wgLocalFileRepo = array (
+    'class'             => 'LocalRepo',
+    'name'              => 'local',
+    'backend'           => 'localOss',
+    'scriptDirUrl'      => $wgScriptPath,
+    'scriptExtension'   => $wgScriptExtension,
+    'hashLevels'        => 2,
+    'deletedHashLevels' => 2,
+    'zones'             => array(
+        'public'  => array( 
+        	'container' => 'huiji-public',
+        	'url'       => 'http://huiji-public.'.$wgOssPath.'/'.$wgHuijiPrefix.'/uploads',
+        	'directory' => $wgHuijiPrefix.'/uploads/',
+         ),
+        'thumb'   => array( 
+        	'container' => 'huiji-thumb',
+        	'url'       => 'http://huiji-thumb.'.$wgOssPath.'/'.$wgHuijiPrefix.'/uploads/thumb',
+        	'directory' => $wgHuijiPrefix.'/uploads/thumb',
+         ),
+        'temp'    => array( 
+        	'container' => 'huiji-temp',
+        	'url'       => 'http://huiji-temp.'.$wgOssPath.'/'.$wgHuijiPrefix.'/uploads/temp',
+        	'directory' => $wgHuijiPrefix.'/uploads/temp',
+        ),
+        'deleted' => array( 
+        	'container' => 'huiji-deleted',
+        	'url'       => 'http://huiji-deleted.'.$wgOssPath.'/'.$wgHuijiPrefix.'/uploads/deleted',
+        	'directory' => $wgHuijiPrefix.'/uploads/deleted',
+        ),
+    )
+);
+
+$wgImgAuthPublicTest = false;
 
 const FS_DISK = 0;
 const FS_OSS = 1;
