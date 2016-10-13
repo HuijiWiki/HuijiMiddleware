@@ -35,6 +35,22 @@ class Huiji{
         }
 		return $rank;
 	}
+
+	public function getCirrusSearchInterwikiSource(){
+		global $wgHuijiPrefix;
+		$rankings = $this->getRankings();
+		$wgCirrusSearchInterwikiSources = [];
+		foreach($rankings as $site){
+			$prefix = $site['site_prefix'];
+        	$wgCirrusSearchInterwikiSources[$prefix] = WikiSite::DbIdFromPrefix($prefix);
+        	$wgCirrusSearchWikiToNameMap[$prefix] = WikiSite::DbIdFromPrefix($prefix);
+        	if ($site['site_rank'] > 10){
+        		break;
+        	}
+		}		
+		unset($wgCirrusSearchInterwikiSources[$wgHuijiPrefix]);
+		return $wgCirrusSearchInterwikiSources;
+	}
 	/**
 	 * count all site edits,files,pages,sites,users,
 	 * @return array 

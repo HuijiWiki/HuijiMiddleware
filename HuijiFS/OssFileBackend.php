@@ -24,7 +24,6 @@
  * @author Robert Vogel
  * @author Thai Phan
  */
-use OSS;
 use MediaWiki\Logger\LoggerFactory;
 use OSS\Core\OssException;
 

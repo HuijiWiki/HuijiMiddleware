@@ -155,7 +155,6 @@ $wgSpecialPages['invitationcode'] = 'SpecialInvitationCode';
 $wgSpecialPages['CreateWiki'] = 'SpecialCreateWiki';
 
 // Hooks
-$wgHooks['SpecialSearchResultsPrepend'][] = 'HuijiHooks::onSpecialSearchResultsPrepend';
 $wgHooks['LoadExtensionSchemaUpdates'][] = 'HuijiHooks::addTables';
 $wgHooks['GetDoubleUnderscoreIDs'][] = 'HuijiHooks::onGetDoubleUnderscoreIDs';
 $wgHooks['OpenSearchUrls'][] = 'HuijiHooks::onOpenSearchUrls';
@@ -359,3 +358,4 @@ $wgSiteSettings['enable-blogpage'] = array(
 	'value' => "<span class='toggle' data-value='false' data-state='true'></span>",
 	'level' => 'B',
 );
+
