@@ -1,5 +1,5 @@
 <?php
-
+/*
 $wgHooks['NewRevisionFromEditComplete'][] = 'EventEmitter::onNewRevisionFromEditComplete';
 $wgHooks['ArticleDelete'][] = 'EventEmitter::onArticleDelete';
 $wgHooks['ArticleUndelete'][] = 'EventEmitter::onArticleUndelete';
@@ -24,7 +24,7 @@ $wgHooks['SocialProfile::advancement'][] = "EventEmitter::onAdvancement";
 
 
 include("httpProducer.php");
-class EventEmitter{
+*/class EventEmitter{
 
 	/**
 	 * Called when a new edit is made
