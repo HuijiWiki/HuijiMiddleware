@@ -297,7 +297,7 @@ $wgLocalFileRepo = array (
         'public'  => array( 
         	'container' => 'huiji-public',
         	'url'       => 'http://huiji-public.'.$wgOssPath.'/'.$wgHuijiPrefix.'/uploads',
-        	'directory' => $wgHuijiPrefix.'/uploads/',
+        	'directory' => $wgHuijiPrefix.'/uploads',
          ),
         'thumb'   => array( 
         	'container' => 'huiji-thumb',
