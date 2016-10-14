@@ -74,6 +74,7 @@ class OssFileBackend extends FileBackendStore {
 		// $container = preg_replace( '#-$#', '', $container );
 		// $container = preg_replace( '#-{2,}#', '-', $container );
 		$container = preg_replace( '#^huiji_sites-[^-]*-#', '', $container);
+		$container = preg_replace( '#^huiji_home-#', '', $container);
 		return $container;
 	}
 	/**
@@ -686,14 +687,14 @@ class OssFileBackend extends FileBackendStore {
 		if ( $e->getMessage() ) {
 			trigger_error( "$func:" . $e->getMessage(), E_USER_WARNING );
 		}
-		// $this->logger->error('OssFileBackend',
-		// 	get_class( $e ) . " in '{$func}' (given '" . FormatJson::encode( $params ) . "')" .
-		// 	( $e->getMessage() ? ": {$e->getMessage()}" : "" ) 
-		// );
-		wfDebugLog( 'OssFileBackend',
+		$this->logger->error(
 			get_class( $e ) . " in '{$func}' (given '" . FormatJson::encode( $params ) . "')" .
-			( $e->getMessage() ? ": {$e->getMessage()}" : "" )
+			( $e->getMessage() ? ": {$e->getMessage()}" : "" ) 
 		);
+		// wfDebugLog( 'OssFileBackend',
+		// 	get_class( $e ) . " in '{$func}' (given '" . FormatJson::encode( $params ) . "')" .
+		// 	( $e->getMessage() ? ": {$e->getMessage()}" : "" )
+		// );
 	}
 }
 /*

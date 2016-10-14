@@ -1,6 +1,6 @@
 <?php
 
-/*$wgHooks['NewRevisionFromEditComplete'][] = 'EventEmitter::onNewRevisionFromEditComplete';
+$wgHooks['NewRevisionFromEditComplete'][] = 'EventEmitter::onNewRevisionFromEditComplete';
 $wgHooks['ArticleDelete'][] = 'EventEmitter::onArticleDelete';
 $wgHooks['ArticleUndelete'][] = 'EventEmitter::onArticleUndelete';
 $wgHooks['Comment::add'][] = "EventEmitter::onCommentAdd";
@@ -23,7 +23,7 @@ $wgHooks['BeforePageDisplay'][] = "EventEmitter::onBeforePageDisplay";
 $wgHooks['SocialProfile::advancement'][] = "EventEmitter::onAdvancement";
 
 
-include("httpProducer.php");*/
+include("httpProducer.php");
 class EventEmitter{
 
 	/**
@@ -74,7 +74,7 @@ class EventEmitter{
                 	'user_id' => $user_id,
                 	'site_prefix' => $wgHuijiPrefix,
                 	'site_name' => $wgSitename,
-                	'page_title' => $page_title,
+                	'page_title' =>utf8_encode($page_title),
                 	'page_id' => $page_id,
                	 	'page_ns' => $page_ns,
 			'page_category' => $page_category,
@@ -87,7 +87,8 @@ class EventEmitter{
 		); 
 	
 
-		HttpProducer::getIns()->process($wgHuijiPrefix.$page_id,"edit",json_encode($data));
+		HttpProducer::getIns()->process($wgHuijiPrefix.$page_id,"edit",json_encode($data, JSON_UNESCAPED_UNICODE));
+
 		wfErrorLog(json_encode($data),"/var/log/mediawiki/SocialProfile.log");	
 
 		//format payload
