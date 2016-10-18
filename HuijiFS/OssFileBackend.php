@@ -278,12 +278,12 @@ class OssFileBackend extends FileBackendStore {
 			return $status; // nothing to do
 		}
 		// Restrict container from end-users...
-		try {
-			$acl = OSS\OssClient::OSS_ACL_TYPE_PRIVATE;
-			$this->ossClient->putObjectAcl( $fullCont, $dir, $acl );
-		} catch ( OssException $e ) {
-			$this->handleException( $e, $status, __METHOD__, $params );
-		}
+		// try {
+		// 	$acl = OSS\OssClient::OSS_ACL_TYPE_PRIVATE;
+		// 	$this->ossClient->putObjectAcl( $fullCont, $dir, $acl );
+		// } catch ( OssException $e ) {
+		// 	$this->handleException( $e, $status, __METHOD__, $params );
+		// }
 		return $status;
 	}
 	/**
@@ -293,12 +293,12 @@ class OssFileBackend extends FileBackendStore {
 	protected function doPublishInternal( $fullCont, $dir, array $params ) {
 		$status = Status::newGood();
 		// Unrestrict container from end-users...
-		try {
-			$acl = OSS\OssClient::OSS_ACL_TYPE_PUBLIC_READ;
-			$this->ossClient->putObjectAcl( $fullCont, $dir, $acl );
-		} catch ( OssException $e ) {
-			$this->handleException( $e, $status, __METHOD__, $params );
-		}
+		// try {
+		// 	$acl = OSS\OssClient::OSS_ACL_TYPE_PUBLIC_READ;
+		// 	$this->ossClient->putObjectAcl( $fullCont, $dir, $acl );
+		// } catch ( OssException $e ) {
+		// 	$this->handleException( $e, $status, __METHOD__, $params );
+		// }
 		return $status;
 	}
 	/**
