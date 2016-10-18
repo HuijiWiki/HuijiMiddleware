@@ -280,7 +280,7 @@ class OssFileBackend extends FileBackendStore {
 		// Restrict container from end-users...
 		try {
 			$acl = OSS\OssClient::OSS_ACL_TYPE_PRIVATE;
-			$this->ossClient->putBucketAcl( $fullCont, $acl );
+			$this->ossClient->putObjectAcl( $fullCont, $dir, $acl );
 		} catch ( OssException $e ) {
 			$this->handleException( $e, $status, __METHOD__, $params );
 		}
@@ -295,7 +295,7 @@ class OssFileBackend extends FileBackendStore {
 		// Unrestrict container from end-users...
 		try {
 			$acl = OSS\OssClient::OSS_ACL_TYPE_PUBLIC_READ;
-			$this->ossClient->putBucketAcl( $fullCont, $acl );
+			$this->ossClient->putObjectAcl( $fullCont, $dir, $acl );
 		} catch ( OssException $e ) {
 			$this->handleException( $e, $status, __METHOD__, $params );
 		}
