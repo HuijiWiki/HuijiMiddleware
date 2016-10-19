@@ -73,7 +73,7 @@ class OssFileBackend extends FileBackendStore {
 		// $container = preg_replace( '#^-#', '', $container );
 		// $container = preg_replace( '#-$#', '', $container );
 		// $container = preg_replace( '#-{2,}#', '-', $container );
-		$container = preg_replace( '#^huiji_sites-[^-]*-huiji#', 'huiji', $container);
+		$container = preg_replace( '#^huiji_sites-.*-huiji-#', 'huiji-', $container);
 		$container = preg_replace( '#^huiji_home-#', '', $container);
 		return $container;
 	}
