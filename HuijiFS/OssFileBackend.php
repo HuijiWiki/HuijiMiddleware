@@ -73,8 +73,10 @@ class OssFileBackend extends FileBackendStore {
 		// $container = preg_replace( '#^-#', '', $container );
 		// $container = preg_replace( '#-$#', '', $container );
 		// $container = preg_replace( '#-{2,}#', '-', $container );
-		$container = preg_replace( '#^huiji_sites-.*-huiji-#', 'huiji-', $container);
-		$container = preg_replace( '#^huiji_home-#', '', $container);
+		$container = preg_replace( '#.*temp$#', 'huiji-temp', $container);
+		$container = preg_replace( '#.*public$#', 'huiji-public', $container);
+		$container = preg_replace( '#.*deleted$#', 'huiji-deleted', $container);
+		$container = preg_replace( '#.*thumb$#', 'huiji-thumb', $container);
 		return $container;
 	}
 	/**
