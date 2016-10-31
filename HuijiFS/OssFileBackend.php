@@ -343,7 +343,7 @@ class OssFileBackend extends FileBackendStore {
 			// @TODO: pass $metadata to addMissingMetadata() to avoid round-trips
 			$this->addMissingMetadata( $srcCont, $srcRel, $params['src'], $metadata );
 			$timestamp = $metadata[strtolower(OSS\OssClient::OSS_LAST_MODIFIED)];
-			$size = $metadata[strtolower(OSS\OssClient::OSS_CONTENT_LENGTH)];
+			$size = $metadata['last-modified'];
 			$sha1 = $metadata['x-oss-meta-sha1base36'];
 			$stat = array(
 				'mtime' => wfTimestamp( TS_MW, $timestamp ),
