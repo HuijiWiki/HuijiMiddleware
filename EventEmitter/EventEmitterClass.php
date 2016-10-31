@@ -1,5 +1,5 @@
 <?php
-
+/*
 $wgHooks['NewRevisionFromEditComplete'][] = 'EventEmitter::onNewRevisionFromEditComplete';
 $wgHooks['ArticleDelete'][] = 'EventEmitter::onArticleDelete';
 $wgHooks['ArticleUndelete'][] = 'EventEmitter::onArticleUndelete';
@@ -23,7 +23,7 @@ $wgHooks['BeforePageDisplay'][] = "EventEmitter::onBeforePageDisplay";
 $wgHooks['SocialProfile::advancement'][] = "EventEmitter::onAdvancement";
 
 
-include("httpProducer.php");
+include("httpProducer.php");*/
 class EventEmitter{
 
 	/**
