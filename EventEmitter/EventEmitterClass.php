@@ -1,5 +1,5 @@
 <?php
-/*
+
 $wgHooks['NewRevisionFromEditComplete'][] = 'EventEmitter::onNewRevisionFromEditComplete';
 $wgHooks['ArticleDelete'][] = 'EventEmitter::onArticleDelete';
 $wgHooks['ArticleUndelete'][] = 'EventEmitter::onArticleUndelete';
@@ -24,7 +24,7 @@ $wgHooks['SocialProfile::advancement'][] = "EventEmitter::onAdvancement";
 
 
 include("httpProducer.php");
-*/class EventEmitter{
+class EventEmitter{
 
 	/**
 	 * Called when a new edit is made
@@ -41,6 +41,8 @@ include("httpProducer.php");
 		$user_name = $user->getName();
                 //use id
 		$user_id = $user->getId();
+		//user is bot
+		$user_isBot = $user->isAllowed('bot');
 		//site prefix
 		$site_prefix = $wgHuijiPrefix;
 		//site name
@@ -72,9 +74,10 @@ include("httpProducer.php");
 	        $data = array(
 			'user_name' => $user_name,
                 	'user_id' => $user_id,
+			'user_isBot'=>$user_isBot,
                 	'site_prefix' => $wgHuijiPrefix,
                 	'site_name' => $wgSitename,
-                	'page_title' =>utf8_encode($page_title),
+                	'page_title' =>$page_title,
                 	'page_id' => $page_id,
                	 	'page_ns' => $page_ns,
 			'page_category' => $page_category,
