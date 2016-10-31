@@ -60,7 +60,7 @@ class OssFileBackend extends FileBackendStore {
         try {
             $this->ossClient = new Oss\OssClient($accessKeyId, $accessKeySecret, $endpoint);
         } catch (OssException $e) {
-            wfDebug($e->getMessage());
+            $this->logger->warn($e);
         }
 	}
 	/**
@@ -350,6 +350,7 @@ class OssFileBackend extends FileBackendStore {
 				'size'  => $size,
 				'sha1'  => $sha1
 			);
+			$this->logger->debug("doGetFileStat is returning ", ['src' => $params, 'stat' => $stat]);
 		} catch ( OssException $e ) {
 			switch ( $e->getHTTPStatus() ) {
 				case 404:
