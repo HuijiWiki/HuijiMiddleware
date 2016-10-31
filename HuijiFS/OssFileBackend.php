@@ -342,15 +342,15 @@ class OssFileBackend extends FileBackendStore {
 			$metadata = $this->ossClient->getObjectMeta($srcCont, $srcRel);
 			// @TODO: pass $metadata to addMissingMetadata() to avoid round-trips
 			$this->addMissingMetadata( $srcCont, $srcRel, $params['src'], $metadata );
-			$timestamp = $metadata[OSS\OssClient::OSS_DATE];
-			$size = $metadata[OSS\OssClient::OSS_CONTENT_LENGTH];
+			$timestamp = $metadata[strtolower(OSS\OssClient::OSS_LAST_MODIFIED)];
+			$size = $metadata[strtolower(OSS\OssClient::OSS_CONTENT_LENGTH)];
 			$sha1 = $metadata['x-oss-meta-sha1base36'];
 			$stat = array(
 				'mtime' => wfTimestamp( TS_MW, $timestamp ),
 				'size'  => $size,
 				'sha1'  => $sha1
 			);
-			$this->logger->debug("doGetFileStat is returning ", ['src' => $params, 'stat' => $stat]);
+			$this->logger->debug("doGetFileStat is returning ", ['metadata'=>$metadata, 'src' => $params, 'stat' => $stat]);
 		} catch ( OssException $e ) {
 			switch ( $e->getHTTPStatus() ) {
 				case 404:
