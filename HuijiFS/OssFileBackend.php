@@ -569,7 +569,7 @@ class OssFileBackend extends FileBackendStore {
 			} else {
 				$blobs = $this->ossClient->listObjects( $fullCont, $options )->getObjectList();
 				foreach ( $blobs as $blob ) {
-					array_push( $objects, $blob->getKeys() );
+					array_push( $objects, $blob->getKey() );
 				}
 				$files = $objects;
 			}
