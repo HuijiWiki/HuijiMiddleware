@@ -453,7 +453,7 @@ class OssFileBackend extends FileBackendStore {
 			$prefix = ( $dir == '' ) ? null : "{$dir}/";
 			$delimiter = '/';
 			// $nextMarker = '';
-			$maxKeys = $limit;
+			$maxKeys = $limit <= 1000 ? $limit:1000;
 			$options = array(
 				'delimiter' => $delimiter,
 				'prefix' => $prefix,
@@ -523,7 +523,7 @@ class OssFileBackend extends FileBackendStore {
 					break;
 				default: // some other exception?
 					$this->handleException( $e, null, __METHOD__,
-						array( 'cont' => $fullCont, 'dir' => $dir ) );
+						array( 'cont' => $fullCont, 'dir' => $dir , 'after' => $after, 'limit' => $limit ));
 			}
 		}
 		wfProfileOut( __METHOD__ . '-' . $this->name );
@@ -547,7 +547,7 @@ class OssFileBackend extends FileBackendStore {
 			$prefix = ( $dir == '' ) ? null : "{$dir}/";
 			$delimiter = '/';
 			// $nextMarker = '';
-			$maxKeys = $limit?$limit:1000;
+			$maxKeys = $limit <= 1000 ? $limit:1000;
 			$options = array(
 				'delimiter' => $delimiter,
 				'prefix' => $prefix,
