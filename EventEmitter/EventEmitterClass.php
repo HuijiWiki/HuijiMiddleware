@@ -1,5 +1,5 @@
 <?php
-/*
+
 $wgHooks['NewRevisionFromEditComplete'][] = 'EventEmitter::onNewRevisionFromEditComplete';
 $wgHooks['ArticleDelete'][] = 'EventEmitter::onArticleDelete';
 $wgHooks['ArticleUndelete'][] = 'EventEmitter::onArticleUndelete';
@@ -23,7 +23,7 @@ $wgHooks['BeforePageDisplay'][] = "EventEmitter::onBeforePageDisplay";
 $wgHooks['SocialProfile::advancement'][] = "EventEmitter::onAdvancement";
 
 
-include("httpProducer.php");*/
+include("httpProducer.php");
 class EventEmitter{
 
 	/**
@@ -84,7 +84,7 @@ class EventEmitter{
 			'page_isNew' => $page_isNew,
 			//'timestamp' => isset($_SERVER[ 'REQUEST_TIME' ]) ? $_SERVER[ 'REQUEST_TIME' ] : "",
 			'timestamp' => $timestamp,
-			
+			'score' => 2.1,			
 	                'client_ip'=> $client_ip,
                 	'client_userAgent' => $client_userAgent,
 		); 
@@ -92,7 +92,7 @@ class EventEmitter{
 
 		HttpProducer::getIns()->process($wgHuijiPrefix.$page_id,"edit",json_encode($data, JSON_UNESCAPED_UNICODE));
 
-		wfErrorLog(json_encode($data),"/var/log/mediawiki/SocialProfile.log");	
+	//	wfErrorLog(json_encode($data),"/var/log/mediawiki/SocialProfile.log");	
 
 		//format payload
 
