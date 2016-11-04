@@ -192,6 +192,9 @@ class HuijiPageInfo extends ContextSource {
 						+substr_count($text, '<a')
 						+substr_count($text, '<td')
 						+substr_count($text, '<li')
+						+substr_count($text, '<ol')
+						+substr_count($text, '<div')
+						+substr_count($text, '<p')
 						+substr_count($text, 'cite_note-')*2;
 
 			 	$result['structure'] = (substr_count($text, '<h2>') > 3)? 5 : 0
