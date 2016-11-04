@@ -20,17 +20,17 @@ class HuijiPageInfo extends ContextSource {
 		$pageCounts = $this->pageCounts( $this->page );
 		Hooks::run( 'HuijiPageInfo', [ $this->page, &$pageCounts ] );
 		if ( $this->page->isCountable() && !$this->mTitle->isMainPage()){
-			$revScore = round($pageCounts['edits'] / 5)
-						+round( $pageCounts['authors'])
-						+round( $pageCounts['recent_edits'] / 5 )
-						+round( $pageCounts['recent_authors'] ) * 2;
+			$revScore = round($pageCounts['edits'] / 2)
+						+round( $pageCounts['authors'] * 3)
+						+round( $pageCounts['recent_edits']  ) * 2
+						+round( $pageCounts['recent_authors'] ) * 15;
 			$temScore = round(($pageCounts['transclusion']['from']
-						+$pageCounts['transclusion']['to'])* 4);
+						+$pageCounts['transclusion']['to'])* 8);
 
 			$watScore = round( $pageCounts['watchers'] )
 						+round( $pageCounts['visitingWatchers'] );
-			$lenScore = round( sqrt($pageCounts['length']) );
-			$comScore = round($pageCounts['comma'] /($pageCounts['length']) * 10000 );
+			$lenScore = round( sqrt($pageCounts['length']) * 3 );
+			$comScore = round($pageCounts['comma'] /($pageCounts['length']) * 1000 );
 			$strScore = $pageCounts['structure'] * 30;
 			$filScore = round($pageCounts['files']) * 2;
 			$score = $revScore + $temScore + $watScore + $lenScore + $comScore + $filScore + $strScore;
@@ -187,8 +187,8 @@ class HuijiPageInfo extends ContextSource {
         		$output = $page->getContent()->getParserOutput( $this->mTitle, $rev, $options,true);
         		$text = $output->getText();
 				$result['comma'] =  substr_count($text, '，')
-						+substr_count($text, '。')
-						+substr_count($text, '、')
+						+substr_count($text, '。')*5
+						+substr_count($text, '、')*5
 						+substr_count($text, '<a')
 						+substr_count($text, '<td')
 						+substr_count($text, '<li')
