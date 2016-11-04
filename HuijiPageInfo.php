@@ -20,20 +20,24 @@ class HuijiPageInfo extends ContextSource {
 		$pageCounts = $this->pageCounts( $this->page );
 		Hooks::run( 'HuijiPageInfo', [ $this->page, &$pageCounts ] );
 		if ( $this->page->isCountable() && !$this->mTitle->isMainPage()){
-			$revScore = round($pageCounts['edits'] / 2)
+			$revScore = round($pageCounts['edits'] )
 						+round( $pageCounts['authors'] * 3)
 						+round( $pageCounts['recent_edits']  ) * 2
 						+round( $pageCounts['recent_authors'] ) * 15;
-			$temScore = round(($pageCounts['transclusion']['from']
-						+$pageCounts['transclusion']['to'])* 8);
-
-			$watScore = round( $pageCounts['watchers'] )
-						+round( $pageCounts['visitingWatchers'] );
-			$lenScore = round( sqrt($pageCounts['length']) * 3 );
-			$comScore = round($pageCounts['comma'] /($pageCounts['length']) * 1000 );
-			$strScore = $pageCounts['structure'] * 30;
+			$watScore = round( $pageCounts['watchers'] *10 )
+						+round( $pageCounts['visitingWatchers'] *30 );
+			$lenScore = round( sqrt($pageCounts['length']) * 4 );
+			$tagScore = round($pageCounts['tag'] /($pageCounts['length']) * 2500 );
+			$strScore = $pageCounts['structure'] * 50;
 			$filScore = round($pageCounts['files']) * 2;
-			$score = $revScore + $temScore + $watScore + $lenScore + $comScore + $filScore + $strScore;
+			if ($pageCounts['length']/$pageCounts['comma'] < 1000){
+				$comScore = 1;
+			} else if ($pageCounts['length'] / $pageCounts['comma'] < 5000) {
+				$comScore = 0.5;
+			} else {
+				$comScore = 0.1;
+			}
+			$score = ($revScore + $watScore + $lenScore + $comScore + $filScore + $strScore) * $comScore;
 			if (isset($pageCounts['averageRating']) && isset($pageCounts['ratingCount']) && $pageCounts['ratingCount'] > 0){
 				$score += round($score*0.2*($pageCounts['averageRating']-3));
 			}
@@ -64,8 +68,8 @@ class HuijiPageInfo extends ContextSource {
 				$title = $page->getTitle();
 				$id = $title->getArticleID();
 
-				$dbr = wfGetDB( DB_REPLICA );
-				$dbrWatchlist = wfGetDB( DB_REPLICA, 'watchlist' );
+				$dbr = wfGetDB( DB_SLAVE );
+				$dbrWatchlist = wfGetDB( DB_SLAVE, 'watchlist' );
 				$setOpts += Database::getCacheSetOptions( $dbr, $dbrWatchlist );
 
 				$watchedItemStore = WatchedItemStore::getDefaultInstance();
@@ -186,20 +190,20 @@ class HuijiPageInfo extends ContextSource {
 				$options = $page->getContent()->getContentHandler()->makeParserOptions( 'canonical' );
         		$output = $page->getContent()->getParserOutput( $this->mTitle, $rev, $options,true);
         		$text = $output->getText();
-				$result['comma'] =  substr_count($text, '，')
-						+substr_count($text, '。')*5
-						+substr_count($text, '、')*5
-						+substr_count($text, '<a')
+				$result['tag'] =  substr_count($text, '<a')*2
 						+substr_count($text, '<td')
-						+substr_count($text, '<li')
-						+substr_count($text, '<ol')
-						+substr_count($text, '<div')
+						+substr_count($text, '<li')*3
+						+substr_count($text, '<ol')*3
+						+substr_count($text, '<div')*3
 						+substr_count($text, '<p')
-						+substr_count($text, 'cite_note-')*2;
-
+						+substr_count($text, 'cite_note-')*5;
+				$result['comma'] = substr_count($text, '，')
+						+substr_count($text, '。')
+						+substr_count($text, '、');
 			 	$result['structure'] = (substr_count($text, '<h2>') > 3)? 1 : 0
 						+(substr_count($text, 'class="infobox"') > 0)? 1 : 0
-						+(substr_count($text, 'class="navbox"') > 0)? 1 : 0;
+						+(substr_count($text, 'class="navbox"') > 0)? 1 : 0
+						+($result['transclusion']['to'] > 10)?1 : 0;
 				$result['files'] = (int)$dbr->selectField(
 					'imagelinks',
 					'COUNT(*)',
@@ -210,24 +214,6 @@ class HuijiPageInfo extends ContextSource {
 				return $result;
 			}
 		);
-	}
-	protected function getImagesCount() {
-		$request = array(
-			'action' => 'query',
-			'prop' => 'pageimages',
-			'piprop' => 'name',
-			'pageids' => implode( '|', $pageIds ),
-			'pilimit' => 'max',
-		);
-		if ( $size ) {
-			$request['piprop'] = 'thumbnail';
-			$request['pithumbsize'] = $size;
-		}
-		$api = new ApiMain( new FauxRequest( $request ) );
-		$api->execute();	
-		$res = (array)$api->getResult()->getResultData( array( 'query', 'pages' ),
-				array( 'Strip' => 'base' ) );	
-
 	}
 	/**
 	 * Returns the name that goes in the "<h1>" page title.
