@@ -109,6 +109,7 @@ $wgAutoloadClasses['OssFileBackendList'] = $dir . '/HuijiFS/OssFileBackend.php';
 $wgAutoloadClasses['AzureFileBackendDirList'] = $dir . '/HuijiFS/OssFileBackend.php';
 $wgAutoloadClasses['AzureFileBackendFileList'] = $dir . '/HuijiFS/OssFileBackend.php';
 //$wgAutoloadClasses['EventEmitter'] = __DIR__. '/EventEmitter/EventEmitterClass.php';
+$wgAutoloadClasses['HuijiPageInfo'] = $dir. '/HuijiPageInfo.php';
 
 $wgAuthManagerAutoConfig['primaryauth']["WeiboLogin\\Auth\\GooglePrimaryAuthenticationProvider"] =  [
 		'class' => 	"WeiboLogin\\Auth\\WeiboPrimaryAuthenticationProvider",
@@ -166,6 +167,7 @@ $wgHooks['GetPreferences'][] = 'HuijiHooks::onGetPreferences';
 $wgHooks['ParserFirstCallInit'][] = 'HuijiHooks::onSetupParserFunction';
 $wgHooks['SpecialPageBeforeExecute'][] = 'HuijiHooks::onSpecialPageBeforeExecute';
 $wgHooks['EditPageCopyrightWarning'][] = 'HuijiHooks::onEditPageCopyrightWarning';
+$wgHooks['InfoAction'][] = 'HuijiHooks::onInfoAction';
 // Register modules
 // See also http://www.mediawiki.org/wiki/Manual:$wgResourceModules
 // ResourceLoader modules are the de facto standard way to easily
@@ -183,9 +185,6 @@ $wgResourceModules['ext.HuijiMiddleware.flash'] = array(
 //create wiki
 $wgResourceModules['ext.HuijiMiddleware.createwiki.js'] = array(
 	'scripts' => 'CreateWikiForm/createwiki.js',
-	'dependencies' => array(
-	),
-
 	'localBasePath' => $dir,
 	'remoteExtPath' => 'HuijiMiddleware/' . $dirbasename,
 	'position' => 'bottom',

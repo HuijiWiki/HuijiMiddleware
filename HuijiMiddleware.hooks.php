@@ -185,6 +185,10 @@ class HuijiHooks {
 		return true;
 
 	}
+	public static function onInfoAction( $context, &$pageInfo ){
+		$info = new HuijiPageInfo($context->getTitle()->getArticleID(),$context);
+		$pageInfo['header-basic'][] = [wfMessage('infoaction-header-recommend-factor')->plain(), $info->pageScore()];
+	}
 
 
 }
