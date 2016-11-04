@@ -14,7 +14,7 @@ class HuijiPageInfo extends ContextSource {
 	}
 	public function pageScore(){
 		global $wgContLang;
-		if ($this->title == null){
+		if ($this->mTitle == null){
 			return 0;
 		}
 		$pageCounts = $this->pageCounts( $this->page );
