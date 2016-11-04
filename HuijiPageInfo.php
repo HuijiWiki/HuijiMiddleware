@@ -5,7 +5,7 @@ class HuijiPageInfo extends ContextSource {
 	public function __construct($pageId, $context){
 		$this->id = $pageId;
 		$this->mTitle = Title::newFromID($pageId);
-		if ($title != null){
+		if ($this->mTitle != null){
 			$this->page = new WikiPage($this->mTitle);
 			$this->setContext( $context );
 			$this->context = $context;			
