@@ -30,7 +30,7 @@ class HuijiPageInfo extends ContextSource {
 			$watScore = round( $pageCounts['watchers'] /5)
 						+round( $pageCounts['visitingWatchers'] );
 			$lenScore = round( sqrt($pageCounts['length']) / 100);
-			$comScore = round($pageCounts['comma'] /($lenScore+1));
+			$comScore = round($pageCounts['comma'] * 2/($lenScore+1));
 			$strScore = $pageCounts['structure'];
 			$filScore = round($pageCounts['files']/2);
 			$score = $revScore + $temScore + $watScore + $lenScore + $comScore + $filScore + $strScore;
