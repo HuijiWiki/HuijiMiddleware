@@ -5,12 +5,18 @@ class HuijiPageInfo extends ContextSource {
 	public function __construct($pageId, $context){
 		$this->id = $pageId;
 		$this->mTitle = Title::newFromID($pageId);
-		$this->page = new WikiPage($this->mTitle);
-		$this->setContext( $context );
-		$this->context = $context;
+		if ($title != null){
+			$this->page = new WikiPage($this->mTitle);
+			$this->setContext( $context );
+			$this->context = $context;			
+		}
+
 	}
 	public function pageScore(){
 		global $wgContLang;
+		if ($this->title == null){
+			return 0;
+		}
 		$pageCounts = $this->pageCounts( $this->page );
 		Hooks::run( 'HuijiPageInfo', [ $this->page, &$pageCounts ] );
 		if ( $this->page->isCountable() ){
