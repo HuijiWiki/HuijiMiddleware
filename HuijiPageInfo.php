@@ -19,8 +19,8 @@ class HuijiPageInfo extends ContextSource {
 		}
 		$pageCounts = $this->pageCounts( $this->page );
 		Hooks::run( 'HuijiPageInfo', [ $this->page, &$pageCounts ] );
-		if ( $this->page->isCountable() ){
-			$revScore = round($pageCounts['revision'] / 1000)
+		if ( $this->page->isCountable() && !$this->mTitle->isMainPage()){
+			$revScore = round($pageCounts['edits'] / 1000)
 						+round( $pageCounts['authors']/5 )
 						+round( $pageCounts['recent_edits'] / 100 )
 						+round( $pageCounts['recent_authors'] );
@@ -29,10 +29,11 @@ class HuijiPageInfo extends ContextSource {
 
 			$watScore = round( $pageCounts['watchers'] /5)
 						+round( $pageCounts['visitingWatchers'] );
-			$lenScore = round( $pageCounts['length'] / 300);
-			$comScore = $pageCounts['comma'];
+			$lenScore = round( sqrt($pageCounts['length']) / 100);
+			$comScore = round($pageCounts['comma'] * 2/($lenScore+1));
+			$strScore = $pageCounts['structure'];
 			$filScore = round($pageCounts['files']/2);
-			$score = $revScore + $temScore + $watScore + $lenScore + $comScore + $filScore;
+			$score = $revScore + $temScore + $watScore + $lenScore + $comScore + $filScore + $strScore;
 			if (isset($pageCounts['averageRating']) && isset($pageCounts['ratingCount']) && $pageCounts['ratingCount'] > 0){
 				$score += round($score*0.2*($pageCounts['averageRating']-3));
 			}
@@ -180,8 +181,21 @@ class HuijiPageInfo extends ContextSource {
 
 				$result['length'] = $title->getLength();
 
-				$result['comma'] =  substr_count($page->getContent()->getNativeData(), '，');
+				$raw = $page->getContent()->getNativeData();
+				$rev = $this->mTitle->getLatestRevID();
+				$options = $page->getContent()->getContentHandler()->makeParserOptions( 'canonical' );
+        		$output = $page->getContent()->getParserOutput( $this->mTitle, $rev, $options,true);
+        		$text = $output->getText();
+				$result['comma'] =  substr_count($text, '，')
+						+substr_count($text, '。')
+						+substr_count($text, '、')
+						+substr_count($text, '<a')
+						+substr_count($text, '<table')
+						+substr_count($text, 'cite_note-')*2;
 
+			 	$result['structure'] = (substr_count($text, '<h2>') > 3)? 5 : 0
+						+(substr_count($text, 'class="infobox"') > 0)? 5 : 0
+						+(substr_count($text, 'class="navbox"') > 0)? 5 : 0;
 				$result['files'] = (int)$dbr->selectField(
 					'imagelinks',
 					'COUNT(*)',
