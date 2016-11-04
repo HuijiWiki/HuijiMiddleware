@@ -20,19 +20,19 @@ class HuijiPageInfo extends ContextSource {
 		$pageCounts = $this->pageCounts( $this->page );
 		Hooks::run( 'HuijiPageInfo', [ $this->page, &$pageCounts ] );
 		if ( $this->page->isCountable() && !$this->mTitle->isMainPage()){
-			$revScore = round($pageCounts['edits'] / 20)
+			$revScore = round($pageCounts['edits'] / 5)
 						+round( $pageCounts['authors'])
-						+round( $pageCounts['recent_edits'] / 20 )
-						+round( $pageCounts['recent_authors'] );
-			$temScore = round($pageCounts['transclusion']['from']
-						+$pageCounts['transclusion']['to']);
+						+round( $pageCounts['recent_edits'] / 5 )
+						+round( $pageCounts['recent_authors'] ) * 2;
+			$temScore = round(($pageCounts['transclusion']['from']
+						+$pageCounts['transclusion']['to'])* 4);
 
-			$watScore = round( $pageCounts['watchers'] /5)
+			$watScore = round( $pageCounts['watchers'] )
 						+round( $pageCounts['visitingWatchers'] );
-			$lenScore = round( sqrt($pageCounts['length']) / 100);
-			$comScore = round($pageCounts['comma'] * 2/($lenScore+1));
-			$strScore = $pageCounts['structure'];
-			$filScore = round($pageCounts['files']/2);
+			$lenScore = round( sqrt($pageCounts['length']) );
+			$comScore = round($pageCounts['comma'] /($pageCounts['length']) * 10000 );
+			$strScore = $pageCounts['structure'] * 30;
+			$filScore = round($pageCounts['files']) * 2;
 			$score = $revScore + $temScore + $watScore + $lenScore + $comScore + $filScore + $strScore;
 			if (isset($pageCounts['averageRating']) && isset($pageCounts['ratingCount']) && $pageCounts['ratingCount'] > 0){
 				$score += round($score*0.2*($pageCounts['averageRating']-3));
@@ -197,9 +197,9 @@ class HuijiPageInfo extends ContextSource {
 						+substr_count($text, '<p')
 						+substr_count($text, 'cite_note-')*2;
 
-			 	$result['structure'] = (substr_count($text, '<h2>') > 3)? 5 : 0
-						+(substr_count($text, 'class="infobox"') > 0)? 5 : 0
-						+(substr_count($text, 'class="navbox"') > 0)? 5 : 0;
+			 	$result['structure'] = (substr_count($text, '<h2>') > 3)? 1 : 0
+						+(substr_count($text, 'class="infobox"') > 0)? 1 : 0
+						+(substr_count($text, 'class="navbox"') > 0)? 1 : 0;
 				$result['files'] = (int)$dbr->selectField(
 					'imagelinks',
 					'COUNT(*)',
