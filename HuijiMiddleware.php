@@ -110,6 +110,7 @@ $wgAutoloadClasses['AzureFileBackendDirList'] = $dir . '/HuijiFS/OssFileBackend.
 $wgAutoloadClasses['AzureFileBackendFileList'] = $dir . '/HuijiFS/OssFileBackend.php';
 //$wgAutoloadClasses['EventEmitter'] = __DIR__. '/EventEmitter/EventEmitterClass.php';
 $wgAutoloadClasses['HuijiPageInfo'] = $dir. '/HuijiPageInfo.php';
+$wgAutoloadClasses['EMJob'] = $dir.'/EventEmitter/EMJob.php';
 
 $wgAuthManagerAutoConfig['primaryauth']["WeiboLogin\\Auth\\GooglePrimaryAuthenticationProvider"] =  [
 		'class' => 	"WeiboLogin\\Auth\\WeiboPrimaryAuthenticationProvider",
@@ -358,3 +359,4 @@ $wgSiteSettings['enable-blogpage'] = array(
 	'level' => 'B',
 );
 
+$wgJobClasses['emJob'] = 'EMJob';
