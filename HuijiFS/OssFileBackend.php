@@ -70,6 +70,8 @@ class OssFileBackend extends FileBackendStore {
 	        $endpoint = $wgOssEndpoint;
 	        try {
 	            self::$client = new OssClient($accessKeyId, $accessKeySecret, $endpoint);
+	            self::$client->setTimeout(4);
+	            self::$client->setConnectTimeout(2);
 	        } catch (OssException $e) {
 	        	$logger = LoggerFactory::getInstance( 'filesystem' );
 	            $logger->warn($e);
