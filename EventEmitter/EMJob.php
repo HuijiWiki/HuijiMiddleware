@@ -20,7 +20,6 @@ class EMJob extends Job {
          * @return bool
          */
         public function run() {	
-		print_r($this->params);
                 switch ($this->params[0]) {
                         case 'em_edit':
                        	// Load data from $this->params and $this->title

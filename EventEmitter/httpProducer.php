@@ -39,7 +39,7 @@ final class HttpProducer
     public function process($key,$tag,$data) 
     {
         //打印配置信息
-        var_dump($this::$configs);
+//        var_dump($this::$configs);
         //获取Topic
         $topic = $this::$configs["Topic"];
         //获取保存Topic的URL路径
@@ -88,7 +88,6 @@ final class HttpProducer
    	curl_setopt($ch,CURLOPT_CUSTOMREQUEST,"POST");
     	//设置HTTP请求的URL
         curl_setopt($ch,CURLOPT_URL,$postUrl);
-	var_dump($postUrl);
        	//设置HTTP请求的body
        	curl_setopt($ch,CURLOPT_POSTFIELDS,$body);
      	//构造执行环境
@@ -100,7 +99,7 @@ final class HttpProducer
       	//清理执行环境
       	ob_end_clean();
     	//打印请求应答结果
-    	var_dump($result);
+    	//var_dump($result);
     	//关闭连接
     	curl_close($ch);
     }
