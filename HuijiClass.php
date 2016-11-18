@@ -23,6 +23,7 @@ class Huiji{
 			return NULL;
 		}
 	}
+
 	/**
 	 * get all site rank before today
 	 * @return array site rank array

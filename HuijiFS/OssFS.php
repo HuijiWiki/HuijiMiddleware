@@ -11,7 +11,7 @@ class OssFS implements HuijiFS{
         $accessKeySecret = Confidential::$aliyunSecret;
         $endpoint = $wgOssEndpoint;
         try {
-            $this->ossClient = new Oss\OssClient($accessKeyId, $accessKeySecret, $endpoint);
+            $this->ossClient = OssFileBackend::getOssClient();
         } catch (Oss\OssException $e) {
             wfDebug($e->getMessage());
         }
@@ -24,7 +24,6 @@ class OssFS implements HuijiFS{
             self::$mInstance = new OssFS();
             return self::$mInstance;
         }
-
     }
 	public function get($path){
 		global $wgOssFSBucket;

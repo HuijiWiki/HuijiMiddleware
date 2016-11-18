@@ -24,6 +24,7 @@
  * @author Robert Vogel
  * @author Thai Phan
  */
+use OSS\OssClient;
 use MediaWiki\Logger\LoggerFactory;
 use OSS\Core\OssException;
 
@@ -40,6 +41,7 @@ use OSS\Core\OssException;
  */
 class OssFileBackend extends FileBackendStore {
 	/** @var IBlob */
+	private static $client;
 	private $ossClient;
 	/** @var string */
 	private $connectionString;
@@ -52,16 +54,28 @@ class OssFileBackend extends FileBackendStore {
 	public function __construct( array $config ) {
 		parent::__construct( $config );
 		// Generate connection string to Windows Oss storage account
-		global $wgOssEndpoint;
-		$accessKeyId = Confidential::$aliyunKey;
-        $accessKeySecret = Confidential::$aliyunSecret;
-        $endpoint = $wgOssEndpoint;
-        $this->logger = $logger = LoggerFactory::getInstance( 'filesystem' );
-        try {
-            $this->ossClient = new Oss\OssClient($accessKeyId, $accessKeySecret, $endpoint);
-        } catch (OssException $e) {
-            $this->logger->warn($e);
-        }
+		
+		$this->logger = LoggerFactory::getInstance( 'filesystem' );
+		$this->ossClient = self::getOssClient();
+
+	}
+	// access private static client.
+	static function getOssClient(){
+		if (self::$client != null){
+			return self::$client;
+		} else {
+			global $wgOssEndpoint;
+			$accessKeyId = Confidential::$aliyunKey;
+	        $accessKeySecret = Confidential::$aliyunSecret;
+	        $endpoint = $wgOssEndpoint;
+	        try {
+	            self::$client = new OssClient($accessKeyId, $accessKeySecret, $endpoint);
+	        } catch (OssException $e) {
+	        	$logger = LoggerFactory::getInstance( 'filesystem' );
+	            $logger->warn($e);
+	        }	
+	        return self::$client;		
+		}
 	}
 	/**
 	 * @see FileBackendStore::resolveContainerName()
