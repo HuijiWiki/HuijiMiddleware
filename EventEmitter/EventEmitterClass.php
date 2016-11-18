@@ -137,7 +137,7 @@ class EventEmitter{
 	/**
 	 * Called when a message is left
 	 */
-	public static function onMessageReceived( int $senderId, int $receiverId, $message ){
+	public static function onMessageReceived($senderId, $receiverId, $message ){
 
 	}
 
@@ -174,7 +174,7 @@ class EventEmitter{
 	 * if we want to collect viewer data, we have to do it in javascript.
 	 */
 	public static function onBeforePageDisplay(OutputPage &$out, Skin &$skin){
-		$out->addModules(['ext.HuijiMiddleware.eventemitter']);
+		//$out->addModules(['ext.HuijiMiddleware.eventemitter']);
 	}
 
 	/**
