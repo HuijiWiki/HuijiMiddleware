@@ -6,10 +6,6 @@ use OSS;
 class OssFS implements HuijiFS{
 	protected $ossClient;
 	private function __construct() {
-		global $wgOssEndpoint;
-		$accessKeyId = Confidential::$aliyunKey;
-        $accessKeySecret = Confidential::$aliyunSecret;
-        $endpoint = $wgOssEndpoint;
         try {
             $this->ossClient = OssFileBackend::getOssClient();
         } catch (Oss\OssException $e) {
