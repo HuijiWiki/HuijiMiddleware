@@ -103,7 +103,7 @@ class EMJob extends Job {
 		); 
 	
 
-		HttpProducer::getIns()->process($wgHuijiPrefix.$page_id,"edit",json_encode($data, JSON_UNESCAPED_UNICODE));
+		HttpProducer::getIns()->process($wgHuijiPrefix.'_'.$page_id,"edit",json_encode($data, JSON_UNESCAPED_UNICODE));
 	}
 }
 
