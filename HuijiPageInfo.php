@@ -27,13 +27,13 @@ class HuijiPageInfo extends ContextSource {
 			$watScore = round( $pageCounts['watchers'] *10 )
 						+round( $pageCounts['visitingWatchers'] *30 );
 			$lenScore = round( sqrt($pageCounts['length']) * 4 );
-			$tagScore = round($pageCounts['tag'] /($pageCounts['length']) * 2500 );
+			$tagScore = round($pageCounts['tag'] /($pageCounts['length']+1) * 2500 );
 			$strScore = $pageCounts['structure'] * 50;
 			$filScore = round($pageCounts['files']) * 2;
 			if ($pageCounts['length']/$pageCounts['comma'] < 100){
 				$comScore = 1;
-			} else if ($pageCounts['length'] / $pageCounts['comma'] < 500) {
-				$comScore = 0.5;
+			} else if ($pageCounts['length'] / ($pageCounts['comma'] +1)< 800) {
+				$comScore = 0.3;
 			} else {
 				$comScore = 0.1;
 			}
