@@ -93,7 +93,7 @@ class OssFileBackend extends FileBackendStore {
 		$container = preg_replace( '#.*public$#', 'huiji-public', $container);
 		$container = preg_replace( '#.*deleted$#', 'huiji-deleted', $container);
 		$container = preg_replace( '#.*thumb$#', 'huiji-thumb', $container);
-		$container = preg_replace( '#.*local-transcoded$#', 'huiji-local-transcoded', $container);
+		$container = preg_replace( '#.*transcoded$#', 'huiji-transcoded', $container);
 		return $container;
 	}
 	/**

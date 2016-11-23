@@ -314,6 +314,11 @@ $wgLocalFileRepo = array (
         	'url'       => 'http://huiji-deleted.'.$wgOssPath.'/'.$wgHuijiPrefix.'/uploads/deleted',
         	'directory' => $wgHuijiPrefix.'/uploads/deleted',
         ),
+        'transcoded' => array(
+        	'container' => 'huiji-transcoded',
+        	'url'       => 'http://huiji-local-transcoded.'.$wgOssPath.'/'.$wgHuijiPrefix.'/uploads/transcoded',
+        	'directory' => $wgHuijiPrefix.'/uploads/transcoded',
+        )
     )
 );
 
