@@ -316,7 +316,7 @@ $wgLocalFileRepo = array (
         ),
         'transcoded' => array(
         	'container' => 'huiji-transcoded',
-        	'url'       => 'http://huiji-local-transcoded.'.$wgOssPath.'/'.$wgHuijiPrefix.'/uploads/transcoded',
+        	'url'       => 'http://huiji-transcoded.'.$wgOssPath.'/'.$wgHuijiPrefix.'/uploads/transcoded',
         	'directory' => $wgHuijiPrefix.'/uploads/transcoded',
         )
     )
