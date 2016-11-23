@@ -239,6 +239,7 @@ class WeiboPrimaryAuthenticationProvider extends AbstractPrimaryAuthenticationPr
 		}
 	}
 	public function finishAccountCreation( $user, $creator, AuthenticationResponse $response ) {
+		global $wgUser;
 		$userInfo = $response->linkRequest->userInfo;
 		$this->persistSessions($user);
 			/* Save Avatar, age and Gender */
