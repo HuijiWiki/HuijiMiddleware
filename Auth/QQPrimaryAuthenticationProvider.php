@@ -243,9 +243,9 @@ class QQPrimaryAuthenticationProvider extends AbstractPrimaryAuthenticationProvi
 		$this->persistSessions($user);
 			/* Save Avatar, age and Gender */
 		if ($userInfo['gender'] == '男'){
-			$wgUser->setOption('gender', 'male');
+			$user->setOption('gender', 'male');
 		} elseif ($userInfo['gender'] == '女'){
-			$wgUser->setOption('gender', 'female');
+			$user->setOption('gender', 'female');
 		}
 		$avatar = new CropAvatar(
 	  		$userInfo['figureurl_qq_1'],

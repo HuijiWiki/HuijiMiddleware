@@ -239,14 +239,13 @@ class WeiboPrimaryAuthenticationProvider extends AbstractPrimaryAuthenticationPr
 		}
 	}
 	public function finishAccountCreation( $user, $creator, AuthenticationResponse $response ) {
-		global $wgUser;
 		$userInfo = $response->linkRequest->userInfo;
 		$this->persistSessions($user);
 			/* Save Avatar, age and Gender */
 		if ($userInfo['gender'] == 'f'){
-			$wgUser->setOption('gender', 'male');
+			$user->setOption('gender', 'male');
 		} elseif ($userInfo['gender'] == 'm'){
-			$wgUser->setOption('gender', 'female');
+			$user->setOption('gender', 'female');
 		}
 		$avatar = new CropAvatar(
 	  		$userInfo['avatar_large'],
