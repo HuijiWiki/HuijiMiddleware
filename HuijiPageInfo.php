@@ -30,9 +30,9 @@ class HuijiPageInfo extends ContextSource {
 			$tagScore = round($pageCounts['tag'] /($pageCounts['length']+1) * 2500 );
 			$strScore = $pageCounts['structure'] * 50;
 			$filScore = round($pageCounts['files']) * 2;
-			if ($pageCounts['length']/$pageCounts['comma'] < 100){
+			if ($pageCounts['length']/$pageCounts['comma'] < 50){
 				$comScore = 1;
-			} else if ($pageCounts['length'] / ($pageCounts['comma'] +1)< 800) {
+			} else if ($pageCounts['length'] / ($pageCounts['comma'] +1)< 200) {
 				$comScore = 0.3;
 			} else {
 				$comScore = 0.1;
