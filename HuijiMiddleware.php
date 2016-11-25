@@ -65,8 +65,7 @@ $wgExtensionCredits['other'][] = array(
 /* Setup */
 
 // Initialize an easy to use shortcut:
-$dir = dirname( __FILE__ );
-$dirbasename = basename( $dir );
+
 require_once "/var/www/html/Confidential.php";
 require_once __DIR__."/EventEmitter/EventEmitterClass.php";
 
@@ -74,19 +73,19 @@ require_once __DIR__."/EventEmitter/EventEmitterClass.php";
 // MediaWiki need to know which PHP files contains your class. It has a
 // registering mecanism to append to the internal autoloader. Simply use
 // $wgAutoLoadClasses as below:
-$wgAutoloadClasses['HuijiFunctions'] = $dir . '/HuijiFunctions.php';
-$wgAutoloadClasses['HuijiPrefix'] = $dir . '/HuijiPrefix.php';
-$wgAutoloadClasses['HuijiHooks'] = $dir . '/HuijiMiddleware.hooks.php';
-$wgAutoloadClasses['SpecialInvitationCode'] = $dir . '/specials/SpecialInvitationCode.php';
-$wgAutoloadClasses['ApiQueryExample'] = $dir . '/api/ApiQueryExample.php';
-$wgAutoloadClasses['WikiSite'] = $dir . '/WikiSiteClass.php';
-$wgAutoloadClasses['Site'] = $dir . '/SiteClass.php';
-$wgAutoloadClasses['Huiji'] = $dir . '/HuijiClass.php';
-$wgAutoloadClasses['HuijiUser'] = $dir . '/HuijiUserClass.php';
+$wgAutoloadClasses['HuijiFunctions'] = __DIR__ . '/HuijiFunctions.php';
+$wgAutoloadClasses['HuijiPrefix'] = __DIR__ . '/HuijiPrefix.php';
+$wgAutoloadClasses['HuijiHooks'] = __DIR__ . '/HuijiMiddleware.hooks.php';
+$wgAutoloadClasses['SpecialInvitationCode'] = __DIR__ . '/specials/SpecialInvitationCode.php';
+$wgAutoloadClasses['ApiQueryExample'] = __DIR__ . '/api/ApiQueryExample.php';
+$wgAutoloadClasses['WikiSite'] = __DIR__ . '/WikiSiteClass.php';
+$wgAutoloadClasses['Site'] = __DIR__ . '/SiteClass.php';
+$wgAutoloadClasses['Huiji'] = __DIR__ . '/HuijiClass.php';
+$wgAutoloadClasses['HuijiUser'] = __DIR__ . '/HuijiUserClass.php';
 $wgAutoloadClasses['SpecialCreateWiki'] = __DIR__ . '/CreateWikiForm/SpecialCreateWiki.php';
-$wgAutoloadClasses['DiskFS'] = $dir . '/HuijiFS/DiskFS.php';
-$wgAutoloadClasses['HuijiFS'] = $dir . '/HuijiFS/HuijiFS.php';
-$wgAutoloadClasses['OssFS'] = $dir . '/HuijiFS/OssFS.php';
+$wgAutoloadClasses['DiskFS'] = __DIR__ . '/HuijiFS/DiskFS.php';
+$wgAutoloadClasses['HuijiFS'] = __DIR__ . '/HuijiFS/HuijiFS.php';
+$wgAutoloadClasses['OssFS'] = __DIR__ . '/HuijiFS/OssFS.php';
 $wgAutoloadClasses['ApiQueryHuijiUserInfo'] = __DIR__. '/api/ApiQueryHuijiUserInfo.php';
 $wgAutoloadClasses['ApiQueryHuijiUsers'] = __DIR__. '/api/ApiQueryHuijiUsers.php';
 $wgAutoloadClasses['ApiQueryAllHuijiUsers'] = __DIR__. '/api/ApiQueryAllHuijiUsers.php';
@@ -105,12 +104,12 @@ $wgAutoloadClasses['WeiboLogin\\Auth\\WeiboServerAuthenticationRequest'] = __DIR
 $wgAutoloadClasses['WeiboLogin\\Auth\\WeiboUserInfoAuthenticationRequest'] = __DIR__. '/Auth/WeiboUserInfoAuthenticationRequest.php';
 
 $wgAutoloadClasses['OssFileBackend'] = __DIR__ . '/HuijiFS/OssFileBackend.php';
-$wgAutoloadClasses['OssFileBackendList'] = $dir . '/HuijiFS/OssFileBackend.php';
-$wgAutoloadClasses['AzureFileBackendDirList'] = $dir . '/HuijiFS/OssFileBackend.php';
-$wgAutoloadClasses['AzureFileBackendFileList'] = $dir . '/HuijiFS/OssFileBackend.php';
+$wgAutoloadClasses['OssFileBackendList'] = __DIR__ . '/HuijiFS/OssFileBackend.php';
+$wgAutoloadClasses['AzureFileBackendDirList'] = __DIR__ . '/HuijiFS/OssFileBackend.php';
+$wgAutoloadClasses['AzureFileBackendFileList'] = __DIR__ . '/HuijiFS/OssFileBackend.php';
 //$wgAutoloadClasses['EventEmitter'] = __DIR__. '/EventEmitter/EventEmitterClass.php';
-$wgAutoloadClasses['HuijiPageInfo'] = $dir. '/HuijiPageInfo.php';
-$wgAutoloadClasses['EMJob'] = $dir.'/EventEmitter/EMJob.php';
+$wgAutoloadClasses['HuijiPageInfo'] = __DIR__. '/HuijiPageInfo.php';
+$wgAutoloadClasses['EMJob'] = __DIR__.'/EventEmitter/EMJob.php';
 
 $wgAuthManagerAutoConfig['primaryauth']["WeiboLogin\\Auth\\GooglePrimaryAuthenticationProvider"] =  [
 		'class' => 	"WeiboLogin\\Auth\\WeiboPrimaryAuthenticationProvider",
@@ -124,12 +123,12 @@ $wgAuthManagerAutoConfig['primaryauth']["QQLogin\\Auth\\GooglePrimaryAuthenticat
 require_once( "$IP/extensions/HuijiMiddleware/vendor/autoload.php");
 
 if (!class_exists("PageProps")){
-	$wgAutoloadClasses['PageProps'] = $dir . '/PageProps.php';
+	$wgAutoloadClasses['PageProps'] = __DIR__ . '/PageProps.php';
 }
 
 $wgMessagesDirs['HuijiMiddleware'] = __DIR__ . '/i18n';
-$wgExtensionMessagesFiles['HuijiMiddlewareAlias'] = $dir . '/HuijiMiddleware.i18n.alias.php';
-$wgExtensionMessagesFiles['HuijiMiddlewareMagic'] = $dir . '/HuijiMiddleware.i18n.magic.php';
+$wgExtensionMessagesFiles['HuijiMiddlewareAlias'] = __DIR__ . '/HuijiMiddleware.i18n.alias.php';
+$wgExtensionMessagesFiles['HuijiMiddlewareMagic'] = __DIR__ . '/HuijiMiddleware.i18n.magic.php';
 
 //API modules
 $wgAPIListModules['HuijiMiddleware'] = 'ApiQueryExample';
@@ -178,21 +177,21 @@ $wgResourceModules['ext.HuijiMiddleware.flash'] = array(
 	'dependencies' => array(
 	),
 
-	'localBasePath' => $dir,
-	'remoteExtPath' => 'HuijiMiddleware/' . $dirbasename,
+	'localBasePath' => __DIR__,
+	'remoteExtPath' => 'HuijiMiddleware/',
 	'position' => 'bottom',
 );
 
 //create wiki
 $wgResourceModules['ext.HuijiMiddleware.createwiki.js'] = array(
 	'scripts' => 'CreateWikiForm/createwiki.js',
-	'localBasePath' => $dir,
-	'remoteExtPath' => 'HuijiMiddleware/' . $dirbasename,
+	'localBasePath' => __DIR__,
+	'remoteExtPath' => 'HuijiMiddleware/',
 	'position' => 'bottom',
 );
 $wgResourceModules['ext.HuijiMiddleware.createwiki.css'] = array(
 	'styles' => 'CreateWikiForm/createwiki.css',
-	'localBasePath' => $dir,
+	'localBasePath' => __DIR__,
 	'remoteExtPath' => 'HuijiMiddleware/',
 	'position' => 'top',
 );
@@ -201,24 +200,24 @@ $wgResourceModules['ext.HuijiMiddleware.LightBox'] = array(
 	'scripts' => 'modules/ext.HuijiMiddleware.LightBox.js',
 	'dependencies' => array(
 	),
-	'localBasePath' => $dir,
-	'remoteExtPath' => 'HuijiMiddleware/' . $dirbasename,
+	'localBasePath' => __DIR__,
+	'remoteExtPath' => 'HuijiMiddleware/',
 	'position' => 'bottom',
 );
 $wgResourceModules['ext.HuijiMiddleware.querystring'] = array(
 	'scripts' => 'modules/ext.HuijiMiddleware.querystring.js',
 	'dependencies' => array(
 	),
-	'localBasePath' => $dir,
-	'remoteExtPath' => 'HuijiMiddleware/' . $dirbasename,
+	'localBasePath' => __DIR__,
+	'remoteExtPath' => 'HuijiMiddleware/',
 	'position' => 'bottom',
 );
 $wgResourceModules['ext.HuijiMiddleware.video.init'] = array(
 	'scripts' => 'modules/ext.HuijiMiddleware.video.init.js',
 	'dependencies' => array(
 	),
-	'localBasePath' => $dir,
-	'remoteExtPath' => 'HuijiMiddleware/' . $dirbasename,
+	'localBasePath' => __DIR__,
+	'remoteExtPath' => 'HuijiMiddleware/',
 	'position' => 'bottom',
 );
 $wgResourceModules['ext.HuijiMiddleware.feedback'] = array(
@@ -226,22 +225,22 @@ $wgResourceModules['ext.HuijiMiddleware.feedback'] = array(
 	'styles' => 'modules/ext.HuijiMiddleware.feedback.css',
 	'dependencies' => array(
 	),
-	'localBasePath' => $dir,
-	'remoteExtPath' => 'HuijiMiddleware/' . $dirbasename,
+	'localBasePath' => __DIR__,
+	'remoteExtPath' => 'HuijiMiddleware/',
 	'position' => 'bottom',
 );
 $wgResourceModules['ext.HuijiMiddleware.callbackqq.js'] = array(
 	'scripts' => 'modules/ext.HuijiMiddleware.callbackqq.js',
 	'dependencies' => array(
 	),
-	'localBasePath' => $dir,
-	'remoteExtPath' => 'HuijiMiddleware/' . $dirbasename,
+	'localBasePath' => __DIR__,
+	'remoteExtPath' => 'HuijiMiddleware/',
 	'position' => 'bottom',
 );
 $wgResourceModules['ext.HuijiMiddleware.eventemitter'] = array(
 	'scripts' => 'EventEmitter/EventEmitter.js',
-	'localBasePath' => $dir,
-	'remoteExtPath' => 'HuijiMiddleware/' . $dirbasename,
+	'localBasePath' => __DIR__,
+	'remoteExtPath' => 'HuijiMiddleware/',
 	'position' => 'bottom',	
 );
 
