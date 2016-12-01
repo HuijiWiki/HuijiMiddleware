@@ -35,8 +35,10 @@ class WikiSite extends Site{
         if ( self::$siteCache == null ) {
             self::$siteCache = new MemcachedPhpBagOStuff( [
             	'servers' => $wgMemCachedServers,
+            	'debug' => false,
             	'persistent' => false,
             	'timeout' => 1, 
+            	'connect_timeout' => 1,
             	'maxKeys' => self::CACHE_MAX 
 
             ] );
