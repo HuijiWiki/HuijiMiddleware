@@ -189,6 +189,7 @@ class HuijiHooks {
 		$info = new HuijiPageInfo($context->getTitle()->getArticleID(),$context);
 		$pageInfo['header-basic'][] = [wfMessage('infoaction-header-recommend-factor')->plain(), $info->pageScore()];
 	}
-
+	public static function onAuthChangeFormFields( $requests, $fieldInfo, &$formDescriptor, $action ) { 
+	}
 
 }

@@ -31,8 +31,15 @@ class WikiSite extends Site{
 		// $siteCache->set($this->mPrefix, $this);
 	}
 	private static function getSiteCache() {
+		global $wgMemCachedServers;
         if ( self::$siteCache == null ) {
-            self::$siteCache = new HashBagOStuff( [ 'maxKeys' => self::CACHE_MAX ] );
+            self::$siteCache = new MemcachedPhpBagOStuff( [
+            	'servers' => $wgMemCachedServers,
+            	'persistent' => false,
+            	'timeout' => 1, 
+            	'maxKeys' => self::CACHE_MAX 
+
+            ] );
 		}
 		return self::$siteCache;
 	}

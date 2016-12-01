@@ -111,14 +111,15 @@ $wgAutoloadClasses['AzureFileBackendFileList'] = __DIR__ . '/HuijiFS/OssFileBack
 $wgAutoloadClasses['HuijiPageInfo'] = __DIR__. '/HuijiPageInfo.php';
 $wgAutoloadClasses['EMJob'] = __DIR__.'/EventEmitter/EMJob.php';
 
+
 $wgAuthManagerAutoConfig['primaryauth']["WeiboLogin\\Auth\\GooglePrimaryAuthenticationProvider"] =  [
 		'class' => 	"WeiboLogin\\Auth\\WeiboPrimaryAuthenticationProvider",
-		'sort' => 2,
+		'sort' => 300,
 	];
 
 $wgAuthManagerAutoConfig['primaryauth']["QQLogin\\Auth\\GooglePrimaryAuthenticationProvider"] =  [
-		'class' => 	"QQLogin\\Auth\\QQPrimaryAuthenticationProvider",
-		'sort' => 1,
+		'class' => 	"QQLogin\\Auth\\QQPrimaryAuthenticationProvider",		
+		'sort' => 400,
 	];
 require_once( "$IP/extensions/HuijiMiddleware/vendor/autoload.php");
 
@@ -168,6 +169,7 @@ $wgHooks['ParserFirstCallInit'][] = 'HuijiHooks::onSetupParserFunction';
 $wgHooks['SpecialPageBeforeExecute'][] = 'HuijiHooks::onSpecialPageBeforeExecute';
 $wgHooks['EditPageCopyrightWarning'][] = 'HuijiHooks::onEditPageCopyrightWarning';
 $wgHooks['InfoAction'][] = 'HuijiHooks::onInfoAction';
+$wgHooks['AuthChangeFormFields'][] = 'HuijiHooks::onAuthChangeFormFields';
 // Register modules
 // See also http://www.mediawiki.org/wiki/Manual:$wgResourceModules
 // ResourceLoader modules are the de facto standard way to easily

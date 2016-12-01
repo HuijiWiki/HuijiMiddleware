@@ -19,7 +19,7 @@ class WeiboRemoveAuthenticationRequest extends AuthenticationRequest {
 		return parent::getUniqueId() . ':' . $this->weiboId;
 	}
 	public function getFieldInfo() {
-		return [ $this->weinoId => [
+		return [ $this->weiboId => [
 			'type' => 'button',
 			'label' => 'unlink-account-weibo',
 			'help' => 'unlink-accounts-weibo-help'
