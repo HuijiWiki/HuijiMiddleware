@@ -56,7 +56,7 @@ class WikiSite extends Site{
 	public static function newFromPrefix( $prefix ){
 		$siteCache = self::getSiteCache();
 		$site = $siteCache->get($prefix);
-		if ( $site != '' ){
+		if ( $site != '' && !empty($site->getId())){
 			return $site;
 		} else {
 			$site = new WikiSite();
@@ -472,7 +472,7 @@ class WikiSite extends Site{
 		if ($this->mPrefix === ''){
 			return '';
 		}
-		if ($this->mId != ''){
+		if ( !empty($this->mId) ){
 			return $this->mId;			
 		}		
 		$siteCache = self::getSiteCache();
