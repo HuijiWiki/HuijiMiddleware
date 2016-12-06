@@ -22,19 +22,66 @@ class EMJob extends Job {
         public function run() {	
                 switch ($this->params[0]) {
                         case 'em_edit':
-                       	// Load data from $this->params and $this->title
-			//	$revId = $this->params[1];
-			//	print_r($revId);
-			//	$rev = Revision::loadFromId(wfGetDB('DB_SLAVE') , $revId);
-			//	print_r($rev);
-			//	die();
-                                return $this->emEdit( $this->title, $this->params[1], $this->params[2],$this->params[3],$this->params[4]);
+                        	return $this->emEdit( $this->title, $this->params[1], $this->params[2],$this->params[3],$this->params[4]);
+				break;
+			case 'em_comment':
+				return $this->emComment($this->title, $this->params[1],$this->params[2]);
 				break;
                         default:
                                 # code...
                                 break;
                  }
 	}
+
+	public function emComment($title, $user, $comment){
+		global $wgHuijiPrefix, $wgSitename,$wgIsProduction;
+		//user name 
+                $user_name = $user->getName();
+                //use id
+                $user_id = $user->getId();
+                //user is bot
+                $user_isBot = $user->isAllowed('bot');
+                //site prefix
+                $site_prefix = $wgHuijiPrefix;
+                //site name
+                $site_name = $wgSitename;
+                //page title
+                $page_title = $title->getText();
+                //page id
+                $page_id = $title->getArticleID();
+                //page namespace
+                $page_ns = $title->getNamespace();
+
+                $huijiPageInfo = new HuijiPageInfo($page_id, RequestContext::getMain());
+                $page_score = $huijiPageInfo->pageScore();
+
+		 
+		$comment_text = $comment->text;
+		$comment_id = $comment->id;
+
+		$timestamp = $comment->timestamp;
+
+		
+		
+
+		$data = array(
+                        'user_name' =>  $user_name,
+                        'user_id' => $user_id,
+                        'user_isBot'=>$user_isBot,
+                        'site_prefix' => $wgHuijiPrefix,
+                        'site_name' => $wgSitename,
+                        'page_title' =>$page_title,
+                        'page_id' => $page_id,
+                        'page_ns' => $page_ns,
+                        'timestamp' => $timestamp,
+			'comment_text'=> $comment_text,
+			'comment_id'=> $comment_id
+                );
+
+
+                HttpProducer::getIns()->process($user_id.'_'.$wgHuijiPrefix.'_'.$page_id.'_'.$comment_id,"comment",json_encode($data, JSON_UNESCAPED_UNICODE));
+	}
+
 
 	public function emEdit( $title, Revision $rev, User $user, $ip, $userAgent){
        		global $wgHuijiPrefix, $wgSitename,$wgIsProduction;
@@ -63,9 +110,9 @@ class EMJob extends Job {
 		//page isNew
 		$page_isNew = $rev->getPrevious() == null ? true : false;
 		//timestamp
-		$timestamp = $rev->getTimestamp();
-				
-		
+		$timestamp = $rev->getTimestamp();		
+		//page revId
+		$page_revId = $rev->getId();	
 		$huijiPageInfo = new HuijiPageInfo($page_id, RequestContext::getMain());
 		$score = $huijiPageInfo->pageScore();
 
@@ -94,6 +141,7 @@ class EMJob extends Job {
                	 	'page_ns' => $page_ns,
 			'page_category' => $page_category,
 			'page_isNew' => $page_isNew,
+			'page_revId' => $page_revId,
 			//'timestamp' => isset($_SERVER[ 'REQUEST_TIME' ]) ? $_SERVER[ 'REQUEST_TIME' ] : "",
 			'timestamp' => $timestamp,
 			'score' => $score,			
@@ -102,7 +150,7 @@ class EMJob extends Job {
 		); 
 	
 
-		HttpProducer::getIns()->process($wgHuijiPrefix.'_'.$page_id,"edit",json_encode($data, JSON_UNESCAPED_UNICODE));
+		HttpProducer::getIns()->process($user_id.'_'.$wgHuijiPrefix.'_'.$page_id,"edit",json_encode($data, JSON_UNESCAPED_UNICODE));
 	}
 }
 

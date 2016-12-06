@@ -24,6 +24,7 @@ $wgHooks['SocialProfile::advancement'][] = "EventEmitter::onAdvancement";
 
 
 require_once("httpProducer.php");
+use MediaWiki\Logger\LoggerFactory;
 class EventEmitter{
 
 	/**
@@ -61,7 +62,14 @@ class EventEmitter{
 	 * Called when a comment is added
 	 */
 	public static function onCommentAdd( Comment $comment, $commentId, $pageId ){
-
+		global  $wgUser, $wgHuijiPrefix, $wgSitename;
+		if($comment == null) return;
+		$title = $comment->page->title;
+		$user = $wgUser;	
+               
+		$params = ['em_comment', $user, $comment] ;
+                $job = new EMJob( $title, $params);
+                JobQueueGroup::singleton()->push( $job ); 	
 	}
 	/**
 	 *  Called when a comment is deleted
@@ -110,12 +118,90 @@ class EventEmitter{
 	 * Called when a poll is voted by others
 	 */
 	public static function onPollVote( $pageId, $pollId, array $choiceIds ){
+		global  $wgUser, $wgHuijiPrefix, $wgSitename;
+		if($pageId == null || $pollId == null) return;
+		$user = $wgUser;	
+                //user name 
+                $user_name = $user->getName();
+                //use id
+                $user_id = $user->getId();
+                //user is bot
+                $user_isBot = $user->isAllowed('bot');
+                //site prefix
+                $site_prefix = $wgHuijiPrefix;
+                //site name
+                $site_name = $wgSitename;
+                //page title
 
+                //page id
+                $page_id = $pageId;
+
+		//poll
+		$p = new Poll();
+		$poll = $p->getPoll();		 
+		$poll_question = $poll['question'];
+		//$poll_id = $poll['id'];
+		$poll_id = $pollId;
+		$poll_choice = $choiceIds;		
+		
+		$timestamp = $poll['timestamp'];
+		
+		
+
+		$data = array(
+                        'user_name' =>  $user_name,
+                        'user_id' => $user_id,
+                        'user_isBot'=>$user_isBot,
+                        'site_prefix' => $wgHuijiPrefix,
+                        'site_name' => $wgSitename,
+                        'page_id' => $page_id,
+                        'timestamp' => $timestamp,
+			'poll_question'=> $poll_question,
+			'poll_id'=> $poll_id,
+			'poll_choice' => $poll_choice,
+                );
+
+                HttpProducer::getIns()->process($user_id.'_'.$wgHuijiPrefix.'_'.$page_id.'_'.$poll_id,"poll",json_encode($data, JSON_UNESCAPED_UNICODE));
 	}
 	/**
 	 * Called when a rating is made
 	 */
 	public static function onRatingVote( Vote $vote, $voteValue, $pageId ){
+		global  $wgUser, $wgHuijiPrefix, $wgSitename;
+		if($pageId == null || $pollId == null) return;
+		$user = $wgUser;	
+                //user name 
+                $user_name = $user->getName();
+                //use id
+                $user_id = $user->getId();
+                //user is bot
+                $user_isBot = $user->isAllowed('bot');
+                //site prefix
+                $site_prefix = $wgHuijiPrefix;
+                //site name
+                $site_name = $wgSitename;
+                //page title
+
+                //page id
+                $page_id = $pageId;
+
+		
+		//vote value
+		$vote_value = $voteValue;
+	
+		$data = array(
+                        'user_name' =>  $user_name,
+                        'user_id' => $user_id,
+                        'user_isBot'=>$user_isBot,
+                        'site_prefix' => $wgHuijiPrefix,
+                        'site_name' => $wgSitename,
+                        'page_id' => $page_id,
+                //        'timestamp' => $timestamp,
+			'vote_value'=> $vote_value,
+                );
+
+                HttpProducer::getIns()->process($user_id.'_'.$wgHuijiPrefix.'_'.$page_id,"rate",json_encode($data, JSON_UNESCAPED_UNICODE));
+		
 
 	}
 	/**

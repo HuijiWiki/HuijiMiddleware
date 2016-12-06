@@ -19,7 +19,7 @@ final class HttpProducer
     function __construct()
     {
             //读取配置信息
-            $this::$configs = parse_ini_file("config.ini");
+            $this::$configs = parse_ini_file("/var/confidential/config.ini");
     }
 
     public static function getIns(){//能过公开的getIns从内部获得一个对象
