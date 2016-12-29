@@ -24,6 +24,7 @@ $wgHooks['SocialProfile::advancement'][] = "EventEmitter::onAdvancement";
 
 
 require_once("httpProducer.php");
+use MediaWiki\Logger\LoggerFactory;
 class EventEmitter{
 
 	/**
@@ -61,7 +62,14 @@ class EventEmitter{
 	 * Called when a comment is added
 	 */
 	public static function onCommentAdd( Comment $comment, $commentId, $pageId ){
-
+		global  $wgUser, $wgHuijiPrefix, $wgSitename;
+		if($comment == null) return;
+		$title = $comment->page->title;
+		$user = $wgUser;	
+               
+		$params = ['em_comment', $user, $comment,wfTimestamp(TS_MW)] ;
+                $job = new EMJob( $title, $params);
+                JobQueueGroup::singleton()->push( $job ); 	
 	}
 	/**
 	 *  Called when a comment is deleted
@@ -111,13 +119,33 @@ class EventEmitter{
 	 */
 	public static function onPollVote( $pageId, $pollId, array $choiceIds ){
 
+		global  $wgUser, $wgHuijiPrefix, $wgSitename; 
+		if($pageId == null || $pollId == null) return;
+                $title =  Title::newFromID($pageId);
+                $user = $wgUser;
+		$p = new Poll();
+		$poll = $p->getPoll($pageId);		 
+
+                $params = ['em_poll', $user, $poll, $choiceIds, wfTimestamp(TS_MW)];
+                $job = new EMJob( $title, $params);
+                JobQueueGroup::singleton()->push( $job );
 	}
 	/**
 	 * Called when a rating is made
 	 */
 	public static function onRatingVote( Vote $vote, $voteValue, $pageId ){
+		global  $wgUser, $wgHuijiPrefix, $wgSitename;	
+		if($pageId == null || $vote == null) return;
 
-	}
+		$title =  Title::newFromID($pageId);
+                $user = $wgUser;
+
+   		$params = ['em_rate', $user, $voteValue, wfTimestamp(TS_MW)];
+                $job = new EMJob( $title, $params);
+                JobQueueGroup::singleton()->push( $job );
+	
+
+        }
 	/**
 	 * Called when a gift is send
 	 * @param $giftId defines general gift type.
