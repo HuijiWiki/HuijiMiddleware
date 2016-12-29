@@ -5,8 +5,8 @@ use MediaWiki\Logger\LoggerFactory;
 class EMJob extends Job {
 	
         public function __construct( $title, $params ) {
-        	$logger = LoggerFactory::getInstance( 'emJob' );	
-			$logger->debug("constructor", ['title'=>$title,'params'=>$params]);
+        	$this->logger = LoggerFactory::getInstance( 'emJob' );	
+		$this->logger->debug("constructor", ['title'=>$title,'params'=>$params]);
                 // Replace synchroniseThreadArticleData with an identifier for your job.
                 parent::__construct( 'emJob', $title, $params );
                 // echo 'asdf';
@@ -28,7 +28,11 @@ class EMJob extends Job {
 			//	$rev = Revision::loadFromId(wfGetDB('DB_SLAVE') , $revId);
 			//	print_r($rev);
 			//	die();
-                                return $this->emEdit( $this->title, $this->params[1], $this->params[2],$this->params[3],$this->params[4]);
+                                try{
+					return $this->emEdit( $this->title, $this->params[1], $this->params[2],$this->params[3],$this->params[4]);
+				}catch(Exception $e){
+					$this->logger->error('job error', ['exception'=>$e]);
+				}
 				break;
                         default:
                                 # code...
