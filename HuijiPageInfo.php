@@ -24,8 +24,6 @@ class HuijiPageInfo extends ContextSource {
 						+round( $pageCounts['authors'] * 3)
 						+round( $pageCounts['recent_edits']  ) * 2
 						+round( $pageCounts['recent_authors'] ) * 15;
-			$watScore = round( $pageCounts['watchers'] *10 )
-						+round( $pageCounts['visitingWatchers'] *30 );
 			$lenScore = round( sqrt($pageCounts['length']) * 4 );
 			$tagScore = round($pageCounts['tag'] /($pageCounts['length']+1) * 2500 );
 			$strScore = $pageCounts['structure'] * 50;
@@ -37,7 +35,7 @@ class HuijiPageInfo extends ContextSource {
 			} else {
 				$comScore = 0.1;
 			}
-			$score = ($revScore + $watScore + $lenScore + $comScore + $filScore + $strScore) * $comScore;
+			$score = ($revScore + $lenScore + $comScore + $filScore + $strScore) * $comScore;
 			if (isset($pageCounts['averageRating']) && isset($pageCounts['ratingCount']) && $pageCounts['ratingCount'] > 0){
 				$score += round($score*0.2*($pageCounts['averageRating']-3));
 			}
@@ -72,18 +70,8 @@ class HuijiPageInfo extends ContextSource {
 				$dbrWatchlist = wfGetDB( DB_SLAVE, 'watchlist' );
 				$setOpts += Database::getCacheSetOptions( $dbr, $dbrWatchlist );
 
-				$watchedItemStore = WatchedItemStore::getDefaultInstance();
 
 				$result = [];
-				$result['watchers'] = $watchedItemStore->countWatchers( $title );
-
-				if ( $config->get( 'ShowUpdatedMarker' ) ) {
-					$updated = wfTimestamp( TS_UNIX, $page->getTimestamp() );
-					$result['visitingWatchers'] = $watchedItemStore->countVisitingWatchers(
-						$title,
-						$updated - $config->get( 'WatchersMaxAge' )
-					);
-				}
 
 				// Total number of edits
 				$edits = (int)$dbr->selectField(
