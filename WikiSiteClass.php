@@ -692,12 +692,7 @@ class WikiSite extends Site{
 		if ($result){
 			return $result;
 		} else {
-			global $wgDBprefix, $wgDBname;
-			$oldDBprefix = $wgDBprefix;
-			$oldDB = $wgDBname;
-			$dbr = wfGetDB(DB_SLAVE);
-			$dbr->tablePrefix('');
-			$dbr->selectDB('huiji');
+			$dbr = wfGetDB(DB_REPLICA, '', 'huiji');
 			$s = $dbr->selectRow(
 				'site_properties',
 				'site_value',
@@ -714,8 +709,6 @@ class WikiSite extends Site{
 				$this->cache->set($key, $wgDefaultSiteProperty[$name]);
 				return $wgDefaultSiteProperty[$name];
 			}
-			$dbr->tablePrefix($oldDBprefix);
-			$dbr->selectDB($oldDB);
 		}
 
 	}
