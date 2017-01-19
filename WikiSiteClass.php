@@ -170,11 +170,7 @@ class WikiSite extends Site{
     }
 	protected function loadFromRow(){
 			global $wgDBprefix, $wgDBname;
-			$dbr = wfGetDB( DB_SLAVE );
-			$oldDBprefix = $wgDBprefix;
-			$oldDB = $wgDBname;
-			$dbr->tablePrefix('');
-			$dbr->selectDB('huiji');
+			$dbr = wfGetDB( DB_SLAVE,'', 'huiji' );
 			$s = $dbr->selectRow(
 				'domain',
 				array( 
@@ -201,9 +197,6 @@ class WikiSite extends Site{
 				$this->mName = $s->domain_name;
 				$this->mDate = $s->domain_date;
 			}
-
-                	$dbr->tablePrefix($oldDBprefix);
-                	$dbr->selectDB($oldDB);
 	}
 	private function getCustomKey($name){
 		return wfForeignMemcKey('huiji', '', 'WikiSite', $name, $this->mPrefix);

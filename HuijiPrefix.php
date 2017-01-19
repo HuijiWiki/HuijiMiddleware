@@ -111,6 +111,14 @@ class HuijiPrefix{
 			return '';
 		}
 	}
+	static function getDBNames(){
+		$prefixes = self::getAllPrefixes(true);
+		$out = [];
+		foreach ($prefixes as $value) {
+			$out[] = WikiSite::DbIdFromPrefix($value);
+		}
+		return $out;
+	}
 	/**
 	 * get those hiddend prefix
 	 * @return array

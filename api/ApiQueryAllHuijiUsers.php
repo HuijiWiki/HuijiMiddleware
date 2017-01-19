@@ -367,7 +367,8 @@ class ApiQueryAllHuijiUsers extends ApiQueryBase {
 			}
 		}
 
-		$result->setIndexedTagName_internal( array( 'query', $this->getModuleName() ), 'u' );
+		//Error in 1.28
+		//$result->setIndexedTagName_internal( array( 'query', $this->getModuleName() ), 'u' );
 	}
 
 	public function getCacheMode( $params ) {
