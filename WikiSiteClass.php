@@ -768,6 +768,14 @@ class WikiSite extends Site{
 		return $sum;
 	}
 
+	public function getDonationStub(){
+		$month = date("Y-m", time());
+		$siteArr = UserDonation::getDonationRankByPrefix($this->mPrefix, $month);
+		$sum = array_sum($siteArr);
+		$str = $sum.'/'.$this->getDonationGoal($month);
+		return $str;
+	}
+
 	/**
 	 * check site is reach DonationGoal
 	 * @param  string  $month ex: '2016-06'
@@ -784,35 +792,35 @@ class WikiSite extends Site{
 			$monthDonate = $data;
 		}
 		
-        $rating = $this->getRating();
-        switch ($rating) {
-            case 'A':
-                $goalDonate = 5000;
-                break;
-            case 'B':
-                $goalDonate = 1000;
-                break;
-            case 'C':
-                $goalDonate = 200;
-                break;
-            case 'D':
-                $goalDonate = 40;
-                break;
-            case 'E':
-                $goalDonate = 8;
-                break;
-            case 'NA':
-                $goalDonate = 200;
-                break;
-            default:
-                $goalDonate = 100;
-                break;
-        }
+       	$goalDonate = $this->getDonationGoal( $month );
+
         if ( $monthDonate < $goalDonate ) {
         	return false;
         }else{
         	return true;
         }
+	}
+	/**
+	 * get donation goal 
+	 * @param  string  $month ex: '2016-06'
+	 * @return int number of yuan needed
+	 */
+	public function getDonationGoal($month){
+
+		$key = wfForeignMemcKey( 'huiji', '' , 'monthlyDonationGoal', $this->mPrefix, $month );
+		$data = $this->cache->get($key);
+		if ($data == null ){
+			$day = new DateTime($month);
+			$day->modify('first day of last month');
+			$viewership = StatProvider::getStatsPerSite('view', $this->mPrefix, null, $day->format('Y-m-d'), $day->modify('last day of last month')->format('Y-m-d') );
+			
+			$goal = round($viewership * 0.0005)+5;
+
+			$this->cache->set($key, $goal);
+			return $goal;
+		} else {
+			return $data;
+		}
 	}
 
 } 

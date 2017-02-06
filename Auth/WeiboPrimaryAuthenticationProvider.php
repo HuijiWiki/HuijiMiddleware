@@ -54,7 +54,7 @@ class WeiboPrimaryAuthenticationProvider extends AbstractPrimaryAuthenticationPr
 				$i = '';
 				
 				if (!User::isUsableName( $plus[ 'screen_name' ] ) ){
-					$plus['screen_name'] = "WeiboUser".time();
+					$plus['screen_name'] = "微博用户".time();
 				}
 				$ret = $plus['screen_name'];
 				while ( User::createNew($ret) == null ){

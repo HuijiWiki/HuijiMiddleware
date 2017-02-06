@@ -54,7 +54,7 @@ class QQPrimaryAuthenticationProvider extends AbstractPrimaryAuthenticationProvi
 				$i = '';
 				
 				if (!User::isUsableName( $plus[ 'nickname' ] ) ){
-					$plus['nickname'] = "QQUser".time();
+					$plus['nickname'] = "QQ用户".time();
 				}
 				$ret = $plus['nickname'];
 				while ( User::createNew($ret) == null ){

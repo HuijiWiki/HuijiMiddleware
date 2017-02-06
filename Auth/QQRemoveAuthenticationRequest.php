@@ -21,7 +21,7 @@ class QQRemoveAuthenticationRequest extends AuthenticationRequest {
 	public function getFieldInfo() {
 		return [ $this->QQId => [
 			'type' => 'button',
-			'label' => 'Remove QQ',
+			'label' => 'remove-qq',
 			'help' => null
 		]];
 	}

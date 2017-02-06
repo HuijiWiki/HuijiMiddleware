@@ -186,8 +186,11 @@ class HuijiHooks {
 
 	}
 	public static function onInfoAction( $context, &$pageInfo ){
+		global $wgHuijiPrefix;
 		$info = new HuijiPageInfo($context->getTitle()->getArticleID(),$context);
+		$count = StatProvider::getStatPerPage('view', $context->getTitle()->getArticleID(), null, null, $wgHuijiPrefix);
 		$pageInfo['header-basic'][] = [wfMessage('infoaction-header-recommend-factor')->plain(), $info->pageScore()];
+		$pageInfo['header-basic'][] = [wfMessage('infoaction-header-viewership')->plain(), $count];
 	}
 	public static function onAuthChangeFormFields( $requests, $fieldInfo, &$formDescriptor, $action ) { 
 	}
