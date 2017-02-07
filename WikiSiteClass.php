@@ -654,7 +654,7 @@ class WikiSite extends Site{
 		if (empty($this->getBestRank())){
 			return 'NA';
 		}
-		if (($this->getBestRank() == 10) and ($stats['articles'] > 1000) and ($stats['followers'] > 250) and ($stats['edits'] > 10000 ) ){
+		if (($this->getBestRank() >= 10) and ($stats['articles'] > 1000) and ($stats['followers'] > 250) and ($stats['edits'] > 10000 ) ){
 			$this->mSiteRating = 'A';
 		} else {
 			if ( ($stats['articles'] > 200) and ($stats['followers'] > 50) and ($stats['edits'] > 2000) ){
