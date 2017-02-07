@@ -772,7 +772,11 @@ class WikiSite extends Site{
 		$month = date("Y-m", time());
 		$siteArr = UserDonation::getDonationRankByPrefix($this->mPrefix, $month);
 		$sum = array_sum($siteArr);
-		$str = $sum.'/'.$this->getDonationGoal($month);
+		if ($sum < $this->getDonationGoal($month)){
+			$str = $sum.'/'.$this->getDonationGoal($month);
+		}else{
+			$str = '<i class="fa fa-gratipay" aria-hidden="true"></i>';
+		}
 		return $str;
 	}
 
@@ -812,10 +816,11 @@ class WikiSite extends Site{
 		if ($data == null ){
 			$day = new DateTime($month);
 			$day->modify('first day of last month');
-			$viewership = StatProvider::getStatsPerSite('view', $this->mPrefix, null, $day->format('Y-m-d'), $day->modify('last day of last month')->format('Y-m-d') );
-			
-			$goal = round($viewership * 0.0005)+5;
-
+			$viewership = StatProvider::getStatsPerSite('view', $this->mPrefix, null, $day->format('Y-m-d'), $day->modify('last day of this month')->format('Y-m-d') );
+			$goal = round($viewership * 0.0005);
+			if ($goal < 5){
+				$goal = 5;
+			}	
 			$this->cache->set($key, $goal);
 			return $goal;
 		} else {
