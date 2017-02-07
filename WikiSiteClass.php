@@ -775,7 +775,7 @@ class WikiSite extends Site{
 		if ($sum < $this->getDonationGoal($month)){
 			$str = $sum.'/'.$this->getDonationGoal($month);
 		} else {
-			$str = $sum.'/'.$sum;
+			$str = $sum;
 		}
 		return $str;
 	}
