@@ -774,8 +774,8 @@ class WikiSite extends Site{
 		$sum = array_sum($siteArr);
 		if ($sum < $this->getDonationGoal($month)){
 			$str = $sum.'/'.$this->getDonationGoal($month);
-		}else{
-			$str = '<i class="fa fa-gratipay" aria-hidden="true"></i>';
+		} else {
+			$str = $sum.'/'.$sum;
 		}
 		return $str;
 	}
