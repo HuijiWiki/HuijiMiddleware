@@ -57,7 +57,7 @@ class Huiji{
 	 * @return array 
 	 */
 	public function getStats(){
-		$key = wfForeignMemcKey('huiji', '', 'Huiji', 'getStats');
+		$key = wfGlobalCacheKey('HuijiClass', 'getStats');
 		$stats = $this->cache->get($key);
 		if ($stats != ''){
 			return $stats;
