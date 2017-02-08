@@ -191,7 +191,7 @@ class EMJob extends Job {
 	}
 
 
-	public function emEdit( $title, Revision $revId, User $user, $ip, $userAgent){
+	public function emEdit( $title, $revId, User $user, $ip, $userAgent){
        		global $wgHuijiPrefix, $wgSitename,$wgIsProduction;
 
 //        	if($wgIsProduction == false) return;
