@@ -17,7 +17,7 @@ class HuijiPageInfo extends ContextSource {
 		if ($this->mTitle == null){
 			return 0;
 		}
-		if (defined(NS_POLL) && $this->mTitle->getNamespace() == NS_POLL){
+		if (defined('NS_POLL') && $this->mTitle->getNamespace() === NS_POLL){
 			return 60;
 		}
 		$pageCounts = $this->pageCounts( $this->page );

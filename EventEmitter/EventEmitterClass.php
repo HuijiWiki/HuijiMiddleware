@@ -37,7 +37,7 @@ class EventEmitter{
                 //client userAgent
                 $client_userAgent = isset($_SERVER[ 'HTTP_USER_AGENT' ]) ? $_SERVER[ 'HTTP_USER_AGENT' ] : "";
 
-		$params = ['em_edit',$rev, $user, $client_ip, $client_userAgent] ;
+		$params = ['em_edit',$rev->getId(), $user, $client_ip, $client_userAgent] ;
 		//$params = ['123'];
 
 	        $job = new EMJob( $article->getTitle(), $params);
@@ -66,7 +66,6 @@ class EventEmitter{
 		if($comment == null) return;
 		$title = $comment->page->title;
 		$user = $wgUser;	
-               
 		$params = ['em_comment', $user, $comment,wfTimestamp(TS_MW)] ;
                 $job = new EMJob( $title, $params);
                 JobQueueGroup::singleton()->push( $job ); 	

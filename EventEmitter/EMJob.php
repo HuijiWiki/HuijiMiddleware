@@ -43,22 +43,22 @@ class EMJob extends Job {
 	public function emRate($title, $user, $voteValue, $timestamp){
 		global  $wgHuijiPrefix, $wgSitename;
 		//user name 
-                $user_name = $user->getName();
-                //use id
-                $user_id = $user->getId();
-                //user is bot
-                $user_isBot = $user->isAllowed('bot');
-                //site prefix
-                $site_prefix = $wgHuijiPrefix;
-                //site name
-                $site_name = $wgSitename;
+        $user_name = $user->getName();
+        //use id
+        $user_id = $user->getId();
+        //user is bot
+        $user_isBot = $user->isAllowed('bot');
+        //site prefix
+        $site_prefix = $wgHuijiPrefix;
+        //site name
+        $site_name = $wgSitename;
 
-                //page title
-                $page_title = $title->getText();
-                //page id
-                $page_id = $title->getArticleID();
-                //page namespace
-                $page_ns = $title->getNamespace();
+        //page title
+        $page_title = $title->getText();
+        //page id
+        $page_id = $title->getArticleID();
+        //page namespace
+        $page_ns = $title->getNamespace();
 		//page score
 		$huijiPageInfo = new HuijiPageInfo($page_id, RequestContext::getMain());
 		$page_score = $huijiPageInfo->pageScore();
@@ -191,12 +191,13 @@ class EMJob extends Job {
 	}
 
 
-	public function emEdit( $title, Revision $rev, User $user, $ip, $userAgent){
+	public function emEdit( $title, Revision $revId, User $user, $ip, $userAgent){
        		global $wgHuijiPrefix, $wgSitename,$wgIsProduction;
 
 //        	if($wgIsProduction == false) return;
-        	if($rev == null || $title == null || $user == null) return;
 
+        	if($revId == null || $title == null || $user == null) return;
+        $rev = Revision::newFromId($revId);
 		//content
 		$content = $rev->getContent(Revision::RAW);
 		//user name 
