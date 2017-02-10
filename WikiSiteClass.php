@@ -206,7 +206,13 @@ class WikiSite extends Site{
 	 * @return blooen 
 	 */
 	public function exists(){
-		return $this->mPrefix != '';
+		if ($this->mPrefix == ''){
+			return false;
+		} 
+		if (empty($this->getId())){
+			return false;
+		}
+		return true;
 
 	}
 	/**
